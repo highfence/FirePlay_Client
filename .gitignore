@@ -79,3 +79,11 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Custom
+data/
+FirePlay_Data/
+PrivateData/
+HttpClient/
+json.hpp
+Library/
