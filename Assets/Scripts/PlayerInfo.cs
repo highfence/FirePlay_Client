@@ -10,13 +10,13 @@ public class PlayerInfo : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 	}
 
-	public void InfoSetting(string id, long token)
+	public void InfoSetting(string id, string token)
 	{
 		_id = id;
 		_token = token;
 	}
 
 	public string _id;
-	public long _token;
+	public string _token;
     public PlayerType _selectedPlayerType = PlayerType.None;
 }

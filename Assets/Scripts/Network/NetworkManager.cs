@@ -48,6 +48,12 @@ public class NetworkManager : MonoBehaviour
         return _httpNetwork.GetApiString(apiEnum);
     }
 
+    // 컴포넌트 TcpNetwork의 Send를 호출해주는 래핑 메소드.
+    public void SendPacket<T>(T data, PacketInfo.PacketId packetId)
+    {
+        _tcpNetwork.SendPacket<T>(data, packetId);
+    }
+
     // 어플리케이션이 종료될 때 소켓을 닫아주는 메소드.
     void OnApplicationQuit()
     {

@@ -80,14 +80,14 @@ public class HttpPack
     public class LoginRes
     {
         public short Result;
-        public long Token;
+        public string Token;
     }
 
     [System.Serializable]
     public class LogoutReq
     {
         public string UserId;
-        public long Token;
+        public string Token;
     }
 
     [System.Serializable]

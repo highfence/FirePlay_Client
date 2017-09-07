@@ -123,7 +123,7 @@ public class LoginManager : MonoBehaviour
             // 정상적으로 처리 된 경우.
             case ErrorCode.None :
                 #region LoginProcess
-                if (response.Token != 0)
+                if (!string.IsNullOrEmpty(response.Token))
                 {
                     // 유저 정보에 받은 내용 기록.
                     if (_info == null)
@@ -138,11 +138,13 @@ public class LoginManager : MonoBehaviour
                     {
                         // 받은 내용을 가지고 서버에 로그인 요청.
                         var network = FindObjectOfType<NetworkManager>();
+                        var req = new PacketInfo.LoginReq()
+                        {
+                            _id = _info._id,
+                            _token = _info._token
+                        };
 
-
-
-                        // 다음 씬으로 전환.
-                        SceneManager.LoadScene("CharacterSelect");
+                        network.SendPacket<PacketInfo.LoginReq>(req, PacketInfo.PacketId.ID_LoginReq);
                     }
                     catch (SocketException e)
                     {

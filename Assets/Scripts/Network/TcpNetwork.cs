@@ -21,10 +21,11 @@ public class TcpNetwork
 
     public TcpNetwork(string ipAddr = "127.0.0.1", int port = 23452)
     {
-        _ipAddress = ipAddr;
-        _port      = port;
+        _ipAddress    = ipAddr;
+        _port         = port;
         _recvCallback = new AsyncCallback(RecvCallBack);
         _sendCallback = new AsyncCallback(SendCallBack);
+        _packetQueue  = new Queue<Packet>();
 
         try
         {
@@ -185,6 +186,8 @@ public class TcpNetwork
                 SocketFlags.None,
                 _sendCallback,
                 sendData);
+
+            Debug.Log("BeginSend Start");
         }
         catch (SocketException e)
         {
@@ -289,6 +292,9 @@ public class TcpNetwork
             return;
         }
 
+        Debug.Log("SendCallBack Function Entry");
+
+
         var sendData = (AsyncSendData)asyncResult;
 
         var sendSize = 0;
@@ -314,13 +320,19 @@ public class TcpNetwork
                 SocketFlags.Truncated,              // 메시지가 너무 커서 잘렸을 경우의 플래그.
                 _sendCallback,
                 sendData);
+
+            Debug.LogAssertion("Sended Size is small");
         }
+
+        Debug.Log("Packet Send End!");
     }
 
     // SocketException을 처리하는 메소드.
     void HandleException(SocketException e)
     {
         var errorCode = (SocketError)e.ErrorCode;
+
+        Debug.LogAssertion(e.Message);
 
         if (errorCode == SocketError.ConnectionAborted ||
             errorCode == SocketError.Disconnecting ||
@@ -330,7 +342,6 @@ public class TcpNetwork
             errorCode == SocketError.ConnectionReset)
         {
             // TODO :: Close Connect 알림을 서버에 던짐.
-            Debug.LogAssertion(e.Message);
         }
     }
 }

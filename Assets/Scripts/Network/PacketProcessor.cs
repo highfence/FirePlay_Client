@@ -46,7 +46,7 @@ public partial class PacketProcessor : MonoBehaviour
         var req = new CloseReq()
         {
             _id    = myInfo._id,
-            _token = Convert.ToInt32(myInfo._token)
+            _token = (myInfo._token)
         };
 
         network._tcpNetwork.SendPacket<CloseReq>(req, PacketId.ID_CloseReq);
