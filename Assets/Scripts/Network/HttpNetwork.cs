@@ -36,12 +36,9 @@ public class HttpNetwork : MonoBehaviour
         }
         else
         {
-            Debug.Log("Response : " + request.downloadHandler.text);
-
             // 성공했을 경우.
             if (request.responseCode == 200)
             {
-                Debug.Log("Request finished successfully");
                 // 받은 정보 처리하도록 넘겨준다.
                 onSuccess(JsonUtility.FromJson<T>(request.downloadHandler.text));
             }

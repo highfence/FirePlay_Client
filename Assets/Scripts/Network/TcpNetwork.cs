@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using PacketInfo;
 using UnityEngine;
+using Util;
 
 // 비동기 콜백 TcpIp 통신을 목적으로 하는 클래스.
 public class TcpNetwork
@@ -68,8 +69,7 @@ public class TcpNetwork
     void OnConnectSuccess(IAsyncResult asyncResult)
     {
         try
-        {
-            // 접속이 완료되었으므로 Connect 요청을 그만둠. 
+        {   // 접속이 완료되었으므로 Connect 요청을 그만둠. 
             _socket.EndConnect(asyncResult);
             _isConnected = true;
             Debug.LogFormat("Server Connect Success Ip {0}, Port : {1}", _ipAddress, _port);
@@ -201,6 +201,7 @@ public class TcpNetwork
     {
         if (_isConnected == false)
         {
+            Debug.LogAssertion("TcpNetwork was not connected yet");
             return;
         }
 
@@ -220,59 +221,75 @@ public class TcpNetwork
             return;
         }
 
-        // 받은 데이터로부터 패킷을 만듬. 포인터로 동작.
-        unsafe
+        // 패킷 조제 루프.
+        while (true)
         {
-            while (true)
+            // 헤더 사이즈보다 적은 데이터가 있다면 더 이상 패킷을 만들지 않음.
+            if (recvData._recvSize < NetworkDefinition.PacketHeaderSize)
             {
-                // 헤더 사이즈보다 적은 데이터가 있다면 더 이상 패킷을 만들지 않음
-                if (recvData._recvSize < NetworkDefinition.PacketHeaderSize)
-                {
-                    break;
-                }
-
-                // 가비지 컬렉터에 지워지지 않도록 fixed 선언.
-                fixed(byte * packetHeaderPos = &recvData._buffer[recvData._readPos])
-                {
-                    // readPos 위치에서 헤더를 읽는다.
-                    PacketHeader* header = (PacketHeader*)packetHeaderPos;
-
-                    // 패킷 사이즈가 남은 데이터 보다 크다면 더 이상 패킷을 만들지 않음.
-                    int packetSize = NetworkDefinition.PacketHeaderSize + header->bodySize;
-                    if (recvData._recvSize < packetSize)
-                    {
-                        break;
-                    }
-
-                    // 패킷 조제.
-                    var packet = new Packet();
-                    packet.bodySize = header->bodySize;
-                    packet.packetId = header->packetId;
-
-                    packet.data = NetworkDefinition.NetworkEncoding.GetString(
-                        recvData._buffer,                                       // 디코딩할 바이트 버퍼.
-                        recvData._readPos + NetworkDefinition.PacketHeaderSize, // 디코딩할 첫 번째 바이트의 인덱스
-                        header->bodySize                                        // 디코딩할 바이트 수
-                        );
-
-                    // 조제한 패킷을 큐에 넣어준다.
-                    lock(this)
-                    {
-                        _packetQueue.Enqueue(packet);
-                    }
-
-                    // 조제한 데이터 만큼 갱신해준다.
-                    recvData._readPos += packetSize;
-                    recvData._recvSize -= packetSize;
-                }
+                break;
             }
+
+            var header = (PacketHeader)Util.Util.ByteToStructure(recvData._buffer, typeof(PacketHeader));
+
+            break;
         }
 
-        // 사용한 데이터 만큼 앞으로 땡겨준다.
-        for (var i = 0; i < recvData._recvSize; ++i)
-        {
-            recvData._buffer[i] = recvData._buffer[recvData._readPos + i];
-        }
+        // 받은 데이터로부터 패킷을 만듬. 포인터로 동작.
+        //unsafe
+        //{
+        //    while (true)
+        //    {
+        //        // 헤더 사이즈보다 적은 데이터가 있다면 더 이상 패킷을 만들지 않음
+        //        if (recvData._recvSize < NetworkDefinition.PacketHeaderSize)
+        //        {
+        //            break;
+        //        }
+
+        //        // 가비지 컬렉터에 지워지지 않도록 fixed 선언.
+        //        fixed(byte * packetHeaderPos = &recvData._buffer[recvData._readPos])
+        //        {
+        //            // readPos 위치에서 헤더를 읽는다.
+        //            PacketHeader * header = (PacketHeader*)packetHeaderPos;
+
+        //            // 패킷 사이즈가 남은 데이터 보다 크다면 더 이상 패킷을 만들지 않음.
+        //            int packetSize = NetworkDefinition.PacketHeaderSize + header->bodySize;
+        //            if (recvData._recvSize < packetSize)
+        //            {
+        //                break;
+        //            }
+
+        //            // 패킷 조제.
+        //            var packet = new Packet();
+        //            packet.bodySize = header->bodySize;
+        //            packet.packetId = header->packetId;
+
+        //            packet.data = NetworkDefinition.NetworkEncoding.GetString(
+        //                recvData._buffer,                                       // 디코딩할 바이트 버퍼.
+        //                recvData._readPos + NetworkDefinition.PacketHeaderSize, // 디코딩할 첫 번째 바이트의 인덱스
+        //                header->bodySize                                        // 디코딩할 바이트 수
+        //                );
+
+        //            Debug.LogFormat("Recv Packet PacketId{0}", header->packetId);
+
+        //            // 조제한 패킷을 큐에 넣어준다.
+        //            lock(this)
+        //            {
+        //                _packetQueue.Enqueue(packet);
+        //            }
+
+        //            // 조제한 데이터 만큼 갱신해준다.
+        //            recvData._readPos += packetSize;
+        //            recvData._recvSize -= packetSize;
+        //        }
+        //    }
+        //}
+
+        //// 사용한 데이터 만큼 앞으로 땡겨준다.
+        //for (var i = 0; i < recvData._recvSize; ++i)
+        //{
+        //    recvData._buffer[i] = recvData._buffer[recvData._readPos + i];
+        //}
 
         // 다시 비동기 Recv를 걸어준다.
         recvData._socket.BeginReceive(

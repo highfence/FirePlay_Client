@@ -9,7 +9,7 @@ public partial class PacketProcessor : MonoBehaviour
     // 패킷 처리 함수 형태 선언.
     delegate void PacketProcessFunction(string jsonData);
     // 패킷 ID에 따른 처리 함수를 저장할 딕셔너리
-    Dictionary<int, PacketProcessFunction> _packetFunctionDic;
+    Dictionary<int, PacketProcessFunction> _packetFunctionDic = new Dictionary<int, PacketProcessFunction>();
 
 	void Start ()
     {
@@ -29,9 +29,8 @@ public partial class PacketProcessor : MonoBehaviour
     // 패킷 ID에 대응되는 함수들을 등록해주는 메소드.
     void RegistPacketFunctions()
     {
-        _packetFunctionDic = new Dictionary<int, PacketProcessFunction>();
-
         _packetFunctionDic.Add((int)PacketId.ID_CloseReq, ConnectCloseReq);
+        _packetFunctionDic.Add((int)PacketId.ID_LoginRes, LoginRes);
     }
 
     // 클라이언트 종료 요청 메소드.
@@ -50,5 +49,17 @@ public partial class PacketProcessor : MonoBehaviour
         };
 
         network._tcpNetwork.SendPacket<CloseReq>(req, PacketId.ID_CloseReq);
+    }
+
+    // 클라이언트 로그인 응답 메소드
+    void LoginRes(string inData)
+    {
+        Debug.Log(inData);
+
+        var res = new LoginRes();
+        res = JsonUtility.FromJson<LoginRes>(inData);
+
+        // TODO :: 여기서부터 처리.
+        
     }
 }
