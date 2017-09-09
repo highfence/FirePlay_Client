@@ -107,7 +107,15 @@ public struct LoginServerConfig
         LoginServerConfig instance;
         try
         {
+#if DEBUG
+            instance = new LoginServerConfig()
+            {
+                LoginServerAddr = "localhost",
+                Port = "19000"
+            };
+#else
             instance = JsonUtility.FromJson<LoginServerConfig>(text);
+#endif
         }
         catch (Exception e)
         {

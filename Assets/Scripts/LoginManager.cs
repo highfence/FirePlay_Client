@@ -118,6 +118,8 @@ public class LoginManager : MonoBehaviour
     // 로그인 서버에서 온 메시지를 처리해주는 메소드.
     bool HandleLoginMessage(HttpPack.LoginRes response)
     {
+        var network = FindObjectOfType<NetworkManager>();
+
         switch ((ErrorCode)response.Result)
         {
             // 정상적으로 처리 된 경우.
@@ -137,7 +139,6 @@ public class LoginManager : MonoBehaviour
                     try
                     {
                         // 받은 내용을 가지고 서버에 로그인 요청.
-                        var network = FindObjectOfType<NetworkManager>();
                         var req = new PacketInfo.LoginReq()
                         {
                             _id = _info._id,
@@ -158,6 +159,18 @@ public class LoginManager : MonoBehaviour
             // 아이디나 비밀번호가 잘못된 경우.
             case ErrorCode.LoginUserInfoDontExist :
                 Debug.LogAssertion("Invalid Id or Pw");
+
+                var request = new HttpPack.LoginReq()
+                {
+                    UserId = _id,
+                    UserPw = _pw
+                };
+
+                var jsonBody = JsonUtility.ToJson(request);
+
+                var signInRequestUrl = _config.GetHttpString() + network.GetApiString(LoginApiString.SignIn);
+                network.HttpPost<HttpPack.LoginRes>(signInRequestUrl, jsonBody, HandleLoginMessage);
+
                 break;
 
             default :

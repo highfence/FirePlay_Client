@@ -134,6 +134,8 @@ public class TcpNetwork
         }
 
         var sendData = new AsyncSendData(_socket);
+        int id;
+        int bodySize;
 
         // 포인터 동작 수행.
         unsafe
@@ -142,15 +144,16 @@ public class TcpNetwork
             // 보낼 데이터 구조체를 Json 형태로 바꿔줌.
             string jsonData = JsonUtility.ToJson(data);
 
-            int id = (int)packetId;
-            int bodySize = jsonData.Length;
+            id = (int)packetId;
+            bodySize = jsonData.Length + 1;
+
 
             // Send 버퍼 생성.
-            sendData._buffer = new byte[NetworkDefinition.PacketHeaderSize + bodySize];
+            sendData._buffer = new byte[NetworkDefinition.PacketHeaderSize + bodySize + 1];
             sendData._sendSize = NetworkDefinition.PacketHeaderSize + bodySize;
-            #endregion;
+#endregion;
 
-            #region Copying Header Data
+#region Copying Header Data
             // 패킷 아이디 주소의 첫 번째 자리.
             byte * packetIdPos = (byte*)&id;
 
@@ -168,18 +171,24 @@ public class TcpNetwork
             {
                 sendData._buffer[NetworkDefinition.IntSize + i] = bodySizePos[i]; 
             }
-            #endregion;
+#endregion;
 
-            #region Copying Body Data
+#region Copying Body Data
             // 패킷 바디 주소의 첫 번째 자리.
             char[] bodyPos = jsonData.ToCharArray();
             
             // 헤더를 기록했던 버퍼 자리 뒤부터 기록.
-            for (int i = 0; i < bodySize; ++i)
+            for (int i = 0; i < bodySize - 1; ++i)
             {
                 sendData._buffer[NetworkDefinition.PacketHeaderSize + i] = (byte)bodyPos[i];
             }
-            #endregion;
+
+            // 뒤에 널 문자 추가.
+            var nullChar = Convert.ToByte('\0');
+            sendData._buffer[NetworkDefinition.PacketHeaderSize + bodySize] = nullChar;
+            Debug.Log(nullChar);
+
+#endregion;
         }
 
         try
@@ -188,12 +197,10 @@ public class TcpNetwork
             _socket.BeginSend(
                 sendData._buffer,
                 0,
-                sendData._buffer.Length,
+                NetworkDefinition.PacketHeaderSize + bodySize,
                 SocketFlags.None,
                 _sendCallback,
                 sendData);
-
-            Debug.Log("BeginSend Start");
         }
         catch (SocketException e)
         {
@@ -288,15 +295,16 @@ public class TcpNetwork
 
         Debug.Log("SendCallBack Function Entry");
 
-
         var sendData = (AsyncSendData)asyncResult;
 
-        var sendSize = 0;
+        Debug.Log("Callback alived");
+
+        var sendedSize = 0;
 
         try
         {
             // 비동기 Send 요청을 끝내준다.
-            sendSize = sendData._socket.EndSend(asyncResult);
+            sendedSize = sendData._socket.EndSend(asyncResult);
         }
         catch (SocketException e)
         {
@@ -304,13 +312,13 @@ public class TcpNetwork
         }
 
         // 만약 요청한 사이즈보다 보낸 데이터가 작다면
-        if (sendSize < sendData._sendSize)
+        if (sendedSize < sendData._sendSize)
         {
             // 다시 비동기 Send를 요청.
             _socket.BeginSend(
                 sendData._buffer,
-                sendSize,
-                sendData._buffer.Length - sendSize,
+                sendedSize,
+                sendData._sendSize - sendedSize,
                 SocketFlags.Truncated,              // 메시지가 너무 커서 잘렸을 경우의 플래그.
                 _sendCallback,
                 sendData);
