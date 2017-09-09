@@ -3,9 +3,9 @@
 namespace PacketInfo
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct PacketHeader
+    public class PacketHeader
     {
-        public int packetId;
+        public int id;
         public int bodySize;
     }
 

@@ -231,7 +231,12 @@ public class TcpNetwork
             }
 
             // 패킷 헤더 조제.
-            var header = (PacketHeader)ByteTranslator.ByteToStructure(recvData._buffer, NetworkDefinition.PacketHeaderSize, typeof(PacketHeader));
+            PacketHeader header = new PacketHeader();
+
+            int id = BitConverter.ToInt32(recvData._buffer, 0);
+            int bodySize = BitConverter.ToInt32(recvData._buffer, 4);
+            Debug.LogFormat("Recv Packet Id {0}, size {1}", id, bodySize);
+
 
             break;
         }

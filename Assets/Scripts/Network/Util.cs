@@ -1,27 +1,69 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Net;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace Util
 {
     public static class ByteTranslator
     {
-        public static object ByteToStructure(byte[] data, int dataSize, Type type)
+        public static object ByteToObject(byte[] buffer)
         {
-            IntPtr buff = Marshal.AllocHGlobal(dataSize);
-            Marshal.Copy(data, 0, buff, dataSize);
-
-            object obj = Marshal.PtrToStructure(buff, type);
-            Marshal.FreeHGlobal(buff);
-
-            if (Marshal.SizeOf(obj) != dataSize)
+            try
             {
-                return null;
+                using (MemoryStream stream = new MemoryStream(buffer))
+                {
+                    BinaryFormatter binaryFormatter = new BinaryFormatter();
+                    stream.Position = 0;
+                    return binaryFormatter.Deserialize(stream);
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.ToString());
             }
 
+            return null;
+        }
+
+        public static object GetObjectFromBytes(byte[] buffer, Type objType)
+        {
+            object obj = null;
+            if ((buffer != null) && (buffer.Length > 0))
+            {
+                IntPtr ptrObj = IntPtr.Zero;
+                try
+                {
+                    int objSize = Marshal.SizeOf(objType);
+                    if (objSize > 0)
+                    {
+                        if (buffer.Length < objSize)
+                        {
+                            throw new Exception(String.Format("Buffer smaller than needed for creation of object of type {0}", objType));
+                        }
+
+                        ptrObj = Marshal.AllocHGlobal(objSize);
+
+                        if (ptrObj != IntPtr.Zero)
+                        {
+                            Marshal.Copy(buffer, 0, ptrObj, objSize);
+                            obj = Marshal.PtrToStructure(ptrObj, objType);
+                        }
+                        else
+                        {
+                            throw new Exception(String.Format("Couldn't allocate memory to create object of type {0}", objType));
+                        }
+                    }
+                }
+                finally
+                {
+                    if (ptrObj != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(ptrObj);
+                    }
+                }
+            }
             return obj;
         }
 
