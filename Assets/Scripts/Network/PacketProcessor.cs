@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using PacketInfo;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public partial class PacketProcessor : MonoBehaviour
 {
@@ -13,21 +14,27 @@ public partial class PacketProcessor : MonoBehaviour
 
 	void Start ()
     {
-        RegistPacketFunctions();
 	}
 	
     // 입력 패킷을 받고 해당하는 ID의 메소드를 호출해주는 메소드.
-    public void Process(Packet packet)
+    public bool Process(Packet packet)
     {
+
         // 들어온 패킷에 해당하는 함수가 있다면 실행.
         if (_packetFunctionDic.ContainsKey(packet.packetId))
         {
             _packetFunctionDic[packet.packetId](packet.data);
         }
+        else
+        {
+            Debug.LogErrorFormat("Invalid Packet Id : {0}", packet.packetId);
+        }
+
+        return true;
     }
 
     // 패킷 ID에 대응되는 함수들을 등록해주는 메소드.
-    void RegistPacketFunctions()
+    public void RegistPacketFunctions()
     {
         _packetFunctionDic.Add((int)PacketId.ID_CloseReq, ConnectCloseReq);
         _packetFunctionDic.Add((int)PacketId.ID_LoginRes, LoginRes);
@@ -54,12 +61,13 @@ public partial class PacketProcessor : MonoBehaviour
     // 클라이언트 로그인 응답 메소드
     void LoginRes(string inData)
     {
-        Debug.Log(inData);
-
         var res = new LoginRes();
         res = JsonUtility.FromJson<LoginRes>(inData);
 
         // TODO :: 여기서부터 처리.
-        
+        if (res._result == (int)ErrorCode.None)
+        {
+            SceneManager.LoadScene("CharacterSelect");
+        }
     }
 }

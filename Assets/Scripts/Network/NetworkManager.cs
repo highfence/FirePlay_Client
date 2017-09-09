@@ -23,17 +23,24 @@ public class NetworkManager : MonoBehaviour
 
         // HttpNetwork 생성
         _httpNetwork = new HttpNetwork();
+
+        // 패킷 프로세서 생성.
+        _packetProcessor = new PacketProcessor();
+        _packetProcessor.RegistPacketFunctions();
+
+        // 패킷을 처리할 수 있도록 메소드 연결.
+        _tcpNetwork.RegistProcessFunc(_packetProcessor.Process);
     }
 
     private void Update()
     {
         // 처리할 패킷이 있다면 모두 다 처리.
-        while (_tcpNetwork.IsQueueEmpty() == false)
-        {
-            var packet = _tcpNetwork.GetPacket();
+        //while (_tcpNetwork.IsQueueEmpty() == false)
+        //{
+        //    var packet = _tcpNetwork.GetPacket();
 
-            _packetProcessor.Process(packet);
-        }
+        //    _packetProcessor.Process(packet);
+        //}
     }
 
     // 컴포넌트 HttpNetwork의 PostRequest 래핑 메소드.

@@ -15,6 +15,7 @@ public class TcpNetwork
     private Socket        _socket;
     // 멀티 스레드 환경에서 Lock이 필요하다.
     private Queue<Packet> _packetQueue;
+    private Func<Packet, bool> _processFunc;
 
     private bool      _isConnected = false;
     private string    _ipAddress   = "127.0.0.1";
@@ -37,6 +38,11 @@ public class TcpNetwork
         {
             Debug.LogError("Socket Create Failed Error : " + e.Message);
         }
+    }
+
+    public void RegistProcessFunc(Func<Packet, bool> processFunc)
+    {
+        _processFunc = processFunc;
     }
 
     // 소켓을 닫아주는 메소드.
@@ -231,71 +237,36 @@ public class TcpNetwork
             }
 
             // 패킷 헤더 조제.
-            PacketHeader header = new PacketHeader();
+            var header = new PacketHeader();
 
-            int id = BitConverter.ToInt32(recvData._buffer, 0);
-            int bodySize = BitConverter.ToInt32(recvData._buffer, 4);
+            var id = BitConverter.ToInt32(recvData._buffer, 0);
+            var bodySize = BitConverter.ToInt32(recvData._buffer, 4);
             Debug.LogFormat("Recv Packet Id {0}, size {1}", id, bodySize);
 
+            // 패킷 조제.
+            var bodyJson = BitConverter.ToString(recvData._buffer, 8);
+            Debug.LogFormat("Recv Packet Body : {0}", bodyJson);
 
-            break;
+            var packet = new Packet
+            {
+                packetId = id,
+                bodySize = bodySize,
+                data = bodyJson
+            };
+
+            // 조제한 패킷을 큐에 넣어준다.
+            //lock (this)
+            //{
+            //    _packetQueue.Enqueue(packet);
+            //}
+
+            // 조제한 패킷을 처리할 수 있도록 넣어준다.
+            _processFunc(packet);
+
+            // 조제한 데이터 만큼 갱신해준다.
+            recvData._readPos += NetworkDefinition.PacketHeaderSize + bodySize;
+            recvData._recvSize -= NetworkDefinition.PacketHeaderSize + bodySize;
         }
-
-        // 받은 데이터로부터 패킷을 만듬. 포인터로 동작.
-        //unsafe
-        //{
-        //    while (true)
-        //    {
-        //        // 헤더 사이즈보다 적은 데이터가 있다면 더 이상 패킷을 만들지 않음
-        //        if (recvData._recvSize < NetworkDefinition.PacketHeaderSize)
-        //        {
-        //            break;
-        //        }
-
-        //        // 가비지 컬렉터에 지워지지 않도록 fixed 선언.
-        //        fixed(byte * packetHeaderPos = &recvData._buffer[recvData._readPos])
-        //        {
-        //            // readPos 위치에서 헤더를 읽는다.
-        //            PacketHeader * header = (PacketHeader*)packetHeaderPos;
-
-        //            // 패킷 사이즈가 남은 데이터 보다 크다면 더 이상 패킷을 만들지 않음.
-        //            int packetSize = NetworkDefinition.PacketHeaderSize + header->bodySize;
-        //            if (recvData._recvSize < packetSize)
-        //            {
-        //                break;
-        //            }
-
-        //            // 패킷 조제.
-        //            var packet = new Packet();
-        //            packet.bodySize = header->bodySize;
-        //            packet.packetId = header->packetId;
-
-        //            packet.data = NetworkDefinition.NetworkEncoding.GetString(
-        //                recvData._buffer,                                       // 디코딩할 바이트 버퍼.
-        //                recvData._readPos + NetworkDefinition.PacketHeaderSize, // 디코딩할 첫 번째 바이트의 인덱스
-        //                header->bodySize                                        // 디코딩할 바이트 수
-        //                );
-
-        //            Debug.LogFormat("Recv Packet PacketId{0}", header->packetId);
-
-        //            // 조제한 패킷을 큐에 넣어준다.
-        //            lock(this)
-        //            {
-        //                _packetQueue.Enqueue(packet);
-        //            }
-
-        //            // 조제한 데이터 만큼 갱신해준다.
-        //            recvData._readPos += packetSize;
-        //            recvData._recvSize -= packetSize;
-        //        }
-        //    }
-        //}
-
-        //// 사용한 데이터 만큼 앞으로 땡겨준다.
-        //for (var i = 0; i < recvData._recvSize; ++i)
-        //{
-        //    recvData._buffer[i] = recvData._buffer[recvData._readPos + i];
-        //}
 
         // 다시 비동기 Recv를 걸어준다.
         recvData._socket.BeginReceive(
