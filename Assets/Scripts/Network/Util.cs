@@ -7,17 +7,17 @@ using System.Text;
 
 namespace Util
 {
-    public static class Util
+    public static class ByteTranslator
     {
-        public static object ByteToStructure(byte[] data, Type type)
+        public static object ByteToStructure(byte[] data, int dataSize, Type type)
         {
-            IntPtr buff = Marshal.AllocHGlobal(data.Length);
-            Marshal.Copy(data, 0, buff, data.Length);
+            IntPtr buff = Marshal.AllocHGlobal(dataSize);
+            Marshal.Copy(data, 0, buff, dataSize);
 
             object obj = Marshal.PtrToStructure(buff, type);
             Marshal.FreeHGlobal(buff);
 
-            if (Marshal.SizeOf(obj) != data.Length)
+            if (Marshal.SizeOf(obj) != dataSize)
             {
                 return null;
             }

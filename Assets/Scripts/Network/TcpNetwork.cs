@@ -221,7 +221,7 @@ public class TcpNetwork
             return;
         }
 
-        // 패킷 조제 루프.
+        // 받은 데이터로부터 패킷을 만든다.
         while (true)
         {
             // 헤더 사이즈보다 적은 데이터가 있다면 더 이상 패킷을 만들지 않음.
@@ -230,7 +230,8 @@ public class TcpNetwork
                 break;
             }
 
-            var header = (PacketHeader)Util.Util.ByteToStructure(recvData._buffer, typeof(PacketHeader));
+            // 패킷 헤더 조제.
+            var header = (PacketHeader)ByteTranslator.ByteToStructure(recvData._buffer, NetworkDefinition.PacketHeaderSize, typeof(PacketHeader));
 
             break;
         }
