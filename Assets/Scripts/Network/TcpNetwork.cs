@@ -15,7 +15,6 @@ public class TcpNetwork
     private Socket        _socket;
     // 멀티 스레드 환경에서 Lock이 필요하다.
     private Queue<Packet> _packetQueue;
-    private Func<Packet, bool> _processFunc;
 
     private bool      _isConnected = false;
     private string    _ipAddress   = "127.0.0.1";
@@ -38,11 +37,6 @@ public class TcpNetwork
         {
             Debug.LogError("Socket Create Failed Error : " + e.Message);
         }
-    }
-
-    public void RegistProcessFunc(Func<Packet, bool> processFunc)
-    {
-        _processFunc = processFunc;
     }
 
     // 소켓을 닫아주는 메소드.
@@ -186,7 +180,6 @@ public class TcpNetwork
             // 뒤에 널 문자 추가.
             var nullChar = Convert.ToByte('\0');
             sendData._buffer[NetworkDefinition.PacketHeaderSize + bodySize] = nullChar;
-            Debug.Log(nullChar);
 
 #endregion;
         }
@@ -251,8 +244,7 @@ public class TcpNetwork
             Debug.LogFormat("Recv Packet Id {0}, size {1}", id, bodySize);
 
             // 패킷 조제.
-            var bodyJson = BitConverter.ToString(recvData._buffer, 8);
-            Debug.LogFormat("Recv Packet Body : {0}", bodyJson);
+            var bodyJson = NetworkDefinition.NetworkEncoding.GetString(recvData._buffer, 8, bodySize);
 
             var packet = new Packet
             {
@@ -261,14 +253,11 @@ public class TcpNetwork
                 data = bodyJson
             };
 
-            // 조제한 패킷을 큐에 넣어준다.
-            //lock (this)
-            //{
-            //    _packetQueue.Enqueue(packet);
-            //}
-
-            // 조제한 패킷을 처리할 수 있도록 넣어준다.
-            _processFunc(packet);
+            // 조제한 패킷을 처리할 수 있도록 패킷 큐에 넣어준다.
+            lock(this)
+            {
+                _packetQueue.Enqueue(packet);
+            }
 
             // 조제한 데이터 만큼 갱신해준다.
             recvData._readPos += NetworkDefinition.PacketHeaderSize + bodySize;
@@ -293,11 +282,7 @@ public class TcpNetwork
             return;
         }
 
-        Debug.Log("SendCallBack Function Entry");
-
         var sendData = (AsyncSendData)asyncResult;
-
-        Debug.Log("Callback alived");
 
         var sendedSize = 0;
 

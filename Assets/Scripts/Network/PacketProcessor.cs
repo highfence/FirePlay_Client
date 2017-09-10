@@ -12,13 +12,10 @@ public partial class PacketProcessor : MonoBehaviour
     // 패킷 ID에 따른 처리 함수를 저장할 딕셔너리
     Dictionary<int, PacketProcessFunction> _packetFunctionDic = new Dictionary<int, PacketProcessFunction>();
 
-	void Start ()
-    {
-	}
-	
     // 입력 패킷을 받고 해당하는 ID의 메소드를 호출해주는 메소드.
     public bool Process(Packet packet)
     {
+        Debug.LogFormat("Process Packet Id : {0}", packet.packetId);
 
         // 들어온 패킷에 해당하는 함수가 있다면 실행.
         if (_packetFunctionDic.ContainsKey(packet.packetId))
@@ -64,10 +61,14 @@ public partial class PacketProcessor : MonoBehaviour
         var res = new LoginRes();
         res = JsonUtility.FromJson<LoginRes>(inData);
 
-        // TODO :: 여기서부터 처리.
+        // 요청이 성공적이었다면, 씬을 바꿔준다.
         if (res._result == (int)ErrorCode.None)
         {
             SceneManager.LoadScene("CharacterSelect");
+        }
+        else
+        {
+            Debug.LogFormat("LoginRes Result : {0}", res._result);
         }
     }
 }
