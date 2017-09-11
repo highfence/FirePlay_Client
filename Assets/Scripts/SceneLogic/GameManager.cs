@@ -5,7 +5,7 @@ using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
 
-public partial class GameManger : MonoBehaviour
+public partial class GameManager : MonoBehaviour
 {
     // 패킷 처리 함수 형태 선언.
     delegate void PacketProcessFunction(string jsonData);

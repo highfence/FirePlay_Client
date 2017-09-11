@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager_Backup : MonoBehaviour
 {
     private Player _player1;
     private Player _player2;
