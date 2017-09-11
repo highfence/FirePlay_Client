@@ -8,34 +8,16 @@ using UnityEngine;
  * 싱글톤으로 접근.
  * 당연히 씬 전환에 사라지지 않는다.
  */
-public class DataContainer : MonoBehaviour
+public class DataContainer : MonoSingleton 
 {
-    // 싱글톤 구현.
-    private static DataContainer _instance = null;
-    private static GameObject _container = null;
-
-    public static DataContainer GetInstance()
-    {
-        if (_instance == null)
-        {
-            _container = new GameObject
-            {
-                name = "DataContainer"
-            };
-            _instance = _container.AddComponent(typeof(DataContainer)) as DataContainer;
-            _instance.Initialize();
-        }
-
-        return _instance;
-    }
-
     // 초기화 메소드.
-    private void Initialize()
+    // 보유 자료중에 초기화가 필요한 자료가 있다면 여기서 처리.
+    public void Initialize()
     {
-        DontDestroyOnLoad(_container);
+        _playerInfo = new PlayerInfo();
     }
 
-
-
+    // 플레이어의 정보를 담고 있는 구조체.
+    public PlayerInfo _playerInfo { get; private set; }
 
 }

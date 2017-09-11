@@ -7,17 +7,29 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class NetworkManager : MonoBehaviour
+public class NetworkManager : MonoSingleton 
 {
+    public event Action<PacketInfo.LoginRes> OnLoginRes = delegate { };
+
     public HttpNetwork     _httpNetwork = null;
     public TcpNetwork      _tcpNetwork  = null;
+
+
+
+
+
+
+
+
+
+
+
+
+
     public PacketProcessor     _packetProcessor;
 
     private void Start()
     {
-        // 씬 전환에도 소멸되지 않음.
-        DontDestroyOnLoad(gameObject);
-
         // TcpNetwork 생성.
         _tcpNetwork = new TcpNetwork();
         _tcpNetwork.ConnectToServer();

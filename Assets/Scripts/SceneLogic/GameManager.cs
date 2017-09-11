@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 {
     private DataContainer _dataContainer = null;
     private NetworkManager _networkManager = null;
+    private LoginSceneManager _loginSceneManager = null;
 
     private void Start()
     {
@@ -16,8 +17,6 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         // 소유 클래스들 초기화.
-        _dataContainer = DataContainer.GetInstance();
-
-
+        _dataContainer = (DataContainer)DataContainer._instance;
     }
 }

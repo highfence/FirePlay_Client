@@ -5,11 +5,6 @@ using UnityEngine;
 // 씬이 바뀔 때 Player의 정보를 지니고 있을 구조체.
 public class PlayerInfo : MonoBehaviour
 {
-	private void Awake()
-	{
-        DontDestroyOnLoad(gameObject);
-	}
-
 	public void InfoSetting(string id, string token)
 	{
 		_id = id;
