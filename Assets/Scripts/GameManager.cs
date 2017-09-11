@@ -1,49 +1,80 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using PacketInfo;
 using UnityEngine;
+using System;
+using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public partial class GameManger : MonoBehaviour
 {
-    private Player _player1;
-    private Player _player2;
+    // 패킷 처리 함수 형태 선언.
+    delegate void PacketProcessFunction(string jsonData);
+    // 패킷 ID에 따른 처리 함수를 저장할 딕셔너리
+    Dictionary<int, PacketProcessFunction> _packetFunctionDic = new Dictionary<int, PacketProcessFunction>();
 
-    void Start()
+    // 입력 패킷을 받고 해당하는 ID의 메소드를 호출해주는 메소드.
+    public bool Process(Packet packet)
     {
-        //BackGroundCreate();
-        PlatformCreate();
-        PlayerCreate();
+        Debug.LogFormat("Process Packet Id : {0}", packet.packetId);
+
+        // 들어온 패킷에 해당하는 함수가 있다면 실행.
+        if (_packetFunctionDic.ContainsKey(packet.packetId))
+        {
+            _packetFunctionDic[packet.packetId](packet.data);
+        }
+        else
+        {
+            Debug.LogErrorFormat("Invalid Packet Id : {0}", packet.packetId);
+        }
+
+        return true;
     }
 
-    // TODO :: 전 씬에서 고른 PlayerType 기억하고 그에 맞추어 Player 생성하기
-    private void PlayerCreate()
+    // 패킷 ID에 대응되는 함수들을 등록해주는 메소드.
+    public void RegistPacketFunctions()
     {
-        var player1Text = Resources.Load<TextAsset>("Data/Archer1").text;
-        var player1Spec = PlayerSpec.CreateFromText(player1Text);
-
-        _player1 = Player.Factory.Create(player1Spec);
-        _player1.transform.position = CreatePosition();
-
-        //var player2Text = Resources.Load<TextAsset>("Data/Archer1").text;
-        //var player2Spec = PlayerSpec.CreateFromText(player2Text);
-
-        //_player2 = Player.Factory.Create(player2Spec);
-        //_player2.transform.position = new Vector3(1.0f, 0.0f, 0.0f);
+        _packetFunctionDic.Add((int)PacketId.ID_CloseReq, ConnectCloseReq);
+        _packetFunctionDic.Add((int)PacketId.ID_LoginRes, LoginRes);
+        _packetFunctionDic.Add((int)PacketId.ID_FastMatchRes, FastMatchRes);
     }
 
-    private void PlatformCreate()
+    // 클라이언트 종료 요청 메소드.
+    void ConnectCloseReq(string inData)
     {
-        var platform = Resources.Load<GameObject>("Prefabs/Platform");
-        Instantiate(platform);
+        // 로직을 정리한다.
+
+        // 종료 패킷을 보내달라고 요청한다.
+        var network = FindObjectOfType<NetworkManager>();
+
+        var myInfo = FindObjectOfType<PlayerInfo>();
+        var req = new CloseReq()
+        {
+            _id    = myInfo._id,
+            _token = (myInfo._token)
+        };
+
+        network._tcpNetwork.SendPacket<CloseReq>(req, PacketId.ID_CloseReq);
     }
 
-    private void BackGroundCreate()
+    // 클라이언트 로그인 응답 메소드
+    void LoginRes(string inData)
     {
-        var background = Resources.Load<GameObject>("Prefabs/Background");
-        Instantiate(background);
+        var res = new LoginRes();
+        res = JsonUtility.FromJson<LoginRes>(inData);
+
+        // 요청이 성공적이었다면, 씬을 바꿔준다.
+        if (res._result == (int)ErrorCode.None)
+        {
+            SceneManager.LoadScene("CharacterSelect");
+        }
+        else
+        {
+            Debug.LogFormat("LoginRes Result : {0}", res._result);
+        }
     }
 
-    private Vector3 CreatePosition()
+    void FastMatchRes(string inData)
     {
-        return new Vector3(Random.Range(-2.0f, 2.0f), 0.0f, 0.0f);
+        Debug.Log("Fast Match Res Entry");
     }
 }

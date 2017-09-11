@@ -11,7 +11,7 @@ public class NetworkManager : MonoBehaviour
 {
     public HttpNetwork     _httpNetwork = null;
     public TcpNetwork      _tcpNetwork  = null;
-    public PacketProcessor _packetProcessor;
+    public GameManger _packetProcessor;
 
     private void Start()
     {
@@ -26,7 +26,7 @@ public class NetworkManager : MonoBehaviour
         _httpNetwork = new HttpNetwork();
 
         // 패킷 프로세서 생성.
-        _packetProcessor = new PacketProcessor();
+        _packetProcessor = new GameManger();
         _packetProcessor.RegistPacketFunctions();
     }
 
@@ -36,7 +36,7 @@ public class NetworkManager : MonoBehaviour
         if (_tcpNetwork.IsQueueEmpty() == false)
         {
             var packet = _tcpNetwork.GetPacket();
-
+            Debug.Log(packet.data);
             _packetProcessor.Process(packet);
         }
     }

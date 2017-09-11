@@ -10,7 +10,7 @@ namespace PacketInfo
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct Packet
+    public class Packet
     {
         public int packetId;
         public int bodySize;

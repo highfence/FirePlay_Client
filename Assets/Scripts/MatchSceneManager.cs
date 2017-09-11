@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class MatchUIManager : MonoBehaviour
+public class MatchSceneManager : MonoBehaviour
 {
     private GameObject _curtain = null;
     private GUIStyle _textStyle = null;
@@ -48,6 +48,21 @@ public class MatchUIManager : MonoBehaviour
             if (GUI.Button(new Rect((Screen.width / 2) - 155, (Screen.height * 2 / 3), 150, 150), "Fast Match"))
             {
                 _isTryingFastMatch = true;
+
+                // 매치 요청 패킷을 보낸다.
+                var network = FindObjectOfType<NetworkManager>();
+                var info = FindObjectOfType<PlayerInfo>();
+
+                var matchReq = new PacketInfo.FastMatchReq()
+                {
+                    _id = info._id,
+                    _token = info._token,
+                    _type = (int)info._selectedPlayerType
+                };
+
+                network.SendPacket<PacketInfo.FastMatchReq>(matchReq, PacketInfo.PacketId.ID_FastMatchReq);
+
+                _curtain.GetComponent<BlackCurtain>().StartFadeIn();
             }
             if (GUI.Button(new Rect((Screen.width / 2) + 5, (Screen.height * 2 / 3), 150, 150), "Number Match"))
             {
@@ -81,10 +96,15 @@ public class MatchUIManager : MonoBehaviour
 
     private void TryFastMatch()
     {
-        SceneManager.LoadScene("Game");
+        MakeMatchWaitingScene();
     }
 
     private void TryNumberMatch()
+    {
+        MakeMatchWaitingScene();
+    }
+
+    private void MakeMatchWaitingScene()
     {
         _modelInstance.GetComponent<Animator>().enabled = false;
         _matchingCountTime += Time.deltaTime;
@@ -102,7 +122,8 @@ public class MatchUIManager : MonoBehaviour
         {
             _curtain.GetComponent<BlackCurtain>().StartFadeOut();
             _isTryingNumberMatch = false;
-        _modelInstance.GetComponent<Animator>().enabled = true;
+            _isTryingFastMatch = false;
+            _modelInstance.GetComponent<Animator>().enabled = true;
         }
     }
 
