@@ -1,23 +1,20 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public partial class NetworkManager : MonoSingleton 
 {
-    public event Action<PacketInfo.LoginRes> OnLoginRes = delegate { };
 
     public HttpNetwork     _httpNetwork = null;
     public TcpNetwork      _tcpNetwork  = null;
 
+    // 어플리케이션이 종료될 때 소켓을 닫아주는 메소드.
+    void OnApplicationQuit()
+    {
+        // TODO :: Close Session Packet을 보내준다.
+        _tcpNetwork.CloseNetwork();
+    }
 
-
-
-
+    //----------------------------------- 아랫단부터는 없어져야할 코드.
 
     public PacketProcessor     _packetProcessor;
 
@@ -64,10 +61,5 @@ public partial class NetworkManager : MonoSingleton
         _tcpNetwork.SendPacket<T>(data, packetId);
     }
 
-    // 어플리케이션이 종료될 때 소켓을 닫아주는 메소드.
-    void OnApplicationQuit()
-    {
-        // TODO :: Close Session Packet을 보내준다.
-        _tcpNetwork.CloseNetwork();
-    }
+
 }
