@@ -7,19 +7,12 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class NetworkManager : MonoSingleton 
+public partial class NetworkManager : MonoSingleton 
 {
     public event Action<PacketInfo.LoginRes> OnLoginRes = delegate { };
 
     public HttpNetwork     _httpNetwork = null;
     public TcpNetwork      _tcpNetwork  = null;
-
-
-
-
-
-
-
 
 
 
