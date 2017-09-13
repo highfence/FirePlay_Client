@@ -27,10 +27,25 @@ public class LoginSceneManager : MonoBehaviour
 
     }
 
+    // 로그인 서버에서 로그인 응답 패킷이 도착했을 경우 처리하는 콜백함수.
     private bool OnHttpLoginRes(HttpPack.LoginRes response)
     {
         var network = FindObjectOfType<NetworkManager>();
 
+        switch ((ErrorCode)response.Result)
+        {
+            // 정상적으로 처리 된 경우.
+            case ErrorCode.None :
+                if (string.IsNullOrEmpty(response.Token))
+                {
+                    return false;
+                }
+
+                // 유저 정보에 받은 내용 기록.
+                DataContainer._instance._playerInfo
+                break;
+
+        }
 
         return true;
     }
