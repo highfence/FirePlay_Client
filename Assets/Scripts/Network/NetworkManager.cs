@@ -50,7 +50,7 @@ public partial class NetworkManager : MonoSingleton
     }
 
     // 컴포넌트 HttpNetwork의 Api를 찾아주는 래핑 메소드.
-    public string GetApiString(LoginApiString apiEnum)
+    public string GetApiString(HttpApiEnum apiEnum)
     {
         return _httpNetwork.GetApiString(apiEnum);
     }

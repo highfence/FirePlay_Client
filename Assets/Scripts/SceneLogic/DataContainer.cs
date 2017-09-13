@@ -9,29 +9,57 @@ using UnityEngine;
  * 싱글톤으로 접근.
  * 당연히 씬 전환에 사라지지 않는다.
  */
-public class DataContainer : MonoSingleton 
+public class DataContainer : MonoSingleton
 {
     // 초기화 메소드.
     // 보유 자료중에 초기화가 필요한 자료가 있다면 여기서 처리.
     public void Initialize()
     {
         LoadConfigs();
+        SetDictionary();
     }
 
-    public string            _playerId { get; private set; }
-    public string            _playerToken { get; private set; }
-    public LoginServerConfig _loginServerConfig { get; private set; }
+    #region Datas
+    public string                          _playerId          { get; private set; }
+    public string                          _playerToken       { get; private set; }
+    public LoginServerConfig               _loginServerConfig { get; private set; }
+    public Dictionary<HttpApiEnum, string> _httpApiDictionary { get; private set; }
+    #endregion
 
-    // Setters
-    public void SetPlayerId   (string playerId)      { _playerId = playerId; }
+    #region Setters
+    public void SetPlayerId   (string playerId)      { _playerId = playerId;         }
     public void SetPlayerToken(string receivedToken) { _playerToken = receivedToken; }
+    #endregion
 
-    public void LoadConfigs()
+    #region Getters
+    public string GetHttpApiString(HttpApiEnum apiEnum)
+    {
+        string apiString;
+        _httpApiDictionary.TryGetValue(apiEnum, out apiString);
+        return apiString;
+    }
+    #endregion
+
+    #region Functions
+    // 초기에 설정 파일을 로드해주는 메소드.
+    private void LoadConfigs()
     {
         // Login Server Config 로드.
         var loginServerConfigText = Resources.Load<TextAsset>("Data/ServerConfig").text;
         _loginServerConfig = LoginServerConfig.CreateFromText(loginServerConfigText);
     }
+
+    // 딕셔너리에 알맞은 값을 넣어주는 메소드.
+    private void SetDictionary()
+    {
+        _httpApiDictionary = new Dictionary<HttpApiEnum, string>()
+        {
+            { HttpApiEnum.Login, "Request/Login" },
+            { HttpApiEnum.SignIn, "Request/SignIn" },
+            { HttpApiEnum.Logout, "Request/Logout" }
+        };
+    }
+    #endregion
 }
 
 // 로그인 서버의 스펙을 로드하기 위한 구조체.

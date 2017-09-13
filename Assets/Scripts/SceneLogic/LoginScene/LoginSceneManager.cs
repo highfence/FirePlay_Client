@@ -15,7 +15,6 @@ public partial class LoginSceneManager : MonoBehaviour
         SubscribePacketEvents(networkManager);
     }
 
-
     // 패킷 도착 이벤트 메소드들을 처음에 등록해주는 함수.
     private void SubscribePacketEvents(NetworkManager network)
     {
@@ -26,6 +25,41 @@ public partial class LoginSceneManager : MonoBehaviour
     private void OnLoginResArrived(PacketInfo.LoginRes receivedPacket)
     {
 
+    }
+
+    // 로그인 서버에 로그인 요청을 보내는 함수.
+    private bool TryLogin(string writtenId, string writtenPw)
+    {
+        // id, pw 둘 중 하나라도 적혀있지 않다면 리턴.
+        if (string.IsNullOrEmpty(writtenId) || string.IsNullOrEmpty(writtenPw))
+        {
+            return false;
+        }
+
+        try
+        {
+            // 로그인 서버에 요청.
+            var request = new HttpPack.LoginReq()
+            {
+                UserId = writtenId,
+                UserPw = writtenPw
+            };
+            var jsonBody = JsonUtility.ToJson(request);
+            var network = FindObjectOfType<NetworkManager>();
+
+            string loginReqUrl = _dataContainer._loginServerConfig.GetHttpString() + _dataContainer.GetHttpApiString(HttpApiEnum.Login);
+            network.HttpPost<HttpPack.LoginRes>(loginReqUrl, jsonBody, OnHttpLoginRes);
+
+            // 적혀있던 패스워드를 저장해놓는다.
+            _reqUserId = writtenId;
+        }
+        catch (UnityException e)
+        {
+            Debug.Log(e.Message);
+            return false;
+        }
+
+        return true;
     }
 
     // 로그인 서버에서 로그인 응답 패킷이 도착했을 경우 처리하는 콜백함수.
@@ -44,6 +78,7 @@ public partial class LoginSceneManager : MonoBehaviour
                 }
 
                 // 유저 정보에 받은 토큰 내용 기록.
+                _dataContainer.SetPlayerId(_reqUserId);
                 _dataContainer.SetPlayerToken(response.Token);
                 #endregion
                 break;
@@ -62,12 +97,15 @@ public partial class LoginSceneManager : MonoBehaviour
                 };
 
                 var jsonBody = JsonUtility.ToJson(signInReq);
-
-                //var signInRequestUrl = 
+                var signInRequestUrl = _dataContainer._loginServerConfig.GetHttpString() + _dataContainer.GetHttpApiString(HttpApiEnum.SignIn);
+                network.HttpPost<HttpPack.LoginRes>(signInRequestUrl, jsonBody, OnHttpLoginRes);
 
                 #endregion
                 break;
 
+            default:
+                Debug.Log("Login Server Error");
+                break;
         }
 
         return true;

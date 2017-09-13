@@ -28,7 +28,7 @@ public enum ErrorCode : int
     RedisTokenDeleteError = 821
 }
 
-public enum LoginApiString : int
+public enum HttpApiEnum : int
 {
     Login = 0,
     SignIn = 1,

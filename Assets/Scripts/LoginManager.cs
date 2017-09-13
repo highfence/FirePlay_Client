@@ -104,7 +104,7 @@ public class LoginManager : MonoBehaviour
             var jsonStr = JsonUtility.ToJson(request);
             var network = FindObjectOfType<NetworkManager>();
 
-            string loginRequestUrl = _config.GetHttpString() + network.GetApiString(LoginApiString.Login); 
+            string loginRequestUrl = _config.GetHttpString() + network.GetApiString(HttpApiEnum.Login); 
 
             // 로그인 서버로 Post
             network.HttpPost<HttpPack.LoginRes>(loginRequestUrl, jsonStr, HandleLoginMessage);
@@ -168,7 +168,7 @@ public class LoginManager : MonoBehaviour
 
                 var jsonBody = JsonUtility.ToJson(request);
 
-                var signInRequestUrl = _config.GetHttpString() + network.GetApiString(LoginApiString.SignIn);
+                var signInRequestUrl = _config.GetHttpString() + network.GetApiString(HttpApiEnum.SignIn);
                 network.HttpPost<HttpPack.LoginRes>(signInRequestUrl, jsonBody, HandleLoginMessage);
 
                 break;

@@ -7,11 +7,11 @@ using UnityEngine.Networking;
 public class HttpNetwork : MonoBehaviour
 {
     // 로그인 서버의 Api에 해당하는 String을 가지고 있는 딕셔너리.
-    private Dictionary<LoginApiString, string> _apiDic = new Dictionary<LoginApiString, string>
+    private Dictionary<HttpApiEnum, string> _apiDic = new Dictionary<HttpApiEnum, string>
     {
-        { LoginApiString.Login, "Request/Login" },
-        { LoginApiString.SignIn, "Request/SignIn" },
-        { LoginApiString.Logout, "Request/Logout" }
+        { HttpApiEnum.Login, "Request/Login" },
+        { HttpApiEnum.SignIn, "Request/SignIn" },
+        { HttpApiEnum.Logout, "Request/Logout" }
     };
 
     // Http Post를 보내주는 메소드
@@ -55,7 +55,7 @@ public class HttpNetwork : MonoBehaviour
     }
 
     // Api에 맞는 String을 뽑아주는 메소드.
-    public string GetApiString(LoginApiString apiEnum)
+    public string GetApiString(HttpApiEnum apiEnum)
     {
         string apiString;
         _apiDic.TryGetValue(apiEnum, out apiString);
@@ -91,44 +91,5 @@ public class HttpPack
     public class LogoutRes
     {
         public short Result;
-    }
-}
-
-// 로그인 서버의 스펙을 로드하기 위한 구조체.
-public struct LoginServerConfig
-{
-    [SerializeField]
-    public string LoginServerAddr;
-    [SerializeField]
-    public string Port;
-
-    public static LoginServerConfig CreateFromText(string text)
-    {
-        LoginServerConfig instance;
-        try
-        {
-#if DEBUG
-            instance = new LoginServerConfig()
-            {
-                LoginServerAddr = "localhost",
-                Port = "19000"
-            };
-#else
-            instance = JsonUtility.FromJson<LoginServerConfig>(text);
-#endif
-        }
-        catch (Exception e)
-        {
-            Debug.LogErrorFormat("[Config] Cannot parse Config from source : {0}, Error : {1}", text, e.Message);
-            throw;
-        }
-
-        return instance;
-    }
-
-    public string GetHttpString()
-    {
-        var connectString = "http://" + LoginServerAddr + ":" + Port + "/";
-        return connectString;
     }
 }
