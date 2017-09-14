@@ -48,21 +48,10 @@ public class NetworkManager : MonoBehaviour
 
     public PacketProcessor     _packetProcessor;
 
-    private void Update()
-    {
-
-    }
-
     // 컴포넌트 HttpNetwork의 PostRequest 래핑 메소드.
     public void HttpPost<T>(string url, string bodyJson, Func<T, bool> onSuccess)
     {
         StartCoroutine(_httpNetwork.PostRequest<T>(url, bodyJson, onSuccess));
-    }
-
-    // 컴포넌트 HttpNetwork의 Api를 찾아주는 래핑 메소드.
-    public string GetApiString(HttpApiEnum apiEnum)
-    {
-        return _httpNetwork.GetApiString(apiEnum);
     }
 
     // 컴포넌트 TcpNetwork의 Send를 호출해주는 래핑 메소드.

@@ -6,14 +6,6 @@ using UnityEngine.Networking;
 
 public class HttpNetwork : MonoBehaviour
 {
-    // 로그인 서버의 Api에 해당하는 String을 가지고 있는 딕셔너리.
-    private Dictionary<HttpApiEnum, string> _apiDic = new Dictionary<HttpApiEnum, string>
-    {
-        { HttpApiEnum.Login, "Request/Login" },
-        { HttpApiEnum.SignIn, "Request/SignIn" },
-        { HttpApiEnum.Logout, "Request/Logout" }
-    };
-
     // Http Post를 보내주는 메소드
     // @ Param 1 : 접속하려는 url
     // @ Param 2 : 보내려는 Json Serialized 구조체
@@ -52,14 +44,6 @@ public class HttpNetwork : MonoBehaviour
                 Debug.Log("Request failed (status : " + request.responseCode + ")");
             }
         }
-    }
-
-    // Api에 맞는 String을 뽑아주는 메소드.
-    public string GetApiString(HttpApiEnum apiEnum)
-    {
-        string apiString;
-        _apiDic.TryGetValue(apiEnum, out apiString);
-        return apiString;
     }
 }
 
