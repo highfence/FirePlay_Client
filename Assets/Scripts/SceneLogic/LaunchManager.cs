@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /*
@@ -12,14 +10,12 @@ public class LaunchManager : MonoBehaviour
 	void Start ()
     {
         // 데이터 컨테이너 클래스 초기화.
-        var dataObject = new DataContainer();
-        var dataInstance = Instantiate<DataContainer>(dataObject);
-        dataInstance.Initialize();
+        var dataInstance = Instantiate(Resources.Load("Prefabs/DataContainer") as GameObject);
+        DataContainer.GetInstance().Initialize();
 
         // 네트워크 클래스 초기화.
-        var networkObject = new NetworkManager();
-        var networkInstance = Instantiate<NetworkManager>(networkObject);
-        networkInstance.Initialize();
+        var networkInstance = Instantiate(Resources.Load("Prefabs/NetworkManager") as GameObject);
+        NetworkManager.GetInstance().Initialize();
 
         SceneManager.LoadScene("Login");
 	}

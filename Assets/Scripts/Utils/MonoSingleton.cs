@@ -10,7 +10,15 @@ public class MonoSingleton : MonoBehaviour
 {
     private static MonoSingleton _instance = null;
 
-    public static MonoSingleton GetInstance() { return _instance; }
+    public static MonoSingleton GetInstance()
+    {
+        if (_instance == null)
+        {
+            GameObject go = new GameObject();
+            _instance = go.AddComponent<MonoSingleton>();
+        }
+        return _instance;
+    }
 
     private void Awake()
     {

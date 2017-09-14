@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public partial class NetworkManager : MonoSingleton 
+public class NetworkManager : MonoSingleton 
 {
     public HttpNetwork     _httpNetwork = null;
     public TcpNetwork      _tcpNetwork  = null;
@@ -13,10 +13,6 @@ public partial class NetworkManager : MonoSingleton
         _tcpNetwork.CloseNetwork();
     }
 
-    //----------------------------------- 아랫단부터는 없어져야할 코드.
-
-    public PacketProcessor     _packetProcessor;
-
     public override void Initialize()
     {
         // TcpNetwork 생성.
@@ -25,11 +21,11 @@ public partial class NetworkManager : MonoSingleton
 
         // HttpNetwork 생성
         _httpNetwork = new HttpNetwork();
-
-        // 패킷 프로세서 생성.
-        _packetProcessor = new PacketProcessor();
-        _packetProcessor.RegistPacketFunctions();
     }
+
+    //----------------------------------- 아랫단부터는 없어져야할 코드.
+
+    public PacketProcessor     _packetProcessor;
 
     private void Update()
     {

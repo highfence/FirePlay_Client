@@ -41,6 +41,7 @@ public class DataContainer : MonoSingleton
     #endregion
 
     #region Functions
+
     // 초기에 설정 파일을 로드해주는 메소드.
     private void LoadConfigs()
     {
@@ -59,6 +60,7 @@ public class DataContainer : MonoSingleton
             { HttpApiEnum.Logout, "Request/Logout" }
         };
     }
+
     #endregion
 }
 
