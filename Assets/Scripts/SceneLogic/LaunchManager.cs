@@ -10,12 +10,10 @@ public class LaunchManager : MonoBehaviour
 	void Start ()
     {
         // 데이터 컨테이너 클래스 초기화.
-        var dataInstance = Instantiate(Resources.Load("Prefabs/DataContainer") as GameObject);
-        DataContainer.GetInstance().Initialize();
+        DataContainer.GetInstance();
 
         // 네트워크 클래스 초기화.
-        var networkInstance = Instantiate(Resources.Load("Prefabs/NetworkManager") as GameObject);
-        NetworkManager.GetInstance().Initialize();
+        NetworkManager.GetInstance();
 
         SceneManager.LoadScene("Login");
 	}

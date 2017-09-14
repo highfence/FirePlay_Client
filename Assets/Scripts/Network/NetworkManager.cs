@@ -1,19 +1,31 @@
 ﻿using System;
 using UnityEngine;
 
-public class NetworkManager : MonoSingleton 
+public class NetworkManager : MonoBehaviour 
 {
     public HttpNetwork     _httpNetwork = null;
     public TcpNetwork      _tcpNetwork  = null;
 
-    // 어플리케이션이 종료될 때 소켓을 닫아주는 메소드.
-    void OnApplicationQuit()
+    #region SINGLETON
+
+    private static NetworkManager _instance = null;
+
+    private void Awake()
     {
-        // TODO :: Close Session Packet을 보내준다.
-        _tcpNetwork.CloseNetwork();
+        Initialize();
+        DontDestroyOnLoad(this.gameObject);
     }
 
-    public override void Initialize()
+    public static NetworkManager GetInstance()
+    {
+        if (_instance == null)
+        {
+            _instance = Instantiate(Resources.Load("Prefabs/NetworkManager") as GameObject).GetComponent<NetworkManager>();
+        }
+        return _instance;
+    }
+
+    public void Initialize()
     {
         // TcpNetwork 생성.
         _tcpNetwork = new TcpNetwork();
@@ -23,6 +35,15 @@ public class NetworkManager : MonoSingleton
         _httpNetwork = new HttpNetwork();
     }
 
+    #endregion
+
+
+    // 어플리케이션이 종료될 때 소켓을 닫아주는 메소드.
+    void OnApplicationQuit()
+    {
+        // TODO :: Close Session Packet을 보내준다.
+        _tcpNetwork.CloseNetwork();
+    }
     //----------------------------------- 아랫단부터는 없어져야할 코드.
 
     public PacketProcessor     _packetProcessor;

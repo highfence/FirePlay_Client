@@ -9,29 +9,50 @@ using UnityEngine;
  * 싱글톤으로 접근.
  * 당연히 씬 전환에 사라지지 않는다.
  */
-public class DataContainer : MonoSingleton
+public class DataContainer : MonoBehaviour
 {
+    #region SINGLETON
+
+    private static DataContainer _instance = null;
+
+    private void Awake()
+    {
+        Initialize();
+        DontDestroyOnLoad(this.gameObject);
+    }
+
+    public static DataContainer GetInstance()
+    {
+        if (_instance == null)
+        {
+            _instance = Instantiate(Resources.Load("Prefabs/DataContainer") as GameObject).GetComponent<DataContainer>();
+        }
+        return _instance;
+    }
+
     // 초기화 메소드.
     // 보유 자료중에 초기화가 필요한 자료가 있다면 여기서 처리.
-    public override void Initialize()
+    public void Initialize()
     {
         LoadConfigs();
         SetDictionary();
     }
 
-    #region Datas
-    public string                          _playerId          { get; private set; }
-    public string                          _playerToken       { get; private set; }
-    public LoginServerConfig               _loginServerConfig { get; private set; }
+    #endregion
+
+    #region DATAS
+    public string _playerId { get; private set; }
+    public string _playerToken { get; private set; }
+    public LoginServerConfig _loginServerConfig { get; private set; }
     public Dictionary<HttpApiEnum, string> _httpApiDictionary { get; private set; }
     #endregion
 
-    #region Setters
-    public void SetPlayerId   (string playerId)      { _playerId = playerId;         }
+    #region SETTERS
+    public void SetPlayerId(string playerId) { _playerId = playerId; }
     public void SetPlayerToken(string receivedToken) { _playerToken = receivedToken; }
     #endregion
 
-    #region Getters
+    #region GETTERS
     public string GetHttpApiString(HttpApiEnum apiEnum)
     {
         string apiString;
@@ -40,7 +61,7 @@ public class DataContainer : MonoSingleton
     }
     #endregion
 
-    #region Functions
+    #region FUNCTIONS
 
     // 초기에 설정 파일을 로드해주는 메소드.
     private void LoadConfigs()
