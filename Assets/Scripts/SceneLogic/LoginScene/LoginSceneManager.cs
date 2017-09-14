@@ -25,7 +25,7 @@ public partial class LoginSceneManager : MonoBehaviour
     // 게임 서버에서 로그인 응답 패킷이 도착했을 경우
     private void OnLoginResArrived(PacketInfo.LoginRes receivedPacket)
     {
-
+        Debug.Log("Login Res Arrived");
     }
 
     // 로그인 서버에 로그인 요청을 보내는 함수.

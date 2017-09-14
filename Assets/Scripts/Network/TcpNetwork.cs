@@ -255,40 +255,40 @@ public partial class TcpNetwork
         switch ((PacketId)receivedPacket.packetId)
         {
             case PacketId.ID_LoginRes:
-                this.OnLoginRes.Invoke(JsonUtility.FromJson<PacketInfo.LoginRes>(receivedPacket.data));
+                this.OnLoginRes.            Invoke(JsonUtility.FromJson<PacketInfo.LoginRes>(receivedPacket.data));
                 break;
             case PacketId.ID_FastMatchRes:
-                this.OnFastMatchRes.Invoke(JsonUtility.FromJson<PacketInfo.FastMatchRes>(receivedPacket.data));
+                this.OnFastMatchRes.        Invoke(JsonUtility.FromJson<PacketInfo.FastMatchRes>(receivedPacket.data));
                 break;
             case PacketId.ID_MatchCancelRes:
-                this.OnMatchCancelRes.Invoke(JsonUtility.FromJson<PacketInfo.MatchCancelRes>(receivedPacket.data));
+                this.OnMatchCancelRes.      Invoke(JsonUtility.FromJson<PacketInfo.MatchCancelRes>(receivedPacket.data));
                 break;
             case PacketId.ID_MatchSuccessNotify:
-                this.OnMatchSuccessNotify.Invoke(JsonUtility.FromJson<PacketInfo.MatchSuccessNotify>(receivedPacket.data));
+                this.OnMatchSuccessNotify.  Invoke(JsonUtility.FromJson<PacketInfo.MatchSuccessNotify>(receivedPacket.data));
                 break;
             case PacketId.ID_GameStartNotify:
-                this.OnGameStartNotify.Invoke(JsonUtility.FromJson<PacketInfo.GameStartNotify>(receivedPacket.data));
+                this.OnGameStartNotify.     Invoke(JsonUtility.FromJson<PacketInfo.GameStartNotify>(receivedPacket.data));
                 break;
             case PacketId.ID_TurnStartNotify:
-                this.OnTurnStartNotify.Invoke(JsonUtility.FromJson<PacketInfo.TurnStartNotify>(receivedPacket.data));
+                this.OnTurnStartNotify.     Invoke(JsonUtility.FromJson<PacketInfo.TurnStartNotify>(receivedPacket.data));
                 break;
             case PacketId.ID_EnemyTurnStartNotify:
                 this.OnEnemyTurnStartNotify.Invoke(JsonUtility.FromJson<PacketInfo.EnemyTurnStartNotify>(receivedPacket.data));
                 break;
             case PacketId.ID_MoveAck:
-                this.OnMoveAck.Invoke(JsonUtility.FromJson<PacketInfo.MoveAck>(receivedPacket.data));
+                this.OnMoveAck.             Invoke(JsonUtility.FromJson<PacketInfo.MoveAck>(receivedPacket.data));
                 break;
             case PacketId.ID_EnemyMoveNotify:
-                this.OnEnemyMoveNotify.Invoke(JsonUtility.FromJson<PacketInfo.EnemyMoveNotify>(receivedPacket.data));
+                this.OnEnemyMoveNotify.     Invoke(JsonUtility.FromJson<PacketInfo.EnemyMoveNotify>(receivedPacket.data));
                 break;
             case PacketId.ID_FireAck:
-                this.OnFireAck.Invoke(JsonUtility.FromJson<PacketInfo.FireAck>(receivedPacket.data));
+                this.OnFireAck.             Invoke(JsonUtility.FromJson<PacketInfo.FireAck>(receivedPacket.data));
                 break;
             case PacketId.ID_EnemyFireNotify:
-                this.OnEnemyFireNotify.Invoke(JsonUtility.FromJson<PacketInfo.EnemyFireNotify>(receivedPacket.data));
+                this.OnEnemyFireNotify.     Invoke(JsonUtility.FromJson<PacketInfo.EnemyFireNotify>(receivedPacket.data));
                 break;
             case PacketId.ID_GameSetNotify:
-                this.OnGameSetNotify.Invoke(JsonUtility.FromJson<PacketInfo.GameSetNotify>(receivedPacket.data));
+                this.OnGameSetNotify.       Invoke(JsonUtility.FromJson<PacketInfo.GameSetNotify>(receivedPacket.data));
                 break;
         }
     }
