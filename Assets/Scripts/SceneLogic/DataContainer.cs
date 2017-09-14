@@ -13,7 +13,7 @@ public class DataContainer : MonoSingleton
 {
     // 초기화 메소드.
     // 보유 자료중에 초기화가 필요한 자료가 있다면 여기서 처리.
-    public void Initialize()
+    public override void Initialize()
     {
         LoadConfigs();
         SetDictionary();

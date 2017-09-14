@@ -8,13 +8,11 @@ using UnityEngine;
 using Util;
 
 // 비동기 콜백 TcpIp 통신을 목적으로 하는 클래스.
-public class TcpNetwork
+public partial class TcpNetwork
 {
     private AsyncCallback _recvCallback;
     private AsyncCallback _sendCallback;
     private Socket        _socket;
-    // 멀티 스레드 환경에서 Lock이 필요하다.
-    private Queue<Packet> _packetQueue;
 
     private bool      _isConnected = false;
     private string    _ipAddress   = "127.0.0.1";
@@ -26,7 +24,6 @@ public class TcpNetwork
         _port         = port;
         _recvCallback = new AsyncCallback(RecvCallBack);
         _sendCallback = new AsyncCallback(SendCallBack);
-        _packetQueue  = new Queue<Packet>();
 
         try
         {
@@ -99,25 +96,6 @@ public class TcpNetwork
         return _isConnected;
     }
 
-    // 패킷 큐가 비어있는지를 반환하는 메소드.
-    public bool IsQueueEmpty()
-    {
-        lock(this)
-        {
-            if (_packetQueue.Count == 0) return true;
-            else return false;
-        }
-    }
-
-    // 패킷 큐에서 패킷을 하나 빼주는 메소드.
-    public Packet GetPacket()
-    {
-        lock(this)
-        {
-            return _packetQueue.Dequeue();
-        }
-    }
-
     // 지정한 구조체를 패킷으로 만들어 서버에 전달하는 메소드.
     public void SendPacket<T>(T data, PacketId packetId)
     {
@@ -134,7 +112,7 @@ public class TcpNetwork
         // 포인터 동작 수행.
         unsafe
         {
-            #region Prepare Datas
+            #region PREPARE SENDING DATAS
             // 보낼 데이터 구조체를 Json 형태로 바꿔줌.
             string jsonData = JsonUtility.ToJson(data);
 
@@ -145,9 +123,9 @@ public class TcpNetwork
             // Send 버퍼 생성.
             sendData._buffer = new byte[NetworkDefinition.PacketHeaderSize + bodySize + 1];
             sendData._sendSize = NetworkDefinition.PacketHeaderSize + bodySize;
-#endregion;
+            #endregion
 
-#region Copying Header Data
+            #region COPYING PACKET HEADER
             // 패킷 아이디 주소의 첫 번째 자리.
             byte * packetIdPos = (byte*)&id;
 
@@ -165,9 +143,9 @@ public class TcpNetwork
             {
                 sendData._buffer[NetworkDefinition.IntSize + i] = bodySizePos[i]; 
             }
-#endregion;
+            #endregion
 
-#region Copying Body Data
+            #region COPYING PACKET BODY
             // 패킷 바디 주소의 첫 번째 자리.
             char[] bodyPos = jsonData.ToCharArray();
             
@@ -181,7 +159,7 @@ public class TcpNetwork
             var nullChar = Convert.ToByte('\0');
             sendData._buffer[NetworkDefinition.PacketHeaderSize + bodySize] = nullChar;
 
-#endregion;
+            #endregion;
         }
 
         try
@@ -246,18 +224,15 @@ public class TcpNetwork
             // 패킷 조제.
             var bodyJson = NetworkDefinition.NetworkEncoding.GetString(recvData._buffer, 8, bodySize);
 
-            var packet = new Packet
+            var receivedPacket = new Packet
             {
                 packetId = id,
                 bodySize = bodySize,
                 data = bodyJson
             };
 
-            // 조제한 패킷을 처리할 수 있도록 패킷 큐에 넣어준다.
-            lock(this)
-            {
-                _packetQueue.Enqueue(packet);
-            }
+            // 받은 패킷에 관심있어 했던 이벤트들을 모두 호출해준다.
+            InvokePacketEvents(receivedPacket);
 
             // 조제한 데이터 만큼 갱신해준다.
             recvData._readPos += NetworkDefinition.PacketHeaderSize + bodySize;
@@ -274,8 +249,18 @@ public class TcpNetwork
             recvData);
     }
 
+    // 받은 패킷에 이벤트를 걸어놨던 함수들을 모두 실행시킨다.
+    private void InvokePacketEvents(Packet receivedPacket)
+    {
+        switch ((PacketId)receivedPacket.packetId)
+        {
+            case PacketId.ID_LoginRes:
+                break;
+        }
+    }
+
     // Send IO 작업이 끝났을 때 호출될 콜백 메소드.
-    void SendCallBack(IAsyncResult asyncResult)
+    private void SendCallBack(IAsyncResult asyncResult)
     {
         if (_isConnected == false)
         {
@@ -315,7 +300,7 @@ public class TcpNetwork
     }
 
     // SocketException을 처리하는 메소드.
-    void HandleException(SocketException e)
+    private void HandleException(SocketException e)
     {
         var errorCode = (SocketError)e.ErrorCode;
 

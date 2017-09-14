@@ -3,7 +3,6 @@ using UnityEngine;
 
 public partial class NetworkManager : MonoSingleton 
 {
-
     public HttpNetwork     _httpNetwork = null;
     public TcpNetwork      _tcpNetwork  = null;
 
@@ -18,7 +17,7 @@ public partial class NetworkManager : MonoSingleton
 
     public PacketProcessor     _packetProcessor;
 
-    private void Start()
+    public override void Initialize()
     {
         // TcpNetwork 생성.
         _tcpNetwork = new TcpNetwork();
@@ -34,13 +33,7 @@ public partial class NetworkManager : MonoSingleton
 
     private void Update()
     {
-        // 큐에 메시지가 있다면
-        if (_tcpNetwork.IsQueueEmpty() == false)
-        {
-            var packet = _tcpNetwork.GetPacket();
-            Debug.Log(packet.data);
-            _packetProcessor.Process(packet);
-        }
+
     }
 
     // 컴포넌트 HttpNetwork의 PostRequest 래핑 메소드.

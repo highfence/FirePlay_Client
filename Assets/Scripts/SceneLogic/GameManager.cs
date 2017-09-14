@@ -17,6 +17,6 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         // 소유 클래스들 초기화.
-        _dataContainer = (DataContainer)DataContainer._instance;
+        _dataContainer = (DataContainer)DataContainer.GetInstance();
     }
 }

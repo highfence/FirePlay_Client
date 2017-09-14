@@ -9,8 +9,8 @@ public partial class LoginSceneManager : MonoBehaviour
 
     public void Awake()
     {
-        _dataContainer = DataContainer._instance as DataContainer;
-        var networkManager = NetworkManager._instance as NetworkManager;
+        _dataContainer = DataContainer.GetInstance() as DataContainer;
+        var networkManager = NetworkManager.GetInstance() as NetworkManager;
 
         SubscribePacketEvents(networkManager);
     }
@@ -18,7 +18,7 @@ public partial class LoginSceneManager : MonoBehaviour
     // 패킷 도착 이벤트 메소드들을 처음에 등록해주는 함수.
     private void SubscribePacketEvents(NetworkManager network)
     {
-        network.OnLoginRes += this.OnLoginResArrived;
+        network._tcpNetwork.OnLoginRes += this.OnLoginResArrived;
     }
 
     // 게임 서버에서 로그인 응답 패킷이 도착했을 경우
