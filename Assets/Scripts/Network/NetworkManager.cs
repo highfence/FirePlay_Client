@@ -32,7 +32,7 @@ public class NetworkManager : MonoBehaviour
         _tcpNetwork.ConnectToServer();
 
         // HttpNetwork 생성
-        _httpNetwork = Instantiate(Resources.Load("Prefabs/NetworkManager") as GameObject).GetComponent<HttpNetwork>();
+        _httpNetwork = Instantiate(Resources.Load("Prefabs/HttpNetwork") as GameObject).GetComponent<HttpNetwork>();
     }
 
     #endregion

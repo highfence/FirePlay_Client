@@ -41,11 +41,13 @@ public class DataContainer : MonoBehaviour
     #endregion
 
     #region DATAS
+
     public string _playerId { get; private set; }
     public string _playerToken { get; private set; }
     public CharacterType _playerType { get; private set; } 
     public LoginServerConfig _loginServerConfig { get; private set; }
     public Dictionary<HttpApiEnum, string> _httpApiDictionary { get; private set; }
+
     #endregion
 
     #region SETTERS
@@ -89,6 +91,7 @@ public class DataContainer : MonoBehaviour
     #endregion
 }
 
+#region DATA STRUCT VARIABLES
 // 로그인 서버의 스펙을 로드하기 위한 구조체.
 public struct LoginServerConfig
 {
@@ -137,3 +140,5 @@ public enum CharacterType : int
     Archer2 = 2,
     Archer3 = 3
 }
+
+#endregion

@@ -14,5 +14,6 @@ public partial class CharacterSelectSceneManager : MonoBehaviour
         _networkManager = NetworkManager.GetInstance() as NetworkManager;
     }
 
+    private GameObject _pointer = null;
 
 }
