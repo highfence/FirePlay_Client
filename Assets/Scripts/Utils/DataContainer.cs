@@ -43,13 +43,17 @@ public class DataContainer : MonoBehaviour
     #region DATAS
     public string _playerId { get; private set; }
     public string _playerToken { get; private set; }
+    public CharacterType _playerType { get; private set; } 
     public LoginServerConfig _loginServerConfig { get; private set; }
     public Dictionary<HttpApiEnum, string> _httpApiDictionary { get; private set; }
     #endregion
 
     #region SETTERS
+
     public void SetPlayerId(string playerId) { _playerId = playerId; }
     public void SetPlayerToken(string receivedToken) { _playerToken = receivedToken; }
+    public void SetCharacterType(CharacterType type) { _playerType = type; }
+
     #endregion
 
     #region GETTERS
@@ -123,4 +127,13 @@ public struct LoginServerConfig
         var connectString = "http://" + LoginServerAddr + ":" + Port + "/";
         return connectString;
     }
+}
+
+// 플레이어가 고른 캐릭터 종류 Enum 
+public enum CharacterType : int
+{
+    None = 0,
+    Archer1 = 1,
+    Archer2 = 2,
+    Archer3 = 3
 }

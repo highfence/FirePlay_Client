@@ -9,11 +9,11 @@ public class Player : MonoBehaviour
     private SpriteRenderer _spriteRenderer = null;
     private Animator _animator = null;
 
-    private Dictionary<PlayerType, string> _playerTypeToAnimPath = new Dictionary<PlayerType, string>()
+    private Dictionary<CharacterType, string> _playerTypeToAnimPath = new Dictionary<CharacterType, string>()
     {
-        { PlayerType.Archer1, "Animator/Archer1" },
-        { PlayerType.Archer2, "Animator/Archer2" },
-        { PlayerType.Archer3, "Animator/Archer3" }
+        { CharacterType.Archer1, "Animator/Archer1" },
+        { CharacterType.Archer2, "Animator/Archer2" },
+        { CharacterType.Archer3, "Animator/Archer3" }
     };
 
     private int _fireDirection = 90;
@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
         SetAnimator(_spec._playerType);
     }
 
-    private void SetAnimator(PlayerType playerType)
+    private void SetAnimator(CharacterType playerType)
     {
         if (_playerTypeToAnimPath.ContainsKey(playerType) == false)
         {
@@ -218,7 +218,7 @@ public struct PlayerSpec
 {
     // Player Type
     [SerializeField]
-    public PlayerType _playerType;
+    public CharacterType _playerType;
 
     // Move Spec
     [SerializeField]

@@ -13,5 +13,5 @@ public class PlayerInfo : MonoBehaviour
 
 	public string _id;
 	public string _token;
-    public PlayerType _selectedPlayerType = PlayerType.None;
+    public CharacterType _selectedPlayerType = CharacterType.None;
 }
