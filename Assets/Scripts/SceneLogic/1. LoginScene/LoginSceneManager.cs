@@ -19,7 +19,7 @@ public partial class LoginSceneManager : MonoBehaviour
     // 패킷 도착 이벤트 메소드들을 처음에 등록해주는 함수.
     private void SubscribePacketEvents(NetworkManager network)
     {
-        network._tcpNetwork.OnLoginRes += this.OnLoginResArrived;
+        network.OnLoginRes += this.OnLoginResArrived;
     }
 
     // 게임 서버에서 로그인 응답 패킷이 도착했을 경우

@@ -13,6 +13,7 @@ public partial class TcpNetwork
     private AsyncCallback _recvCallback;
     private AsyncCallback _sendCallback;
     private Socket        _socket;
+    private Queue<Packet> _packetQueue;
 
     private bool      _isConnected = false;
     private string    _ipAddress   = "127.0.0.1";
@@ -33,6 +34,25 @@ public partial class TcpNetwork
         catch (Exception e)
         {
             Debug.LogError("Socket Create Failed Error : " + e.Message);
+        }
+    }
+
+    public bool IsMessageExist()
+    {
+        lock (this)
+        {
+            if (_packetQueue.Count == 0)
+                return false;
+            else
+                return true;
+        }
+    }
+
+    public Packet GetPacketFromQueue()
+    {
+        lock (this)
+        {
+            return _packetQueue.Dequeue();
         }
     }
 
@@ -231,8 +251,11 @@ public partial class TcpNetwork
                 data = bodyJson
             };
 
-            // 받은 패킷에 관심있어 했던 이벤트들을 모두 호출해준다.
-            InvokePacketEvents(receivedPacket);
+            // 받은 패킷을 큐로 넣어준다.
+            lock (this)
+            {
+                _packetQueue.Enqueue(receivedPacket);
+            }
 
             // 조제한 데이터 만큼 갱신해준다.
             recvData._readPos += NetworkDefinition.PacketHeaderSize + bodySize;
@@ -247,50 +270,6 @@ public partial class TcpNetwork
             SocketFlags.None,
             _recvCallback,
             recvData);
-    }
-
-    // 받은 패킷에 이벤트를 걸어놨던 함수들을 모두 실행시킨다.
-    private void InvokePacketEvents(Packet receivedPacket)
-    {
-        switch ((PacketId)receivedPacket.packetId)
-        {
-            case PacketId.ID_LoginRes:
-                this.OnLoginRes.            Invoke(JsonUtility.FromJson<PacketInfo.LoginRes>(receivedPacket.data));
-                break;
-            case PacketId.ID_FastMatchRes:
-                this.OnFastMatchRes.        Invoke(JsonUtility.FromJson<PacketInfo.FastMatchRes>(receivedPacket.data));
-                break;
-            case PacketId.ID_MatchCancelRes:
-                this.OnMatchCancelRes.      Invoke(JsonUtility.FromJson<PacketInfo.MatchCancelRes>(receivedPacket.data));
-                break;
-            case PacketId.ID_MatchSuccessNotify:
-                this.OnMatchSuccessNotify.  Invoke(JsonUtility.FromJson<PacketInfo.MatchSuccessNotify>(receivedPacket.data));
-                break;
-            case PacketId.ID_GameStartNotify:
-                this.OnGameStartNotify.     Invoke(JsonUtility.FromJson<PacketInfo.GameStartNotify>(receivedPacket.data));
-                break;
-            case PacketId.ID_TurnStartNotify:
-                this.OnTurnStartNotify.     Invoke(JsonUtility.FromJson<PacketInfo.TurnStartNotify>(receivedPacket.data));
-                break;
-            case PacketId.ID_EnemyTurnStartNotify:
-                this.OnEnemyTurnStartNotify.Invoke(JsonUtility.FromJson<PacketInfo.EnemyTurnStartNotify>(receivedPacket.data));
-                break;
-            case PacketId.ID_MoveAck:
-                this.OnMoveAck.             Invoke(JsonUtility.FromJson<PacketInfo.MoveAck>(receivedPacket.data));
-                break;
-            case PacketId.ID_EnemyMoveNotify:
-                this.OnEnemyMoveNotify.     Invoke(JsonUtility.FromJson<PacketInfo.EnemyMoveNotify>(receivedPacket.data));
-                break;
-            case PacketId.ID_FireAck:
-                this.OnFireAck.             Invoke(JsonUtility.FromJson<PacketInfo.FireAck>(receivedPacket.data));
-                break;
-            case PacketId.ID_EnemyFireNotify:
-                this.OnEnemyFireNotify.     Invoke(JsonUtility.FromJson<PacketInfo.EnemyFireNotify>(receivedPacket.data));
-                break;
-            case PacketId.ID_GameSetNotify:
-                this.OnGameSetNotify.       Invoke(JsonUtility.FromJson<PacketInfo.GameSetNotify>(receivedPacket.data));
-                break;
-        }
     }
 
     // Send IO 작업이 끝났을 때 호출될 콜백 메소드.

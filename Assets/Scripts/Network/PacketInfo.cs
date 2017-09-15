@@ -17,6 +17,4 @@ namespace PacketInfo
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024)]
         public string data;
     }
-
-
 }
