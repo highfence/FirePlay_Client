@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
  * 게임 시작전에 처리해야할 것들이 있다면 처리해주는 클래스.
  * 싱글톤 클래스 초기화를 위해 제작.
  */
-public class LaunchManager : MonoBehaviour
+public class LaunchSceneManager : MonoBehaviour
 {
 	void Start ()
     {
