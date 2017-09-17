@@ -42,11 +42,21 @@ public class DataContainer : MonoBehaviour
 
     #region DATAS
 
+    // 플레이어 관련 데이터.
     public string _playerId { get; private set; }
     public string _playerToken { get; private set; }
     public CharacterType _playerType { get; private set; } 
+
+    // 로그인 서버 관련 데이터.
     public LoginServerConfig _loginServerConfig { get; private set; }
     public Dictionary<HttpApiEnum, string> _httpApiDictionary { get; private set; }
+
+    // 게임 매칭 관련 데이터.
+    public int           _gameNumber { get; private set; }
+    public string        _enemyId    { get; private set; }
+    public int           _enemyWins  { get; private set; }
+    public int           _enemyLoses { get; private set; }
+    public CharacterType _enemyType  { get; private set; }
 
     #endregion
 
@@ -55,6 +65,14 @@ public class DataContainer : MonoBehaviour
     public void SetPlayerId(string playerId) { _playerId = playerId; }
     public void SetPlayerToken(string receivedToken) { _playerToken = receivedToken; }
     public void SetCharacterType(CharacterType type) { _playerType = type; }
+    public void SetGameMatchData(PacketInfo.MatchSuccessNotify matchPacket)
+    {
+        _gameNumber = matchPacket._gameNumber;
+        _enemyId = matchPacket._enemyId;
+        _enemyWins = matchPacket._enemyWins;
+        _enemyLoses = matchPacket._enemyLoses;
+        _enemyType = (CharacterType)matchPacket._enemyType;
+    }
 
     #endregion
 
