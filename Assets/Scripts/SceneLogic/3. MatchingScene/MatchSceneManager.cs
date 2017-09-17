@@ -52,7 +52,13 @@ public partial class MatchSceneManager : MonoBehaviour
     // 매치 취소 요청 답변 패킷 처리.
     private void OnMatchCancelRes(PacketInfo.MatchCancelRes receivedPacket)
     {
-        
+       // TODO :: OnFastmatchRes와 같은 고려 필요. 
+       if (receivedPacket._result == (int)ErrorCode.None)
+        {
+            return;
+        }
+
+        SendMatchCancelPacket();
     }
 
     // 매치 성공 알림 답변 패킷 처리.
@@ -72,7 +78,6 @@ public partial class MatchSceneManager : MonoBehaviour
         };
 
         _networkManager.SendPacket<PacketInfo.FastMatchReq>(matchReq, PacketInfo.PacketId.ID_FastMatchReq);
-
     }
 
     // 매치 취소 요청 패킷을 보낸다.
