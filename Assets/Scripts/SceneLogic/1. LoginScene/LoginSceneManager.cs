@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /*
  * 로그인 씬 관리자 클래스.
@@ -25,7 +26,13 @@ public partial class LoginSceneManager : MonoBehaviour
     // 게임 서버에서 로그인 응답 패킷이 도착했을 경우
     private void OnLoginResArrived(PacketInfo.LoginRes receivedPacket)
     {
-        Debug.Log("Login Res Arrived");
+        if (receivedPacket._result != (int)ErrorCode.None)
+        {
+            Debug.LogFormat("Game Server Login Failed, Error Code : {0}", receivedPacket._result);
+            return;
+        }
+
+        SceneManager.LoadScene("CharacterSelect");
     }
 
     // 로그인 서버에 로그인 요청을 보내는 함수.
@@ -66,8 +73,6 @@ public partial class LoginSceneManager : MonoBehaviour
     // 로그인 서버에서 로그인 응답 패킷이 도착했을 경우 처리하는 콜백함수.
     private bool OnHttpLoginRes(HttpPack.LoginRes response)
     {
-        var network = FindObjectOfType<NetworkManager>();
-
         switch ((ErrorCode)response.Result)
         {
             // 정상적으로 처리 된 경우.
@@ -81,6 +86,16 @@ public partial class LoginSceneManager : MonoBehaviour
                 // 유저 정보에 받은 토큰 내용 기록.
                 _dataContainer.SetPlayerId(_reqUserId);
                 _dataContainer.SetPlayerToken(response.Token);
+
+                // 게임서버에 로그인 요청 패킷 보냄.
+                var loginReq = new PacketInfo.LoginReq()
+                {
+                    _id = _dataContainer._playerId,
+                    _token = _dataContainer._playerToken
+                };
+
+                _networkManager.SendPacket<PacketInfo.LoginReq>(loginReq, PacketInfo.PacketId.ID_LoginReq);
+
                 #endregion
                 break;
 
@@ -99,7 +114,7 @@ public partial class LoginSceneManager : MonoBehaviour
 
                 var jsonBody = JsonUtility.ToJson(signInReq);
                 var signInRequestUrl = _dataContainer._loginServerConfig.GetHttpString() + _dataContainer.GetHttpApiString(HttpApiEnum.SignIn);
-                network.HttpPost<HttpPack.LoginRes>(signInRequestUrl, jsonBody, OnHttpLoginRes);
+                _networkManager.HttpPost<HttpPack.LoginRes>(signInRequestUrl, jsonBody, OnHttpLoginRes);
 
                 #endregion
                 break;

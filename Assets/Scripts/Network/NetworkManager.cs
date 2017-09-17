@@ -8,7 +8,6 @@ public partial class NetworkManager : MonoBehaviour
 {
     public HttpNetwork              _httpNetwork = null;
     public TcpNetwork               _tcpNetwork  = null;
-    public Queue<PacketInfo.Packet> _packetQueue;
 
     #region SINGLETON
 

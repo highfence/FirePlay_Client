@@ -25,6 +25,7 @@ public partial class TcpNetwork
         _port         = port;
         _recvCallback = new AsyncCallback(RecvCallBack);
         _sendCallback = new AsyncCallback(SendCallBack);
+        _packetQueue  = new Queue<Packet>();
 
         try
         {
