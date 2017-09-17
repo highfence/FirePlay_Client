@@ -1,25 +1,23 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
-public class MatchSceneManager : MonoBehaviour
+/*
+ * 매칭 씬 Gui를 담당하는 클래스
+ */
+public partial class MatchSceneManager : MonoBehaviour
 {
-    private GameObject _curtain = null;
-    private GUIStyle _textStyle = null;
-    private GameObject _modelInstance = null;
-    private bool _isTryingNumberMatch = false;
-    private bool _isTryingFastMatch = false;
-    private float _matchingCountTime = 0.0f;
-    private string[] _matchingString;
-    private int _matchingCountIdx = 0;
+    private GameObject _curtain             = null;
+    private GUIStyle   _textStyle           = null;
+    private GameObject _modelInstance       = null;
+    private bool       _isTryingNumberMatch = false;
+    private bool       _isTryingFastMatch   = false;
+    private float      _matchingCountTime   = 0.0f;
+    private string[]   _matchingString;
+    private int        _matchingCountIdx    = 0;
 
     private void Awake()
     {
-        SetTextOpt();
-        _curtain = Instantiate(Resources.Load("Prefabs/BlackCurtain") as GameObject);
+        SetTextOption();
         MakeAnim();
     }
 
@@ -49,27 +47,14 @@ public class MatchSceneManager : MonoBehaviour
             {
                 _isTryingFastMatch = true;
 
-                // 매치 요청 패킷을 보낸다.
-                var network = FindObjectOfType<NetworkManager>();
-                var info = FindObjectOfType<PlayerInfo>();
-
-                var matchReq = new PacketInfo.FastMatchReq()
-                {
-                    _id = info._id,
-                    _token = info._token,
-                    _type = (int)info._selectedPlayerType
-                };
-
-                network.SendPacket<PacketInfo.FastMatchReq>(matchReq, PacketInfo.PacketId.ID_FastMatchReq);
-
-                _curtain.GetComponent<BlackCurtain>().StartFadeIn();
+                SendMatchReqPacket();
             }
             if (GUI.Button(new Rect((Screen.width / 2) + 5, (Screen.height * 2 / 3), 150, 150), "Number Match"))
             {
+                // TODO :: Number Match는 추후에 구현.
                 _curtain.GetComponent<BlackCurtain>().StartFadeIn();
 
                 _isTryingNumberMatch = true;
-                // TODO :: Number Match는 추후에 구현.
             }
         }
         else if (_isTryingNumberMatch == true)
@@ -82,7 +67,8 @@ public class MatchSceneManager : MonoBehaviour
         }
     }
 
-    private void SetTextOpt()
+    // 텍스트 옵션을 세팅해주는 함수.
+    private void SetTextOption()
     {
         _textStyle = new GUIStyle();
         _textStyle.fontSize = 40;
@@ -126,5 +112,4 @@ public class MatchSceneManager : MonoBehaviour
             _modelInstance.GetComponent<Animator>().enabled = true;
         }
     }
-
 }
