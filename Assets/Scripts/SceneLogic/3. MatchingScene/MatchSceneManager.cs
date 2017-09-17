@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /*
  * 매칭 씬을 담당하는 클래스.
@@ -68,9 +69,11 @@ public partial class MatchSceneManager : MonoBehaviour
         SendMatchSuccessAck();
 
         // 받은 정보를 저장한다.
-        
+        _dataContainer.SetGameMatchData(receivedPacket);
+
         // 게임 씬으로 상태를 바꾼다.
-        
+        // TODO :: 게임 확인 패킷이 날라올때 까지의 컷씬이 필요하지 않을까 싶기도.
+        SceneManager.LoadScene("Game"); 
     }
 
     // 매치 요청 패킷을 보낸다.
