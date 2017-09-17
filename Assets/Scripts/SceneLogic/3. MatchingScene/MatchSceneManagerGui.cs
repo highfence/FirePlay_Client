@@ -48,6 +48,7 @@ public partial class MatchSceneManager : MonoBehaviour
                 _isTryingFastMatch = true;
 
                 SendMatchReqPacket();
+                _curtain.GetComponent<BlackCurtain>().StartFadeIn();
             }
             if (GUI.Button(new Rect((Screen.width / 2) + 5, (Screen.height * 2 / 3), 150, 150), "Number Match"))
             {
