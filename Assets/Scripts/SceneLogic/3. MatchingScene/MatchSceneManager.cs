@@ -35,7 +35,18 @@ public partial class MatchSceneManager : MonoBehaviour
     // 빠른 매치 요청 답변 패킷 처리.
     private void OnFastMatchRes(PacketInfo.FastMatchRes receivedPacket)
     {
+        // 정상적인 답변이 왔다면 그냥 매칭 성사 패킷을 기다리면 된다.
+        if (receivedPacket._result == (int)ErrorCode.None)
+        {
+            return;
+        }
 
+        // 정상적인 답변이 아니라면, 다시 한번 매칭 패킷을 보낸다.
+        // TODO :: 이러면 쓸데 없는 패킷이 너무 많이 왔다갔다 하니까, 
+        // 패킷에 마지막 보낸 시간을 적어놓고 1초에 한번씩 보내게 한다던가 하는 것이 필요함.
+        // TODO :: 에러코드를 분석해서 그에 따른 switch ~ case 문으로 처리하는 것도 좋을듯.
+        // 우선 지금은 바로 다시 요청 패킷을 보낸다.
+        SendMatchReqPacket();
     }
 
     // 매치 취소 요청 답변 패킷 처리.
