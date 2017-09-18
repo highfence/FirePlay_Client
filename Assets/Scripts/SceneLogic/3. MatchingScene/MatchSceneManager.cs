@@ -138,7 +138,7 @@ public class MatchSceneManager : MonoBehaviour
     {
         var selectInfo = _dataContainer._playerType;
 
-        string prefabPath = "PrivateData/SpritesArchers/FantasyArcher_0" + (int)selectInfo._selectedPlayerType;
+        string prefabPath = "PrivateData/SpritesArchers/FantasyArcher_0" + (int)selectInfo;
 
         _modelInstance = Instantiate(Resources.Load(prefabPath) as GameObject);
 
