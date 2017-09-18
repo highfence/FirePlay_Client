@@ -15,6 +15,9 @@ public class MatchSceneManager : MonoBehaviour
     {
         Initialize();
         RegistPacketEvents();
+
+        SetTextOption();
+        MakeAnim();
     }
 
     // 초기화 함수.
@@ -126,12 +129,6 @@ public class MatchSceneManager : MonoBehaviour
     private string[] _matchingString;
     private int _matchingCountIdx = 0;
 
-    private void Awake()
-    {
-        SetTextOption();
-        MakeAnim();
-    }
-
     private void OnGUI()
     {
         MakeButton();
@@ -139,9 +136,7 @@ public class MatchSceneManager : MonoBehaviour
 
     private void MakeAnim()
     {
-        var selectInfo = FindObjectOfType<PlayerInfo>();
-
-        if (selectInfo == null) return;
+        var selectInfo = _dataContainer._playerType;
 
         string prefabPath = "PrivateData/SpritesArchers/FantasyArcher_0" + (int)selectInfo._selectedPlayerType;
 
