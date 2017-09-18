@@ -110,8 +110,7 @@ public partial class CharacterSelectSceneManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             // PlayerInfo에 기록.
-            var playerInfo = FindObjectOfType<PlayerInfo>();
-            playerInfo._selectedPlayerType = _selectedCharacter;
+            _dataContainer.SetCharacterType(_selectedCharacter);
 
             // 씬 전환.
             SceneManager.LoadScene("Matching");
