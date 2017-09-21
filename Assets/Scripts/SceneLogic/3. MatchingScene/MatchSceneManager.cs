@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class MatchSceneManager : MonoBehaviour
 {
     #region PACKET LOGIC
+
     DataContainer _dataContainer = null;
     NetworkManager _networkManager = null;
 
@@ -32,8 +33,8 @@ public class MatchSceneManager : MonoBehaviour
     // 패킷 처리 함수를 이벤트에 등록해주는 메소드.
     private void RegistPacketEvents()
     {
-        _networkManager.OnFastMatchRes += OnFastMatchRes;
-        _networkManager.OnMatchCancelRes += OnMatchCancelRes;
+        _networkManager.OnFastMatchRes       += OnFastMatchRes;
+        _networkManager.OnMatchCancelRes     += OnMatchCancelRes;
         _networkManager.OnMatchSuccessNotify += OnMatchSuccessNotify;
     }
 
@@ -80,6 +81,8 @@ public class MatchSceneManager : MonoBehaviour
         SceneManager.LoadScene("Game");
     }
 
+
+
     // 매치 요청 패킷을 보낸다.
     void SendMatchReqPacket()
     {
@@ -91,6 +94,7 @@ public class MatchSceneManager : MonoBehaviour
         };
 
         _networkManager.SendPacket<PacketInfo.FastMatchReq>(matchReq, PacketInfo.PacketId.ID_FastMatchReq);
+
     }
 
     // 매치 취소 요청 패킷을 보낸다.
