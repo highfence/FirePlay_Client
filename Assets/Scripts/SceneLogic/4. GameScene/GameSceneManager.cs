@@ -63,14 +63,21 @@ public class GameSceneManager : MonoBehaviour
         // TODO :: 컷씬이 추가된다면 컷씬 추가 
     }
 
+    // 턴이 시작되었음을 알려주는 패킷 처리.
     private void OnTurnStartNotify(PacketInfo.TurnStartNotify receivedPacket)
     {
-        
+        // TODO :: 턴 시작시 바람 얻어와서 적용.
+
+        // TODO :: 내 턴이라는 걸 알려주고 시간 차를 둔 뒤 턴 활성화.
+        _player._isMyTurn = true;
     }
 
+    // 상대 턴이 시작되었음을 알려주는 패킷 처리.
     private void OnEnemyTurnStartNotify(PacketInfo.EnemyTurnStartNotify receivedPacket)
     {
+        // TODO :: 턴 시작시 바람 얻어와서 적용.
 
+        // TODO :: 상대 턴이라는 걸 알려주고 시간 차를 둔 뒤 턴 활성화.
     }
 
     private void OnMoveAck(PacketInfo.MoveAck receivedPacket)
@@ -100,7 +107,7 @@ public class GameSceneManager : MonoBehaviour
 
     #endregion
 
-    #region INGAME GRAPHIC
+    #region INGAME
 
     private Player _player;
     private Player _enemy;

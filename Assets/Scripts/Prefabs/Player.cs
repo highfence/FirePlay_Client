@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField]
     private SpriteRenderer _spriteRenderer = null;
-    private Animator _animator = null;
+    private Animator       _animator = null;
 
     private Dictionary<CharacterType, string> _playerTypeToAnimPath = new Dictionary<CharacterType, string>()
     {
@@ -16,11 +16,13 @@ public class Player : MonoBehaviour
         { CharacterType.Archer3, "Animator/Archer3" }
     };
 
-    private int _fireDirection = 90;
-    private bool _isGoesRight = true;
-    private bool _isMouseClicked = false;
-    private float _fireLineStrength = 0.0f;
-    public bool _isEnemy = false;
+    private int       _fireDirection = 90;
+    private bool      _isGoesRight = true;
+    private bool      _isMouseClicked = false;
+    private float     _fireLineStrength = 0.0f;
+
+    public bool       _isEnemy = false;
+    public bool       _isMyTurn = false;
     public PlayerSpec _spec { get; private set; }
 
     public void Init(PlayerSpec spec)
@@ -51,6 +53,9 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (_isEnemy || _isMyTurn == false)
+            return;
+
         MoveControll();
         FireDirectionControll();
         FireControll();
@@ -105,9 +110,6 @@ public class Player : MonoBehaviour
 
     private void MoveControll()
     {
-        if (_isEnemy)
-            return;
-
         if (!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow))
         {
             _animator.SetBool("Move", false);
