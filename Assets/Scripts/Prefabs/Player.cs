@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     private bool _isGoesRight = true;
     private bool _isMouseClicked = false;
     private float _fireLineStrength = 0.0f;
+    public bool _isEnemy = false;
     public PlayerSpec _spec { get; private set; }
 
     public void Init(PlayerSpec spec)
@@ -104,6 +105,9 @@ public class Player : MonoBehaviour
 
     private void MoveControll()
     {
+        if (_isEnemy)
+            return;
+
         if (!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow))
         {
             _animator.SetBool("Move", false);
