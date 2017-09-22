@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private SpriteRenderer _spriteRenderer = null;
     private Animator       _animator = null;
+    private Vector3        _beforePosition;
 
     private Dictionary<CharacterType, string> _playerTypeToAnimPath = new Dictionary<CharacterType, string>()
     {
@@ -27,6 +28,7 @@ public class Player : MonoBehaviour
 
     public void Init(PlayerSpec spec)
     {
+        _beforePosition = transform.position;
         _spec = spec;
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
@@ -49,10 +51,8 @@ public class Player : MonoBehaviour
     {
         SpriteControll();
         FireLineControll();
-    }
 
-    private void FixedUpdate()
-    {
+        // 이 밑에는 조작 관련.
         if (_isEnemy || _isMyTurn == false)
             return;
 
@@ -128,6 +128,24 @@ public class Player : MonoBehaviour
             _isGoesRight = true;
 
             transform.position += Vector3.right * _spec._moveSpeed * Time.deltaTime;
+        }
+        else
+        {
+            // 손가락을 떼었을 때.
+            var curPosition = transform.position;
+
+            var movedRange = _beforePosition.x - curPosition.x;
+
+            _beforePosition = curPosition;
+
+            var moveNotify = new PacketInfo.MoveNotify()
+            {
+                _enemyPositionX = (int)transform.position.x,
+                _enemyPositionY = (int)transform.position.y,
+                _moveRange = (int)movedRange
+            };
+
+            NetworkManager.GetInstance().SendPacket<PacketInfo.MoveNotify>(moveNotify, PacketInfo.PacketId.ID_MoveNotify);
         }
     }
 

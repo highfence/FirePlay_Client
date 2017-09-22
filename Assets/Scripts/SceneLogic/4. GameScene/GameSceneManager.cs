@@ -47,10 +47,10 @@ public class GameSceneManager : MonoBehaviour
     private void OnGameStartNotify(PacketInfo.GameStartNotify receivedPacket)
     {
         // 받은 패킷에서 내 위치와 상대방 위치를 뽑아옴.
-        _player.transform.position = Camera.main.WorldToViewportPoint(new Vector3(receivedPacket._positionX, 30));
-        _enemy.transform.position = Camera.main.WorldToViewportPoint(new Vector3(receivedPacket._enemyPositionX, 30));
+        _player.transform.position = (new Vector3(receivedPacket._positionX, 30));
+        _enemy.transform.position = (new Vector3(receivedPacket._enemyPositionX, 30));
 
-        Debug.LogFormat("received point : {0}, {1}, translated point : {2}, {3}", receivedPacket._positionX, receivedPacket._positionY, _player.transform.position.x, _player.transform.position.y);
+        Debug.LogFormat("received point : {0}, {1}", receivedPacket._positionX, receivedPacket._enemyPositionX);
 
         // 응답을 보내준다.
         var ackPacket = new PacketInfo.GameStartAck()
@@ -78,16 +78,35 @@ public class GameSceneManager : MonoBehaviour
         // TODO :: 턴 시작시 바람 얻어와서 적용.
 
         // TODO :: 상대 턴이라는 걸 알려주고 시간 차를 둔 뒤 턴 활성화.
+        _player._isMyTurn = false;
     }
 
     private void OnMoveAck(PacketInfo.MoveAck receivedPacket)
     {
-
     }
 
     private void OnEnemyMoveNotify(PacketInfo.EnemyMoveNotify receivedPacket)
     {
+        MoveEnemy(receivedPacket._moveRange);
+    }
 
+    IEnumerator MoveEnemy(int movedRange)
+    {
+        float remainRange = (float)movedRange;
+        if (remainRange < 0)
+        {
+            remainRange *= -1;
+        }
+
+        while (remainRange > 0.0f)
+        {
+            var enemyPos = _enemy.transform.position;
+            enemyPos.x += movedRange / 100;
+            _enemy.transform.position = enemyPos;
+            remainRange -= movedRange / 100;
+
+            yield return new WaitForSeconds(0.02f);
+        }
     }
 
     private void OnFireAck(PacketInfo.FireAck receivedPacket)
