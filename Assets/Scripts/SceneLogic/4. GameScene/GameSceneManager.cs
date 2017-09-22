@@ -15,6 +15,11 @@ public class GameSceneManager : MonoBehaviour
         PlayerCreate();
     }
 
+    private void Update()
+    {
+        
+    }
+
     #region PACKET LOGIC
 
     DataContainer _dataContainer = null;
@@ -28,7 +33,14 @@ public class GameSceneManager : MonoBehaviour
 
     private void RegistPacketEvents()
     {
-        _networkManager.OnGameStartNotify += this.OnGameStartNotify;
+        _networkManager.OnGameStartNotify      += this.OnGameStartNotify;
+        _networkManager.OnTurnStartNotify      += this.OnTurnStartNotify;
+        _networkManager.OnEnemyTurnStartNotify += this.OnEnemyTurnStartNotify;
+        _networkManager.OnMoveAck              += this.OnMoveAck;
+        _networkManager.OnEnemyMoveNotify      += this.OnEnemyMoveNotify;
+        _networkManager.OnFireAck              += this.OnFireAck;
+        _networkManager.OnEnemyFireNotify      += this.OnEnemyFireNotify;
+        _networkManager.OnGameSetNotify        += this.OnGameSetNotify;
     }
 
     // 게임 시작 알림 답변 패킷 처리.
@@ -49,6 +61,41 @@ public class GameSceneManager : MonoBehaviour
         _networkManager.SendPacket<PacketInfo.GameStartAck>(ackPacket, PacketInfo.PacketId.ID_GameStartAck);
 
         // TODO :: 컷씬이 추가된다면 컷씬 추가 
+    }
+
+    private void OnTurnStartNotify(PacketInfo.TurnStartNotify receivedPacket)
+    {
+        
+    }
+
+    private void OnEnemyTurnStartNotify(PacketInfo.EnemyTurnStartNotify receivedPacket)
+    {
+
+    }
+
+    private void OnMoveAck(PacketInfo.MoveAck receivedPacket)
+    {
+
+    }
+
+    private void OnEnemyMoveNotify(PacketInfo.EnemyMoveNotify receivedPacket)
+    {
+
+    }
+
+    private void OnFireAck(PacketInfo.FireAck receivedPacket)
+    {
+
+    }
+
+    private void OnEnemyFireNotify(PacketInfo.EnemyFireNotify receivedPacket)
+    {
+
+    }
+
+    private void OnGameSetNotify(PacketInfo.GameSetNotify receivedPacket)
+    {
+
     }
 
     #endregion
