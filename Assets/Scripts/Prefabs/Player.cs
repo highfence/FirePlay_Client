@@ -17,7 +17,6 @@ public class Player : MonoBehaviour
         { CharacterType.Archer3, "Animator/Archer3" }
     };
 
-    private int       _fireDirection = 90;
     private bool      _isGoesRight = true;
     private bool      _isMouseClicked = false;
     private float     _fireLineStrength = 0.0f;
@@ -50,7 +49,6 @@ public class Player : MonoBehaviour
     private void Update()
     {
         SpriteControll();
-        FireLineControll();
 
         // 이 밑에는 조작 관련.
         if (_isEnemy || _isMyTurn == false)
@@ -58,55 +56,6 @@ public class Player : MonoBehaviour
 
         MoveControll();
         KeyUpDetect();
-        FireDirectionControll();
-        FireControll();
-    }
-
-    private void FireControll()
-    {
-        //if (Input.GetKey(KeyCode.Space))
-        //{
-        //	var fireUnitVec = new Vector2(Mathf.Cos(_fireDirection), Mathf.Sin(_fireDirection));
-        //	fireUnitVec.Normalize();
-
-        //	var bulletPrefab = Resources.Load("Prefabs/Bullet") as GameObject;
-        //	var bulletInstance = Instantiate<GameObject>(bulletPrefab, transform.position, transform.rotation);
-
-        //	var instanceRigidBody = bulletInstance.GetComponent<Rigidbody2D>();
-        //	instanceRigidBody.AddForce(fireUnitVec * 1000);
-        //}
-
-        // 0 : 좌클릭 검사.
-        if (Input.GetMouseButton(0))
-        {
-            _isMouseClicked = true;
-        }
-        else
-        {
-            if (_isMouseClicked == true)
-            {
-                Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mousePosition.z = 0.0f;
-
-                FireBullet(mousePosition, transform.position, _fireLineStrength);
-            }
-            _fireLineStrength = 0.0f;
-            _isMouseClicked = false;
-        }
-    }
-
-    private void FireBullet(Vector3 mouseVec, Vector3 playerVec, float distance)
-    {
-        // TODO :: 알맞은 총알의 스펙을 읽어다가 생성하기.
-        var fireVec = playerVec - mouseVec;
-        fireVec.z = 0;
-        fireVec.Normalize();
-
-        var bulletPrefab = Resources.Load("Prefabs/Bullet") as GameObject;
-        var bulletInstance = Instantiate<GameObject>(bulletPrefab, transform.position, transform.rotation);
-
-        var instanceRigidBody = bulletInstance.GetComponent<Rigidbody2D>();
-        instanceRigidBody.AddForce(fireVec * distance * 300);
     }
 
     private void MoveControll()
@@ -146,6 +95,7 @@ public class Player : MonoBehaviour
             _beforePosition = curPosition;
 
             // TODO :: 서버에서 이해할 수 있는 좌표 값으로 바꿔서 보내주어야 함.
+            // TODO :: MoveNotify와 Ack의 포지션을 float값으로 바꾸어야 함.
             var moveNotify = new PacketInfo.MoveNotify()
             {
                 _enemyPositionX = (int)transform.position.x,
@@ -154,37 +104,6 @@ public class Player : MonoBehaviour
             };
 
             NetworkManager.GetInstance().SendPacket<PacketInfo.MoveNotify>(moveNotify, PacketInfo.PacketId.ID_MoveNotify);
-        }
-    }
-
-    private void FireDirectionControll()
-    {
-        // 관심있는 입력값이 들어오지 않았다면 바로 return해준다.
-        if (!Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.DownArrow))
-        {
-            return;
-        }
-
-        // 관심있는 입력값에 대하여 알맞는 처리를 해준다.
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            // TODO :: 90도가 아니라 멤버 변수로 처리.
-            if (_fireDirection >= _spec._maxFireAngle)
-            {
-                return;
-            }
-
-            ++_fireDirection;
-        }
-        else if (Input.GetKey(KeyCode.DownArrow))
-        {
-            // TODO :: 위와 마찬가지
-            if (_fireDirection <= _spec._minFireAngle)
-            {
-                return;
-            }
-
-            --_fireDirection;
         }
     }
 
@@ -201,30 +120,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void FireLineControll()
-    {
-        // 마우스가 클릭되지 않은 상태면 FireLine을 그리지 않음.
-        if (_isMouseClicked == false)
-        {
-            return;
-        }
-
-        // 마우스 위치 구함.
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0.0f;
-
-        _fireLineStrength = Vector3.Distance(mousePosition, transform.position);
-        Debug.DrawLine(mousePosition, transform.position, Color.red);
-    }
-
-    void OnCollisionEnter2D(Collision2D coll)
-    {
-        if (coll.gameObject.tag == "Bullet")
-        {
-            Debug.Log("Damaged");
-            Destroy(coll.gameObject);
-        }
-    }
 
     public static class Factory
     {
