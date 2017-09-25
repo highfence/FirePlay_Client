@@ -57,6 +57,7 @@ public class Player : MonoBehaviour
             return;
 
         MoveControll();
+        KeyUpDetect();
         FireDirectionControll();
         FireControll();
     }
@@ -129,8 +130,14 @@ public class Player : MonoBehaviour
 
             transform.position += Vector3.right * _spec._moveSpeed * Time.deltaTime;
         }
-        else
+    }
+
+    private void KeyUpDetect()
+    {
+        if (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow))
         {
+            Debug.Log("Key Up Command Detected");
+
             // 손가락을 떼었을 때.
             var curPosition = transform.position;
 
@@ -138,11 +145,12 @@ public class Player : MonoBehaviour
 
             _beforePosition = curPosition;
 
+            // TODO :: 서버에서 이해할 수 있는 좌표 값으로 바꿔서 보내주어야 함.
             var moveNotify = new PacketInfo.MoveNotify()
             {
                 _enemyPositionX = (int)transform.position.x,
                 _enemyPositionY = (int)transform.position.y,
-                _moveRange = (int)movedRange
+                _moveRange = (int)((Camera.main.ViewportToWorldPoint(new Vector3(movedRange, 0.0f, 0.0f)).x))
             };
 
             NetworkManager.GetInstance().SendPacket<PacketInfo.MoveNotify>(moveNotify, PacketInfo.PacketId.ID_MoveNotify);

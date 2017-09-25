@@ -59,6 +59,7 @@ public class GameSceneManager : MonoBehaviour
         };
 
         _networkManager.SendPacket<PacketInfo.GameStartAck>(ackPacket, PacketInfo.PacketId.ID_GameStartAck);
+        Debug.Log("Send Game Start Ack");
 
         // TODO :: 컷씬이 추가된다면 컷씬 추가 
     }
@@ -87,10 +88,11 @@ public class GameSceneManager : MonoBehaviour
 
     private void OnEnemyMoveNotify(PacketInfo.EnemyMoveNotify receivedPacket)
     {
-        MoveEnemy(receivedPacket._moveRange);
+        var movedRange = Camera.main.WorldToViewportPoint(new Vector3(receivedPacket._moveRange, 0, 0)).x;
+        MoveEnemy(receivedPacket._enemyPositionX, (int)movedRange);
     }
 
-    IEnumerator MoveEnemy(int movedRange)
+    IEnumerator MoveEnemy(int enemyPositionX, int movedRange)
     {
         float remainRange = (float)movedRange;
         if (remainRange < 0)
