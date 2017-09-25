@@ -88,28 +88,30 @@ public class GameSceneManager : MonoBehaviour
 
     private void OnEnemyMoveNotify(PacketInfo.EnemyMoveNotify receivedPacket)
     {
-        var movedRange = Camera.main.WorldToViewportPoint(new Vector3(receivedPacket._moveRange, 0, 0)).x;
-        MoveEnemy(receivedPacket._enemyPositionX, (int)movedRange);
+        _enemy.transform.position = new Vector3(receivedPacket._enemyPositionX, receivedPacket._enemyPositionY);
+
+        //var movedRange = Camera.main.WorldToViewportPoint(new Vector3(receivedPacket._moveRange, 0, 0)).x;
+        //MoveEnemy(receivedPacket._enemyPositionX, (int)movedRange);
     }
 
-    IEnumerator MoveEnemy(int enemyPositionX, int movedRange)
-    {
-        float remainRange = (float)movedRange;
-        if (remainRange < 0)
-        {
-            remainRange *= -1;
-        }
+    //IEnumerator MoveEnemy(int enemyPositionX, int movedRange)
+    //{
+    //    float remainRange = (float)movedRange;
+    //    if (remainRange < 0)
+    //    {
+    //        remainRange *= -1;
+    //    }
 
-        while (remainRange > 0.0f)
-        {
-            var enemyPos = _enemy.transform.position;
-            enemyPos.x += movedRange / 100;
-            _enemy.transform.position = enemyPos;
-            remainRange -= movedRange / 100;
+    //    while (remainRange > 0.0f)
+    //    {
+    //        var enemyPos = _enemy.transform.position;
+    //        enemyPos.x += movedRange / 100;
+    //        _enemy.transform.position = enemyPos;
+    //        remainRange -= movedRange / 100;
 
-            yield return new WaitForSeconds(0.02f);
-        }
-    }
+    //        yield return new WaitForSeconds(0.02f);
+    //    }
+    //}
 
     private void OnFireAck(PacketInfo.FireAck receivedPacket)
     {
