@@ -47,8 +47,8 @@ public class GameSceneManager : MonoBehaviour
     private void OnGameStartNotify(PacketInfo.GameStartNotify receivedPacket)
     {
         // 받은 패킷에서 내 위치와 상대방 위치를 뽑아옴.
-        _player.transform.position = (new Vector3(receivedPacket._positionX, 30));
-        _enemy.transform.position = (new Vector3(receivedPacket._enemyPositionX, 30));
+        _player.transform.position = Camera.main.WorldToViewportPoint(new Vector3(receivedPacket._positionX, 30));
+        _enemy.transform.position = Camera.main.WorldToViewportPoint(new Vector3(receivedPacket._enemyPositionX, 30));
 
         Debug.LogFormat("received point : {0}, {1}", receivedPacket._positionX, receivedPacket._enemyPositionX);
 
