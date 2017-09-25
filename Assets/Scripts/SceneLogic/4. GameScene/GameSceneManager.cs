@@ -148,8 +148,7 @@ public class GameSceneManager : MonoBehaviour
         var enemySpec = PlayerSpec.CreateFromText(enemySpecText);
 
         _enemy = Player.Factory.Create(enemySpec);
-        // 적군 표시를 해주어서 움직이지 않도록 해줌.
-        _enemy._isEnemy = true;
+        _enemy.SetEnemy();
     }
 
     private void PlatformCreate()

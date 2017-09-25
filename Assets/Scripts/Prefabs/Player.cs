@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private SpriteRenderer _spriteRenderer = null;
     private Animator       _animator = null;
     private Vector3        _beforePosition;
+    private LineRenderer   _fireLine;
 
     private Dictionary<CharacterType, string> _playerTypeToAnimPath = new Dictionary<CharacterType, string>()
     {
@@ -18,20 +19,43 @@ public class Player : MonoBehaviour
     };
 
     private bool      _isGoesRight = true;
-    private bool      _isMouseClicked = false;
-    private float     _fireLineStrength = 0.0f;
 
-    public bool       _isEnemy = false;
-    public bool       _isMyTurn = false;
+    private bool      _isEnemy     = false;
+    public bool       _isMyTurn    = false;
+    public bool       _isMouseDown = false;
     public PlayerSpec _spec { get; private set; }
 
     public void Init(PlayerSpec spec)
     {
         _beforePosition = transform.position;
-        _spec = spec;
+        _spec           = spec;
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _animator = GetComponent<Animator>();
+        _animator       = GetComponent<Animator>();
         SetAnimator(_spec._playerType);
+
+        FireLineInitialize();
+    }
+
+    public void SetEnemy()
+    {
+        _isEnemy = true;
+        _fireLine.enabled = false;
+    }
+
+    private void FireLineInitialize()
+    {
+        _fireLine = GetComponent<LineRenderer>();
+
+        // Fire Line 색 설정.
+        _fireLine.startColor = Color.red;
+        _fireLine.endColor = Color.yellow;
+
+        // Fire Line 두께 설정.
+        _fireLine.startWidth = 0.1f;
+        _fireLine.endWidth = 0.1f;
+
+        // 라인 시작점 설정.
+        _fireLine.SetPosition(0, transform.position);
     }
 
     private void SetAnimator(CharacterType playerType)
@@ -54,6 +78,7 @@ public class Player : MonoBehaviour
         if (_isEnemy || _isMyTurn == false)
             return;
 
+        FireControll();
         MoveControll();
         KeyUpDetect();
     }
@@ -120,6 +145,30 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void FireControll()
+    {
+        _fireLine.SetPosition(0, transform.position);
+        
+        // 클릭 관련 검사.
+        if (Input.GetMouseButtonDown(0))
+        {
+            _isMouseDown = true;
+        }
+        else
+        {
+            if (_isMouseDown == true)
+            {
+                _fireLine.enabled = true;
+                _fireLine.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            }
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            _isMouseDown = false;
+            _fireLine.enabled = false;
+        }
+    }
 
     public static class Factory
     {
