@@ -78,7 +78,7 @@ public class MatchSceneManager : MonoBehaviour
 
         // 게임 씬으로 상태를 바꾼다.
         // TODO :: 게임 확인 패킷이 날라올때 까지의 컷씬이 필요하지 않을까 싶기도.
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene("4. Game");
     }
 
 
