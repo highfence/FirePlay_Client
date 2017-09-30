@@ -24,7 +24,12 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject == _owner)
             return;
-        
+
+        var explosion = Instantiate(Resources.Load("Prefabs/Explosion") as GameObject);
+        explosion.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+        explosion.transform.position = this.transform.position;
+
+        Destroy(this.gameObject);
     }
 
 }
