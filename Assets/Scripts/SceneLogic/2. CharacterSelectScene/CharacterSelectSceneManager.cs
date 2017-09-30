@@ -113,7 +113,7 @@ public partial class CharacterSelectSceneManager : MonoBehaviour
             _dataContainer.SetCharacterType(_selectedCharacter);
 
             // 씬 전환.
-            SceneManager.LoadScene("Matching");
+            SceneManager.LoadScene("3. Matching");
         }
     }
 }

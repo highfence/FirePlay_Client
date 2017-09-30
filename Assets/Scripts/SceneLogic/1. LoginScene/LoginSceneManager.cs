@@ -35,7 +35,7 @@ public class LoginSceneManager : MonoBehaviour
             return;
         }
 
-        SceneManager.LoadScene("CharacterSelect");
+        SceneManager.LoadScene("2. CharacterSelect");
     }
 
     // 로그인 서버에 로그인 요청을 보내는 함수.
