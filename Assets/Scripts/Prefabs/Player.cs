@@ -79,6 +79,18 @@ public class Player : MonoBehaviour
         FireControll();
         MoveControll();
         KeyUpDetect();
+        TurnControll();
+    }
+
+    private void TurnControll()
+    {
+        if (_isMyTurn == false)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            
+        }
     }
 
     private void MoveControll()

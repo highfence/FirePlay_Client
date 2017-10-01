@@ -1,4 +1,4 @@
-namespace PacketInfo
+namespace Packet
 {
 	// C++ IOCP서버와 Unity C#이 통신하기 위한 패킷 정의 파일입니다.
 	// 로그인 요청 패킷
@@ -159,6 +159,16 @@ namespace PacketInfo
 	public int					_result;
 	}
 
+	// 턴 종료 알림 패킷
+	public class TurnEndNotify
+{
+	}
+
+	// 턴 종료 응답 패킷
+	public class TurnEndAck
+{
+	}
+
 	// 게임 종료 알림 패킷
 	public class GameSetNotify
 {
@@ -202,8 +212,10 @@ namespace PacketInfo
 		ID_FireAck			= 120,
 		ID_EnemyFireNotify			= 121,
 		ID_EnemyFireAck			= 122,
-		ID_GameSetNotify			= 123,
-		ID_GameSetAck			= 124,
-		ID_CloseReq			= 125,
+		ID_TurnEndNotify			= 123,
+		ID_TurnEndAck			= 124,
+		ID_GameSetNotify			= 125,
+		ID_GameSetAck			= 126,
+		ID_CloseReq			= 127,
 	};
 }
