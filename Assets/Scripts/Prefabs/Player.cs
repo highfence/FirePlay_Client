@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
         SetAnimator(_spec._playerType);
 
         FireLineInitialize();
+        this.gameObject.AddComponent<PolygonCollider2D>();
     }
 
     public void SetEnemy()
@@ -82,7 +83,7 @@ public class Player : MonoBehaviour
 
     private void MoveControll()
     {
-        if (_isEnemy || _isMouseDown == false)
+        if (_isEnemy || _isMyTurn == false)
         {
             return;
         }
@@ -110,7 +111,7 @@ public class Player : MonoBehaviour
 
     private void KeyUpDetect()
     {
-        if (_isEnemy || _isMouseDown == false)
+        if (_isEnemy || _isMyTurn == false)
         {
             return;
         }
@@ -186,18 +187,25 @@ public class Player : MonoBehaviour
     private void FireBullet(Vector3 mousePosition)
     {
         var unitVec3 = this.transform.position - mousePosition;
-        var unitVec2 = new Vector2(unitVec3.x, unitVec3.y);
+        var unitVec2 = new Vector2((int)unitVec3.x, (int)unitVec3.y);
         var magnitude = unitVec2.magnitude;
         unitVec2.Normalize();
 
+        // 총알 발사.
         var bullet = Instantiate(Resources.Load("Prefabs/Bullet")) as GameObject;
         bullet.GetComponent<Bullet>().Fire(this.gameObject, unitVec2, magnitude);
 
         // 서버에 발사했다고 알림.
         var fireNotify = new PacketInfo.FireNotify()
         {
-
+            _enemyPositionX = (int)this.transform.position.x,
+            _enemyPositionY = (int)this.transform.position.y,
+            _fireType = 0,
+            _forceX = (int)unitVec3.x,
+            _forceY = (int)unitVec3.y
         };
+
+        NetworkManager.GetInstance().SendPacket<PacketInfo.FireNotify>(fireNotify, PacketInfo.PacketId.ID_FireNotify);
     }
 
     public static class Factory

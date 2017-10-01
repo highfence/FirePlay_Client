@@ -15,8 +15,7 @@ public class Background : MonoBehaviour
 		_renderer.sprite = _backgroundSprite;
 
 		Vector2 spriteSize = _backgroundSprite.rect.size;
-		Vector3 scale = new Vector3(
-			Screen.width * 2f / spriteSize.x, Screen.height * 2f / spriteSize.y, 1f);
+		Vector3 scale = new Vector3(Screen.width * 2f / spriteSize.x, Screen.height * 2f / spriteSize.y, 1f);
 
 		transform.localScale = scale;
 		//transform.position -= new Vector3(0, 1.0f, 0);
