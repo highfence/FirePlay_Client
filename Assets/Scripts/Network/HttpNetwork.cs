@@ -22,7 +22,7 @@ public class HttpNetwork : MonoBehaviour
         // IO가 끝날때까지 사용권 반환.
         yield return request.Send();
 
-        if (request.isNetworkError)
+        if (request.isError)
         {
             Debug.LogError("Http Post Failed");
         }
