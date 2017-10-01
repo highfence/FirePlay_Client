@@ -74,10 +74,7 @@ public class Player : MonoBehaviour
     {
         SpriteControll();
 
-        // 이 밑에는 조작 관련.
-        if (_isEnemy || _isMyTurn == false)
-            return;
-
+        // 조작 관련 함수들.
         FireControll();
         MoveControll();
         KeyUpDetect();
@@ -85,6 +82,11 @@ public class Player : MonoBehaviour
 
     private void MoveControll()
     {
+        if (_isEnemy || _isMouseDown == false)
+        {
+            return;
+        }
+
         if (!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow))
         {
             _animator.SetBool("Move", false);
@@ -108,6 +110,11 @@ public class Player : MonoBehaviour
 
     private void KeyUpDetect()
     {
+        if (_isEnemy || _isMouseDown == false)
+        {
+            return;
+        }
+
         if (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow))
         {
             Debug.Log("Key Up Command Detected");
@@ -148,6 +155,9 @@ public class Player : MonoBehaviour
     private void FireControll()
     {
         _fireLine.SetPosition(0, transform.position);
+
+        if (_isEnemy || _isMyTurn == false)
+            return;
         
         // 클릭 관련 검사.
         if (Input.GetMouseButtonDown(0))
@@ -167,7 +177,27 @@ public class Player : MonoBehaviour
         {
             _isMouseDown = false;
             _fireLine.enabled = false;
+
+            // 발사.
+            FireBullet(Input.mousePosition);            
         }
+    }
+
+    private void FireBullet(Vector3 mousePosition)
+    {
+        var unitVec3 = this.transform.position - mousePosition;
+        var unitVec2 = new Vector2(unitVec3.x, unitVec3.y);
+        var magnitude = unitVec2.magnitude;
+        unitVec2.Normalize();
+
+        var bullet = Instantiate(Resources.Load("Prefabs/Bullet")) as GameObject;
+        bullet.GetComponent<Bullet>().Fire(this.gameObject, unitVec2, magnitude);
+
+        // 서버에 발사했다고 알림.
+        var fireNotify = new PacketInfo.FireNotify()
+        {
+
+        };
     }
 
     public static class Factory
