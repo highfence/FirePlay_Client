@@ -1,4 +1,4 @@
-namespace Packet
+namespace PacketInfo
 {
 	// C++ IOCP서버와 Unity C#이 통신하기 위한 패킷 정의 파일입니다.
 	// 로그인 요청 패킷

@@ -87,9 +87,12 @@ public class Player : MonoBehaviour
         if (_isMyTurn == false)
             return;
 
+        // 임시로 Esc를 누르면 턴이 바뀌도록 만들어놓음.
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            
+            var endNotify = new PacketInfo.TurnEndNotify();
+
+            NetworkManager.GetInstance().SendPacket<PacketInfo.TurnEndNotify>(endNotify, PacketInfo.PacketId.ID_TurnEndNotify);
         }
     }
 
