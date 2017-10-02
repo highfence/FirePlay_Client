@@ -136,6 +136,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //
+    //}
+
     private void MoveControll()
     {
         if (_isEnemy || _isMyTurn == false)
@@ -345,7 +350,7 @@ public struct PlayerSpec
         }
         catch (Exception e)
         {
-            Debug.LogErrorFormat("[PlayerSpec] Cannot parse PlayerSpec from source - {0}", text);
+            Debug.LogErrorFormat("[PlayerSpec] Cannot parse PlayerSpec from source - {0}, {1}", text, e.Message);
             throw;
         }
 

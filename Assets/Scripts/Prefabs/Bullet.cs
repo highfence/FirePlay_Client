@@ -23,8 +23,9 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject == _owner)
-            return;
+        // 쏜 사람은 자기 총알에 맞지 않음.
+        //if (collision.gameObject == _owner)
+        //    return;
 
         var explosion = Instantiate(Resources.Load("Prefabs/Explosion") as GameObject);
         explosion.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
