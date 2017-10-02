@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField]
     private SpriteRenderer _spriteRenderer = null;
-    private SpriteRenderer _crosshair      = null;
+    private GameObject     _crosshair      = null;
     private Animator       _animator       = null;
     private Vector3        _beforePosition;
     private LineRenderer   _fireLine;
@@ -39,18 +39,30 @@ public class Player : MonoBehaviour
         _spec           = spec;
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator       = GetComponent<Animator>();
-        _crosshair      = GetComponentInChildren<SpriteRenderer>();
 
         SetAnimator(_spec._playerType);
+        SetSprite(_spec._playerType);
+
         FireLineInitialize();
         CrosshairInitialize();
 
         this.gameObject.AddComponent<PolygonCollider2D>();
     }
 
+
     private void CrosshairInitialize()
     {
-        _crosshair.enabled = false;
+        try
+        {
+            _crosshair = Instantiate(Resources.Load("Prefabs/FireCrosshair") as GameObject);
+            _crosshair.transform.SetParent(this.transform);
+            _crosshair.GetComponent<SpriteRenderer>().enabled = false;
+        }
+        catch(Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
+
     }
 
     public void SetEnemy()
@@ -79,12 +91,24 @@ public class Player : MonoBehaviour
     {
         if (_playerTypeToAnimPath.ContainsKey(playerType) == false)
         {
-            Debug.LogAssertionFormat("log");
+            Debug.LogAssertionFormat("Invalid Dictionary Anim Path - {0}", playerType);
             return;
         }
 
         var path = _playerTypeToAnimPath[playerType];
         _animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>(path);
+    }
+
+    private void SetSprite(CharacterType playerType)
+    {
+        if (_playerTypeToSpritePath.ContainsKey(playerType) == false)
+        {
+            Debug.LogAssertionFormat("Invalid Dictionary Sprite Path - {0}", playerType);
+            return;
+        }
+
+        var path = _playerTypeToSpritePath[playerType];
+        _spriteRenderer.sprite = Resources.Load<Sprite>(path);
     }
 
     private void Update()
@@ -203,7 +227,7 @@ public class Player : MonoBehaviour
                 _fireLine.enabled = true;
                 _fireLine.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
-                _crosshair.enabled = true;
+                _crosshair.GetComponent<SpriteRenderer>().enabled = true;
             }
         }
 
@@ -211,7 +235,7 @@ public class Player : MonoBehaviour
         {
             _isMouseDown = false;
             _fireLine.enabled = false;
-            _crosshair.enabled = false;
+            _crosshair.GetComponent<SpriteRenderer>().enabled = false;
 
             // 발사.
             FireBullet(Input.mousePosition);            

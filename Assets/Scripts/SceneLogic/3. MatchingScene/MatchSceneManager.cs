@@ -124,14 +124,14 @@ public class MatchSceneManager : MonoBehaviour
 
     #region GUI
 
-    private GameObject _curtain = null;
-    private GUIStyle _textStyle = null;
-    private GameObject _modelInstance = null;
-    private bool _isTryingNumberMatch = false;
-    private bool _isTryingFastMatch = false;
-    private float _matchingCountTime = 0.0f;
-    private string[] _matchingString;
-    private int _matchingCountIdx = 0;
+    private GameObject _curtain             = null;
+    private GUIStyle   _textStyle           = null;
+    private GameObject _modelInstance       = null;
+    private bool       _isTryingNumberMatch = false;
+    private bool       _isTryingFastMatch   = false;
+    private float      _matchingCountTime   = 0.0f;
+    private string[]   _matchingString;
+    private int        _matchingCountIdx    = 0;
 
     private void OnGUI()
     {
