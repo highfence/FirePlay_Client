@@ -224,9 +224,12 @@ public class Player : MonoBehaviour
         {
             if (_isMouseDown == true)
             {
+                #region FIRELINE CONTROLL
                 _fireLine.enabled = true;
                 _fireLine.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                #endregion
 
+                #region CROSSHAIR CONTROLL
                 _crosshair.GetComponent<SpriteRenderer>().enabled = true;
                 var playerPos = new Vector2(this.transform.position.x, this.transform.position.y);
                 var mouseWorldPos = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
@@ -235,6 +238,7 @@ public class Player : MonoBehaviour
                 oppositeUnitVec *= 2;
 
                 _crosshair.transform.position = (this.transform.position + new Vector3(oppositeUnitVec.x, oppositeUnitVec.y, 0));
+                #endregion
             }
         }
 
