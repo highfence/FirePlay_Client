@@ -228,6 +228,13 @@ public class Player : MonoBehaviour
                 _fireLine.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
                 _crosshair.GetComponent<SpriteRenderer>().enabled = true;
+                var playerPos = new Vector2(this.transform.position.x, this.transform.position.y);
+                var mouseWorldPos = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+                var oppositeUnitVec = playerPos - mouseWorldPos;
+                oppositeUnitVec.Normalize();
+                oppositeUnitVec *= 2;
+
+                _crosshair.transform.position = (this.transform.position + new Vector3(oppositeUnitVec.x, oppositeUnitVec.y, 0));
             }
         }
 
@@ -247,11 +254,13 @@ public class Player : MonoBehaviour
         var unitVec3 = Camera.main.WorldToScreenPoint(this.transform.position) - mousePosition;
         var unitVec2 = new Vector2((int)unitVec3.x, (int)unitVec3.y);
         var magnitude = unitVec2.magnitude;
+
         unitVec2.Normalize();
 
         // 총알 발사.
         var bullet = Instantiate(Resources.Load("Prefabs/Bullet")) as GameObject;
-        bullet.GetComponent<Bullet>().Fire(this.gameObject, crosshairPosition, unitVec2, magnitude);
+        // TODO :: 임시로 2배의 매그니튜드를 줌.
+        bullet.GetComponent<Bullet>().Fire(this.gameObject, crosshairPosition, unitVec2, magnitude * 2);
 
         // 서버에 발사했다고 알림.
         var fireNotify = new PacketInfo.FireNotify()
