@@ -7,7 +7,8 @@ public class Player : MonoBehaviour
 {
     [SerializeField]
     private SpriteRenderer _spriteRenderer = null;
-    private Animator       _animator = null;
+    private SpriteRenderer _crosshair      = null;
+    private Animator       _animator       = null;
     private Vector3        _beforePosition;
     private LineRenderer   _fireLine;
 
@@ -16,6 +17,13 @@ public class Player : MonoBehaviour
         { CharacterType.Archer1, "Animator/Archer1" },
         { CharacterType.Archer2, "Animator/Archer2" },
         { CharacterType.Archer3, "Animator/Archer3" }
+    };
+
+    private Dictionary<CharacterType, string> _playerTypeToSpritePath = new Dictionary<CharacterType, string>()
+    {
+        { CharacterType.Archer1, "PrivateData/SpritesArchers/Archer1/FantasyArcher_01_Attack1_0213" },
+        { CharacterType.Archer2, "PrivateData/SpritesArchers/Archer2/FantasyArcher_02_Attack1_0219" },
+        { CharacterType.Archer3, "PrivateData/SpritesArchers/Archer3/FantasyArcher_03_Attack1_0211" }
     };
 
     private bool      _isGoesRight = true;
@@ -31,10 +39,18 @@ public class Player : MonoBehaviour
         _spec           = spec;
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator       = GetComponent<Animator>();
-        SetAnimator(_spec._playerType);
+        _crosshair      = GetComponentInChildren<SpriteRenderer>();
 
+        SetAnimator(_spec._playerType);
         FireLineInitialize();
+        CrosshairInitialize();
+
         this.gameObject.AddComponent<PolygonCollider2D>();
+    }
+
+    private void CrosshairInitialize()
+    {
+        _crosshair.enabled = false;
     }
 
     public void SetEnemy()
@@ -186,6 +202,8 @@ public class Player : MonoBehaviour
             {
                 _fireLine.enabled = true;
                 _fireLine.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+
+                _crosshair.enabled = true;
             }
         }
 
@@ -193,6 +211,7 @@ public class Player : MonoBehaviour
         {
             _isMouseDown = false;
             _fireLine.enabled = false;
+            _crosshair.enabled = false;
 
             // 발사.
             FireBullet(Input.mousePosition);            

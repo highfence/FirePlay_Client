@@ -35,5 +35,4 @@ public class TestManager : MonoBehaviour
         var platform = Resources.Load<GameObject>("Prefabs/Platform");
         Instantiate(platform);
     }
-
 }
