@@ -12,10 +12,10 @@ public class Bullet : MonoBehaviour
         _renderer = this.GetComponent<SpriteRenderer>();
     }
 
-    public void Fire(GameObject owner, Vector2 fireUnitVec, float magnitude)
+    public void Fire(GameObject owner, Vector2 firePosition, Vector2 fireUnitVec, float magnitude)
     {
         _owner = owner;
-        this.transform.position = owner.transform.position;
+        this.transform.position = firePosition;
 
         var body = this.GetComponent<Rigidbody2D>();
         body.AddForce(fireUnitVec * magnitude);

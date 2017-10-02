@@ -116,7 +116,7 @@ public class Player : MonoBehaviour
         SpriteControll();
 
         // 조작 관련 함수들.
-        FireControll();
+        MouseControll();
         MoveControll();
         KeyUpDetect();
         TurnControll();
@@ -208,7 +208,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void FireControll()
+    private void MouseControll()
     {
         _fireLine.SetPosition(0, (transform.position));
 
@@ -238,20 +238,20 @@ public class Player : MonoBehaviour
             _crosshair.GetComponent<SpriteRenderer>().enabled = false;
 
             // 발사.
-            FireBullet(Input.mousePosition);            
+            FireBullet(Input.mousePosition, _crosshair.transform.position);            
         }
     }
 
-    private void FireBullet(Vector3 mousePosition)
+    private void FireBullet(Vector3 mousePosition, Vector3 crosshairPosition)
     {
-        var unitVec3 = this.transform.position - mousePosition;
+        var unitVec3 = Camera.main.WorldToScreenPoint(this.transform.position) - mousePosition;
         var unitVec2 = new Vector2((int)unitVec3.x, (int)unitVec3.y);
         var magnitude = unitVec2.magnitude;
         unitVec2.Normalize();
 
         // 총알 발사.
         var bullet = Instantiate(Resources.Load("Prefabs/Bullet")) as GameObject;
-        bullet.GetComponent<Bullet>().Fire(this.gameObject, unitVec2, magnitude);
+        bullet.GetComponent<Bullet>().Fire(this.gameObject, crosshairPosition, unitVec2, magnitude);
 
         // 서버에 발사했다고 알림.
         var fireNotify = new PacketInfo.FireNotify()
