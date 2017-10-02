@@ -55,8 +55,8 @@ public class Player : MonoBehaviour
         _fireLine.startWidth = 0.1f;
         _fireLine.endWidth = 0.1f;
 
-        // 라인 시작점 설정.
-        _fireLine.SetPosition(0, transform.position);
+        _fireLine.SetPosition(0, (transform.position));
+        _fireLine.enabled = false;
     }
 
     private void SetAnimator(CharacterType playerType)
@@ -170,7 +170,7 @@ public class Player : MonoBehaviour
 
     private void FireControll()
     {
-        _fireLine.SetPosition(0, transform.position);
+        _fireLine.SetPosition(0, (transform.position));
 
         if (_isEnemy || _isMyTurn == false)
             return;
