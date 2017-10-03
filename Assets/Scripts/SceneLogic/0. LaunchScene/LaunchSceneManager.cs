@@ -15,6 +15,9 @@ public class LaunchSceneManager : MonoBehaviour
         // 네트워크 클래스 초기화.
         NetworkManager.GetInstance();
 
+        // 이펙트 클래스 초기화.
+        EffectManager.GetInstance();
+
         SceneManager.LoadScene("1. Login");
 	}
 }
