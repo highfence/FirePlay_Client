@@ -19,9 +19,20 @@ public class Explosion : MonoBehaviour
         { ExplosionType.Type3, "Data/Type3" }
     };
 
-    private void Init(ExplosionType type)
-    {
+    private ExplosionSpec _spec;
 
+    private void Init(ExplosionType explosionType)
+    {
+        // 스펙 로드.
+        if (_explosionTypeToSpecPath.ContainsKey(explosionType) == false)
+        {
+            Debug.LogAssertionFormat("Invalid Dictionay Data Path - {0]", explosionType);
+            return;
+        }
+
+        var path = _explosionTypeToSpecPath[explosionType];
+        var text = Resources.Load<TextAsset>(path).text;
+        _spec = ExplosionSpec.CreateFromText(text);
     }
 
     private struct ExplosionSpec
@@ -34,7 +45,7 @@ public class Explosion : MonoBehaviour
         int _maxDamage;
 
         [SerializeField]
-        string _spritePath;
+        string _prefabPath;
 
         public static ExplosionSpec CreateFromText(string text)
         {

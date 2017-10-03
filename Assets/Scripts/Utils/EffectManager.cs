@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class EffectManager : MonoBehaviour
 {
-    public GameObject[] _effects;
-
     #region SINGLETON
 
     private static EffectManager _instance = null;
@@ -34,5 +32,16 @@ public class EffectManager : MonoBehaviour
     #endregion
 
     #region FUNCTIONS
+
+    public void MakeExplosion(ExplosionType type, Vector2 position)
+    {
+        var explosionObject = Resources.Load("Prefabs/Explosion");
+        var instance = Instantiate(explosionObject) as GameObject;
+        instance.GetComponent<Explosion>().Init(type);
+
+        var explosionPosition = new Vector3(position.x, position.y, 0);
+        instance.transform.position = explosionPosition;
+    }
+
     #endregion
 }
