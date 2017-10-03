@@ -37,6 +37,7 @@ public class Explosion : MonoBehaviour
 
         _explosion = Instantiate(Resources.Load(_spec._prefabPath)) as GameObject;
         _explosion.transform.position = this.transform.position;
+        _explosion.transform.SetParent(this.transform);
     }
 
     private struct ExplosionSpec

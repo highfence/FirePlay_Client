@@ -266,7 +266,7 @@ public class Player : MonoBehaviour
         // 총알 발사.
         var bullet = Instantiate(Resources.Load("Prefabs/Bullet")) as GameObject;
         // TODO :: 임시로 2배의 매그니튜드를 줌.
-        bullet.GetComponent<Bullet>().Fire(crosshairPosition, unitVec2, magnitude * 2);
+        bullet.GetComponent<Bullet>().Fire(crosshairPosition, unitVec2, magnitude * 2, ExplosionType.Type1);
 
         // 서버에 발사했다고 알림.
         var fireNotify = new PacketInfo.FireNotify()
