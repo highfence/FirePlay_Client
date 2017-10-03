@@ -11,6 +11,8 @@ public class TestManager : MonoBehaviour
     {
         PlatformCreate();
         PlayerCreate();
+
+        EffectManager.GetInstance().MakeExplosion(ExplosionType.Type1, Vector2.zero);
     }
 
     private void PlayerCreate()

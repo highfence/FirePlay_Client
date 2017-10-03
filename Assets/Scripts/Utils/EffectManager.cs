@@ -23,7 +23,7 @@ public class EffectManager : MonoBehaviour
     {
         if (_instance == null)
         {
-            _instance = Instantiate(Resources.Load("Prefbas/EffectManager") as GameObject).GetComponent<EffectManager>();
+            _instance = Instantiate(Resources.Load("Prefabs/EffectManager") as GameObject).GetComponent<EffectManager>();
         }
 
         return _instance;

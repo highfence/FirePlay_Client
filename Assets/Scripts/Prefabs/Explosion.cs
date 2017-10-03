@@ -20,8 +20,9 @@ public class Explosion : MonoBehaviour
     };
 
     private ExplosionSpec _spec;
+    private GameObject _explosion;
 
-    private void Init(ExplosionType explosionType)
+    public void Init(ExplosionType explosionType)
     {
         // 스펙 로드.
         if (_explosionTypeToSpecPath.ContainsKey(explosionType) == false)
@@ -33,19 +34,22 @@ public class Explosion : MonoBehaviour
         var path = _explosionTypeToSpecPath[explosionType];
         var text = Resources.Load<TextAsset>(path).text;
         _spec = ExplosionSpec.CreateFromText(text);
+
+        _explosion = Instantiate(Resources.Load(_spec._prefabPath)) as GameObject;
+        _explosion.transform.position = this.transform.position;
     }
 
     private struct ExplosionSpec
     {
         [SerializeField]
-        float _range;
+        public float _range;
 
         [SerializeField]
-        int _minDamage;
-        int _maxDamage;
+        public int _minDamage;
+        public int _maxDamage;
 
         [SerializeField]
-        string _prefabPath;
+        public string _prefabPath;
 
         public static ExplosionSpec CreateFromText(string text)
         {
