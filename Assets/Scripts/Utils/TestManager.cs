@@ -11,8 +11,6 @@ public class TestManager : MonoBehaviour
     {
         PlatformCreate();
         PlayerCreate();
-
-        EffectManager.GetInstance().MakeExplosion(ExplosionType.Type1, Vector2.zero);
     }
 
     private void PlayerCreate()
@@ -30,6 +28,13 @@ public class TestManager : MonoBehaviour
 
         _enemy = Player.Factory.Create(enemySpec);
         _enemy.SetEnemy();
+
+        var playerPosition = Camera.main.ScreenToWorldPoint(new Vector3(50, 300, 0));
+        playerPosition.z = 10;
+        _player.transform.position = playerPosition;
+
+        DataContainer.GetInstance().SetPlayerPosition(_player.transform.position);
+        DataContainer.GetInstance().SetEnemyPosition(_enemy.transform.position);
     }
 
     private void PlatformCreate()

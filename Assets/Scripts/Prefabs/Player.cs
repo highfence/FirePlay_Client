@@ -27,7 +27,6 @@ public class Player : MonoBehaviour
     };
 
     private bool      _isGoesRight = true;
-
     private bool      _isEnemy     = false;
     public bool       _isMyTurn    = false;
     public bool       _isMouseDown = false;
@@ -136,8 +135,6 @@ public class Player : MonoBehaviour
         }
     }
 
-
-
     private void MoveControll()
     {
         if (_isEnemy || _isMyTurn == false)
@@ -152,6 +149,7 @@ public class Player : MonoBehaviour
         }
 
         _animator.SetBool("Move", true);
+
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             _isGoesRight = false;
@@ -194,6 +192,7 @@ public class Player : MonoBehaviour
             };
 
             NetworkManager.GetInstance().SendPacket<PacketInfo.MoveNotify>(moveNotify, PacketInfo.PacketId.ID_MoveNotify);
+            DataContainer.GetInstance().SetPlayerPosition(this.transform.position);
         }
     }
 
