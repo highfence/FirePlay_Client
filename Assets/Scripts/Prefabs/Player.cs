@@ -298,12 +298,6 @@ public class Player : MonoBehaviour
         _isMyTurn = false;
     }
 
-    private struct FireInfo
-    {
-        public Vector3 mousePosition;
-        public Vector3 crosshairPosition;
-    }
-
     public static class Factory
     {
         public static Player Create(PlayerSpec spec)

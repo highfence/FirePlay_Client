@@ -9,6 +9,9 @@ public class LaunchSceneManager : MonoBehaviour
 {
 	void Start ()
     {
+        // 스크린 설정 초기화.
+        Screen.SetResolution(1280, 800, false);
+
         // 데이터 컨테이너 클래스 초기화.
         DataContainer.GetInstance();
 
