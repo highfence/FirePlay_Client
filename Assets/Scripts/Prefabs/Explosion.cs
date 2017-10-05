@@ -52,7 +52,6 @@ public class Explosion : MonoBehaviour
 
         if (GetExplosionCollision(_spec, player, this.transform.position))
         {
-            // TODO :: Player에 데미지를 받는 함수 생성.
             player.GetComponent<Player>().Damaged(damage);
         }
 
@@ -70,10 +69,12 @@ public class Explosion : MonoBehaviour
         #endregion
     }
 
-    private bool GetExplosionCollision(ExplosionSpec spec, GameObject player, Vector2 position)
+    private bool GetExplosionCollision(ExplosionSpec spec, GameObject player, Vector3 position)
     {
         var playerPosition = new Vector2(player.transform.position.x, player.transform.position.y);
-        var distance = Vector2.Distance(playerPosition, position);
+        var explosionPosition = new Vector2(position.x, position.y);
+
+        var distance = Vector2.Distance(playerPosition, explosionPosition);
 
         if (distance <= spec._range)
         {

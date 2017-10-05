@@ -44,10 +44,10 @@ public class EffectManager : MonoBehaviour
         var explosionObject = Resources.Load("Prefabs/Explosion");
         var instance = Instantiate(explosionObject) as GameObject;
 
-        instance.GetComponent<Explosion>().Init(type, _player, _enemy);
-
         var explosionPosition = new Vector3(position.x, position.y, 0);
         instance.transform.position = explosionPosition;
+
+        instance.GetComponent<Explosion>().Init(type, _player, _enemy);
     }
 
     public void FreePlayers()

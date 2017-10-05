@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     private Animator       _animator       = null;
     private Vector3        _beforePosition;
     private LineRenderer   _fireLine;
-    private int            _hp             = 0;
+    public  int            _hp             = 0;
 
     private Dictionary<CharacterType, string> _playerTypeToAnimPath = new Dictionary<CharacterType, string>()
     {
@@ -72,9 +72,11 @@ public class Player : MonoBehaviour
 
     public void Damaged(int damage)
     {
-        _hp -= damage;
+        Debug.LogFormat("Damage : {0}", damage);
 
-        // TODO :: 애니메이션 동작시키기.
+        _hp = _hp - damage;
+
+        _animator.SetTrigger("Damage");
     }
 
     private void FireLineInitialize()
@@ -180,8 +182,6 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow))
         {
-            Debug.Log("Key Up Command Detected");
-
             // 손가락을 떼었을 때.
             var curPosition = transform.position;
 
