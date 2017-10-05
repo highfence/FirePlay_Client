@@ -73,8 +73,9 @@ public class Explosion : MonoBehaviour
     {
         var playerPosition = new Vector2(player.transform.position.x, player.transform.position.y);
         var explosionPosition = new Vector2(position.x, position.y);
-
         var distance = Vector2.Distance(playerPosition, explosionPosition);
+
+        Debug.LogFormat("Distance to explosion : {0}, Explosion Range : {1}", distance, spec._range);
 
         if (distance <= spec._range)
         {
