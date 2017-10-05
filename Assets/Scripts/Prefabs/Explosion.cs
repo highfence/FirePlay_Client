@@ -48,7 +48,18 @@ public class Explosion : MonoBehaviour
 
         #region COLLISION DETECT 
 
-        
+        int damage = UnityEngine.Random.Range(_spec._minDamage, _spec._maxDamage);
+
+        if (GetExplosionCollision(_spec, player, this.transform.position))
+        {
+            // TODO :: Player에 데미지를 받는 함수 생성.
+            player.GetComponent<Player>().Damaged(damage);
+        }
+
+        if (GetExplosionCollision(_spec, enemy, this.transform.position))
+        {
+            enemy.GetComponent<Player>().Damaged(damage);
+        }
 
         #endregion
 

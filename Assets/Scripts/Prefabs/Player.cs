@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     private Animator       _animator       = null;
     private Vector3        _beforePosition;
     private LineRenderer   _fireLine;
+    private int            _hp             = 0;
 
     private Dictionary<CharacterType, string> _playerTypeToAnimPath = new Dictionary<CharacterType, string>()
     {
@@ -38,6 +39,7 @@ public class Player : MonoBehaviour
         _spec           = spec;
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator       = GetComponent<Animator>();
+        _hp             = spec._maxHealth;
 
         SetAnimator(_spec._playerType);
         SetSprite(_spec._playerType);
@@ -47,7 +49,6 @@ public class Player : MonoBehaviour
 
         this.gameObject.AddComponent<PolygonCollider2D>();
     }
-
 
     private void CrosshairInitialize()
     {
@@ -61,13 +62,19 @@ public class Player : MonoBehaviour
         {
             Debug.LogError(e.Message);
         }
-
     }
 
     public void SetEnemy()
     {
         _isEnemy = true;
         _fireLine.enabled = false;
+    }
+
+    public void Damaged(int damage)
+    {
+        _hp -= damage;
+
+        // TODO :: 애니메이션 동작시키기.
     }
 
     private void FireLineInitialize()
