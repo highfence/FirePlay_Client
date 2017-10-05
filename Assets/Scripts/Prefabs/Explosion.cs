@@ -24,7 +24,8 @@ public class Explosion : MonoBehaviour
 
     public void Init(ExplosionType explosionType)
     {
-        // 스펙 로드.
+        #region SPEC LOAD
+
         if (_explosionTypeToSpecPath.ContainsKey(explosionType) == false)
         {
             Debug.LogAssertionFormat("Invalid Dictionay Data Path - {0]", explosionType);
@@ -35,9 +36,25 @@ public class Explosion : MonoBehaviour
         var text = Resources.Load<TextAsset>(path).text;
         _spec = ExplosionSpec.CreateFromText(text);
 
+        #endregion
+
+        #region MAKE EFFECT
+
         _explosion = Instantiate(Resources.Load(_spec._prefabPath)) as GameObject;
         _explosion.transform.position = this.transform.position;
         _explosion.transform.SetParent(this.transform);
+
+        #endregion
+
+        #region COLLISION DETECT 
+
+        #endregion
+
+        #region DELETE SELF
+
+        Destroy(this.gameObject, 3f);
+
+        #endregion
     }
 
     private struct ExplosionSpec

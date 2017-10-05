@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EffectAutoDestory : MonoBehaviour
 {
-    public float delay = 0f;
+    public float delay = 3f;
 
     // Use this for initialization
     void Start()
