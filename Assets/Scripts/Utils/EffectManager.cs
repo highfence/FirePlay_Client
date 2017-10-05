@@ -4,19 +4,16 @@ using UnityEngine;
 
 public class EffectManager : MonoBehaviour
 {
+    GameObject _player = null;
+    GameObject _enemy = null;
+
     #region SINGLETON
 
     private static EffectManager _instance = null;
 
     private void Awake()
     {
-        Initialize();
         DontDestroyOnLoad(this.gameObject);
-    }
-
-    private void Initialize()
-    {
-
     }
 
     public static EffectManager GetInstance()
@@ -33,6 +30,12 @@ public class EffectManager : MonoBehaviour
 
     #region FUNCTIONS
 
+    public void SetPlayers(GameObject player, GameObject enemy)
+    {
+        _player = player;
+        _enemy = enemy;
+    }
+
     public void MakeExplosion(ExplosionType type, Vector2 position)
     {
         var explosionObject = Resources.Load("Prefabs/Explosion");
@@ -41,6 +44,12 @@ public class EffectManager : MonoBehaviour
 
         var explosionPosition = new Vector3(position.x, position.y, 0);
         instance.transform.position = explosionPosition;
+    }
+
+    public void FreePlayers()
+    {
+        _player = null;
+        _enemy = null;
     }
 
     #endregion
