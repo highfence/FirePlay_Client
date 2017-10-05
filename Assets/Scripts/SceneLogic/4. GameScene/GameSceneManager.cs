@@ -13,6 +13,9 @@ public class GameSceneManager : MonoBehaviour
         // Ingame Graphic Initialize
         PlatformCreate();
         PlayerCreate();
+
+        // UI Initialize
+        UIInitialize();
     }
 
     private void Update()
@@ -160,6 +163,19 @@ public class GameSceneManager : MonoBehaviour
     {
         var platform = Resources.Load<GameObject>("Prefabs/Platform");
         Instantiate(platform);
+    }
+
+    #endregion
+
+    #region UI
+
+    private UISystem _uiSystem;
+
+    public void UIInitialize()
+    {
+        _uiSystem = FindObjectOfType<UISystem>();
+        
+
     }
 
     #endregion
