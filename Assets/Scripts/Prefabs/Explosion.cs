@@ -22,7 +22,7 @@ public class Explosion : MonoBehaviour
     private ExplosionSpec _spec;
     private GameObject _explosion;
 
-    public void Init(ExplosionType explosionType)
+    public void Init(ExplosionType explosionType, GameObject player, GameObject enemy)
     {
         #region SPEC LOAD
 
@@ -48,7 +48,7 @@ public class Explosion : MonoBehaviour
 
         #region COLLISION DETECT 
 
-         
+        
 
         #endregion
 
@@ -57,6 +57,19 @@ public class Explosion : MonoBehaviour
         Destroy(this.gameObject, 3f);
 
         #endregion
+    }
+
+    private bool GetExplosionCollision(ExplosionSpec spec, GameObject player, Vector2 position)
+    {
+        var playerPosition = new Vector2(player.transform.position.x, player.transform.position.y);
+        var distance = Vector2.Distance(playerPosition, position);
+
+        if (distance <= spec._range)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private struct ExplosionSpec

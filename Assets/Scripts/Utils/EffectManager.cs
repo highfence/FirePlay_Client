@@ -38,9 +38,13 @@ public class EffectManager : MonoBehaviour
 
     public void MakeExplosion(ExplosionType type, Vector2 position)
     {
+        if (_player == null || _enemy == null)
+            return;
+
         var explosionObject = Resources.Load("Prefabs/Explosion");
         var instance = Instantiate(explosionObject) as GameObject;
-        instance.GetComponent<Explosion>().Init(type);
+
+        instance.GetComponent<Explosion>().Init(type, _player, _enemy);
 
         var explosionPosition = new Vector3(position.x, position.y, 0);
         instance.transform.position = explosionPosition;

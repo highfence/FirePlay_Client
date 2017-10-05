@@ -11,6 +11,8 @@ public class TestManager : MonoBehaviour
     {
         PlatformCreate();
         PlayerCreate();
+
+        EffectManager.GetInstance().SetPlayers(_player.gameObject, _enemy.gameObject);
     }
 
     private void PlayerCreate()
