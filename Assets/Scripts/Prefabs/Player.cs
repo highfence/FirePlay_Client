@@ -72,8 +72,6 @@ public class Player : MonoBehaviour
 
     public void Damaged(int damage)
     {
-        Debug.LogFormat("Damage : {0}", damage);
-
         _hp = _hp - damage;
 
         _animator.SetTrigger("Damage");
@@ -257,12 +255,21 @@ public class Player : MonoBehaviour
             _crosshair.GetComponent<SpriteRenderer>().enabled = false;
 
             // 발사.
-            FireBullet(Input.mousePosition, _crosshair.transform.position);            
+            StartCoroutine("OnAttackStarted");
         }
     }
 
-    private void FireBullet(Vector3 mousePosition, Vector3 crosshairPosition)
+    IEnumerator OnAttackStarted()
     {
+        // 애니메이션 전환.
+        _animator.SetTrigger("Attack");
+
+        // 애니메이션이 끝날때까지 기다림.
+        yield return new WaitForSeconds(1);
+
+        var mousePosition = Input.mousePosition;
+        var crosshairPosition = _crosshair.transform.position;
+
         var unitVec3 = Camera.main.WorldToScreenPoint(this.transform.position) - mousePosition;
         var unitVec2 = new Vector2((int)unitVec3.x, (int)unitVec3.y);
         var magnitude = unitVec2.magnitude;
@@ -273,6 +280,7 @@ public class Player : MonoBehaviour
         var bullet = Instantiate(Resources.Load("Prefabs/Bullet")) as GameObject;
         // TODO :: 임시로 2배의 매그니튜드를 줌.
         bullet.GetComponent<Bullet>().Fire(crosshairPosition, unitVec2, magnitude * 2, ExplosionType.Type1);
+
 
         // 서버에 발사했다고 알림.
         var fireNotify = new PacketInfo.FireNotify()
@@ -285,6 +293,15 @@ public class Player : MonoBehaviour
         };
 
         NetworkManager.GetInstance().SendPacket<PacketInfo.FireNotify>(fireNotify, PacketInfo.PacketId.ID_FireNotify);
+
+        // 내 턴을 끝낸다.
+        _isMyTurn = false;
+    }
+
+    private struct FireInfo
+    {
+        public Vector3 mousePosition;
+        public Vector3 crosshairPosition;
     }
 
     public static class Factory

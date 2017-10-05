@@ -53,7 +53,7 @@ public class EffectManager : MonoBehaviour
     public void FreePlayers()
     {
         _player = null;
-        _enemy = null;
+        _enemy  = null;
     }
 
     #endregion
