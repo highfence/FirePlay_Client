@@ -46,11 +46,14 @@ public class DataContainer : MonoBehaviour
     public string        _playerId    { get; private set; }
     public string        _playerToken { get; private set; }
     public CharacterType _playerType  { get; private set; } 
+    public int           _playerWins  { get; private set; }
+    public int           _playerLoses { get; private set; }
+
     public Vector2       _playerPos   { get; private set; }
     public Vector2       _enemyPos    { get; private set; }
 
     // 로그인 서버 관련 데이터.
-    public LoginServerConfig _loginServerConfig { get; private set; }
+    public LoginServerConfig               _loginServerConfig { get; private set; }
     public Dictionary<HttpApiEnum, string> _httpApiDictionary { get; private set; }
 
     // 게임 매칭 관련 데이터.
@@ -67,6 +70,7 @@ public class DataContainer : MonoBehaviour
     public void SetPlayerId(string playerId) { _playerId = playerId; }
     public void SetPlayerToken(string receivedToken) { _playerToken = receivedToken; }
     public void SetCharacterType(CharacterType type) { _playerType = type; }
+    public void SetPlayerScore(int wins, int loses) { _playerWins = wins; _playerLoses = loses; }
     public void SetGameMatchData(PacketInfo.MatchSuccessNotify matchPacket)
     {
         _gameNumber = matchPacket._gameNumber;

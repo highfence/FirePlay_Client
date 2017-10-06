@@ -79,7 +79,8 @@ public class GameSceneManager : MonoBehaviour
             _result = (int)ErrorCode.None
         };
 
-        _networkManager.SendPacket<PacketInfo.GameStartAck>(ackPacket, PacketInfo.PacketId.ID_GameStartAck);
+        _networkManager.SendPacket(ackPacket, PacketInfo.PacketId.ID_GameStartAck);
+
         // TODO :: 컷씬이 추가된다면 컷씬 추가 
     }
 

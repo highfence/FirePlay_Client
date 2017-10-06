@@ -101,8 +101,6 @@ public partial class NetworkManager : MonoBehaviour
         }
     }
 
-    //----------------------------------- 아랫단부터는 없어져야할 코드.
-
     // 컴포넌트 HttpNetwork의 PostRequest 래핑 메소드.
     public void HttpPost<T>(string url, string bodyJson, Func<T, bool> onSuccess)
     {
@@ -110,8 +108,8 @@ public partial class NetworkManager : MonoBehaviour
     }
 
     // 컴포넌트 TcpNetwork의 Send를 호출해주는 래핑 메소드.
-    public void SendPacket<T>(T data, PacketInfo.PacketId packetId)
+    public void SendPacket<T>(T data, PacketId packetId)
     {
-        _tcpNetwork.SendPacket<T>(data, packetId);
+        _tcpNetwork.SendPacket(data, packetId);
     }
 }

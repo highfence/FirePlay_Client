@@ -29,6 +29,10 @@ public class LoginSceneManager : MonoBehaviour
     // 게임 서버에서 로그인 응답 패킷이 도착했을 경우
     private void OnLoginResArrived(PacketInfo.LoginRes receivedPacket)
     {
+        // TODO :: 여기서 플레이어의 전적을 적어두어야 함.
+        // LoginRes가 wins, loses를 담아야 함.
+        _dataContainer.SetPlayerScore(0, 0);
+
         if (receivedPacket._result != (int)ErrorCode.None)
         {
             Debug.LogFormat("Game Server Login Failed, Error Code : {0}", receivedPacket._result);
@@ -107,8 +111,8 @@ public class LoginSceneManager : MonoBehaviour
                 #region Error Code : User Info Dont Exist 
                 // TODO :: 회원가입중이라고 윈도우 띄우기.
                 Debug.LogAssertion("Invalid Id or Pw");
-                // 가입 요청을 한다.
 
+                // 가입 요청을 한다.
                 var signInReq = new HttpPack.LoginReq()
                 {
                     UserId = _id,
