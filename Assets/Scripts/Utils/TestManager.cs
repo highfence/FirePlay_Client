@@ -88,10 +88,14 @@ public class TestManager : MonoBehaviour
         _playerHealthBar.transform.position = new Vector3(Screen.width * 0.2f, Screen.height * 0.88f, 0);
         _uiSystem.AttachUI(_playerHealthBar);
 
+        _player.SetHealthBar(_playerHealthBar);
+
         // 적군 체력바 초기화.
         _enemyHealthBar = Instantiate(Resources.Load("GUI/HorizontalBoxWithShadow") as GameObject);
         _enemyHealthBar.transform.position = new Vector3(Screen.width * 0.8f, Screen.height * 0.88f, 0);
         _uiSystem.AttachUI(_enemyHealthBar);
+
+        _enemy.SetHealthBar(_enemyHealthBar);
 
         // 플레이어 정보 초기화.
         _playerNameText = Instantiate(Resources.Load("GUI/PlayerNameText")) as GameObject;

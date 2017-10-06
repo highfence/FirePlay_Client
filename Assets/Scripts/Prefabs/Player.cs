@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     private Animator       _animator       = null;
     private Vector3        _beforePosition;
     private LineRenderer   _fireLine;
+    private GameObject     _healthBar      = null;
     public  int            _hp             = 0;
 
     private Dictionary<CharacterType, string> _playerTypeToAnimPath = new Dictionary<CharacterType, string>()
@@ -75,7 +76,16 @@ public class Player : MonoBehaviour
     {
         _hp = _hp - damage;
 
+        var remainRatio = (float)_hp / (float)_spec._maxHealth;
+
+        _healthBar.GetComponent<ProgressBarPro>().Value = remainRatio;
+
         _animator.SetTrigger("Damage");
+    }
+
+    public void SetHealthBar(GameObject healthBar)
+    {
+        _healthBar = healthBar;
     }
 
     private void FireLineInitialize()
