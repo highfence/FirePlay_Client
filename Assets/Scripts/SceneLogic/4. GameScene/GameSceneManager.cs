@@ -186,7 +186,7 @@ public class GameSceneManager : MonoBehaviour
         _uiSystem = FindObjectOfType<UISystem>();
 
         _timeText = Instantiate(Resources.Load("GUI/TimeText")) as GameObject;
-        var timePosition = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height * 0.8f, 0));
+        var timePosition = _uiSystem._uiCam.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height * 0.8f, 0));
         timePosition.z = 0;
         _timeText.transform.position = timePosition;
         _uiSystem.AttachUI(_timeText);
