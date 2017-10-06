@@ -6,17 +6,17 @@ using UnityEngine.UI;
 
 public class GameTimer : MonoBehaviour
 {
-    public int _turnTime { get; private set; }
-    public float _accTime { get; private set; }
-    public bool _isTimeSeted { get; private set; }
-    public bool _isTurnStarted { get; private set; }
+    public int _turnTime;
+    public float _accTime;
+    public bool _isTimeSeted;
+    public bool _isTurnStarted;
 
     // 턴이 자동으로 끝났을 때 호출될 이벤트.
     public event Action OnTurnAutoEnd = delegate { };
 
     private GameObject _timeText;
 
-	void Start ()
+	void Awake ()
     {
         _turnTime = 15;
         _accTime = 0;
@@ -31,7 +31,7 @@ public class GameTimer : MonoBehaviour
 	
 	void Update ()
     {
-        if (_isTimeSeted && _isTurnStarted)
+        if (_isTimeSeted == true && _isTurnStarted == true)
         {
             TimeProcess();
         }
