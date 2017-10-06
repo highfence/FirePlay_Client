@@ -197,17 +197,19 @@ public class GameSceneManager : MonoBehaviour
     public GameObject _playerNameText;
     public GameObject _enemyNameText;
     public GameObject _playerText;
+    public GameObject _playerScoreText;
     public GameObject _enemyText;
+    public GameObject _enemyScoreText;
 
     private GameTimer _gameTimer;
 
-    public void UIInitialize()
+    private void UIInitialize()
     {
         _uiSystem = FindObjectOfType<UISystem>();
 
         // 시간관련 초기화.
         _timeText = Instantiate(Resources.Load("GUI/TimeText")) as GameObject;
-        var timePosition = _uiSystem._uiCam.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height * 0.8f, 0));
+        var timePosition = (new Vector3(Screen.width / 2, Screen.height * 0.95f, 0));
         timePosition.z = 0;
         _timeText.transform.position = timePosition;
         _uiSystem.AttachUI(_timeText);
@@ -218,31 +220,42 @@ public class GameSceneManager : MonoBehaviour
 
         // 플레이어 체력바 초기화.
         _playerHealthBar = Instantiate(Resources.Load("GUI/HorizontalBoxWithShadow") as GameObject);
-        _playerHealthBar.transform.position = new Vector3(Screen.width * 0.1f, Screen.height * 0.8f, 0);
+        _playerHealthBar.transform.position = new Vector3(Screen.width * 0.2f, Screen.height * 0.88f, 0);
         _uiSystem.AttachUI(_playerHealthBar);
 
         // 적군 체력바 초기화.
         _enemyHealthBar = Instantiate(Resources.Load("GUI/HorizontalBoxWithShadow") as GameObject);
-        _enemyHealthBar.transform.position = new Vector3(Screen.width * 0.9f, Screen.height * 0.8f, 0);
+        _enemyHealthBar.transform.position = new Vector3(Screen.width * 0.8f, Screen.height * 0.88f, 0);
         _uiSystem.AttachUI(_enemyHealthBar);
 
         // 플레이어 정보 초기화.
-        _playerNameText = Instantiate(Resources.Load("GUI/NameText")) as GameObject;
+        _playerNameText = Instantiate(Resources.Load("GUI/PlayerNameText")) as GameObject;
         _playerNameText.GetComponent<Text>().text = _dataContainer._playerId;
-        _playerNameText.transform.position = new Vector3(Screen.width * 0.1f, Screen.height * 0.9f, 0);
+        _playerNameText.transform.position = new Vector3(Screen.width * 0.128f, Screen.height * 0.95f, 0);
         _uiSystem.AttachUI(_playerNameText);
 
         _playerText = Instantiate(Resources.Load("GUI/PlayerText")) as GameObject;
         _uiSystem.AttachUI(_playerText);
 
+        _playerScoreText = Instantiate(Resources.Load("GUI/PlayerScoreText")) as GameObject;
+        _playerScoreText.GetComponent<Text>().text = "Wins : " + _dataContainer._playerWins.ToString() + "\n Loses : " + _dataContainer._playerLoses.ToString();
+        _playerScoreText.transform.position = new Vector3(Screen.width * 0.40f, Screen.height * 0.95f, 0);
+        _uiSystem.AttachUI(_playerScoreText);
+
         // 적군 정보 초기화.
-        _enemyNameText = Instantiate(Resources.Load("GUI/NameText")) as GameObject;
+        _enemyNameText = Instantiate(Resources.Load("GUI/EnemyNameText")) as GameObject;
         _enemyNameText.GetComponent<Text>().text = _dataContainer._enemyId;
-        _enemyNameText.transform.position = new Vector3(Screen.width * 0.9f, Screen.height * 0.9f, 0);
+        _enemyNameText.transform.position = new Vector3(Screen.width * 0.872f, Screen.height * 0.95f, 0);
         _uiSystem.AttachUI(_enemyNameText);
-        
+
         _enemyText = Instantiate(Resources.Load("GUI/PlayerText")) as GameObject;
         _uiSystem.AttachUI(_enemyText);
+
+        _enemyScoreText = Instantiate(Resources.Load("GUI/EnemyScoreText")) as GameObject;
+        _enemyScoreText.GetComponent<Text>().text = _dataContainer._enemyWins.ToString() + " : Wins \n" + _dataContainer._enemyLoses.ToString() + " : Loses";
+        _enemyScoreText.transform.position = new Vector3(Screen.width * 0.60f, Screen.height * 0.95f, 0);
+        _uiSystem.AttachUI(_enemyScoreText);
+
     }
 
     private void UIUpdate()

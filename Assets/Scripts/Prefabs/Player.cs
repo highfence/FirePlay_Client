@@ -188,13 +188,16 @@ public class Player : MonoBehaviour
             _beforePosition = curPosition;
 
             // TODO :: 서버에서 이해할 수 있는 좌표 값으로 바꿔서 보내주어야 함.
-            // TODO :: MoveNotify와 Ack의 포지션을 float값으로 바꾸어야 함.
             var moveNotify = new PacketInfo.MoveNotify()
             {
-                _enemyPositionX = (int)transform.position.x,
-                _enemyPositionY = (int)transform.position.y,
+                _enemyPositionX = (int)transform.position.x * 100,
+                _enemyPositionY = (int)transform.position.y * 100,
                 _moveRange = (int)((Camera.main.ViewportToWorldPoint(new Vector3(movedRange, 0.0f, 0.0f)).x))
             };
+
+            Debug.LogFormat("Moved! origin : {0},", this.transform.position);
+            this.transform.position = new Vector3(moveNotify._enemyPositionX / 100, moveNotify._enemyPositionY / 100, 0);
+            Debug.LogFormat("Moved! transed : {0},", this.transform.position);
 
             NetworkManager.GetInstance().SendPacket<PacketInfo.MoveNotify>(moveNotify, PacketInfo.PacketId.ID_MoveNotify);
             DataContainer.GetInstance().SetPlayerPosition(this.transform.position);
