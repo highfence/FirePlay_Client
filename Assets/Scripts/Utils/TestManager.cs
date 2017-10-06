@@ -2,11 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TestManager : MonoBehaviour
 {
     public Player _player;
     public Player _enemy;
+    public DataContainer _dataContainer;
 
     private void Start()
     {
@@ -14,11 +16,16 @@ public class TestManager : MonoBehaviour
         PlayerCreate();
 
         EffectManager.GetInstance().SetPlayers(_player.gameObject, _enemy.gameObject);
+        _dataContainer = DataContainer.GetInstance();
         UIInitialize();
     }
 
     private UISystem _uiSystem;
     public GameObject _timeText;
+    public GameObject _playerHealthBar;
+    public GameObject _enemyHealthBar;
+    public GameObject _playerNameText;
+    public GameObject _enemyNameText;
 
     private GameTimer _gameTimer;
 
@@ -26,6 +33,7 @@ public class TestManager : MonoBehaviour
     {
         _uiSystem = FindObjectOfType<UISystem>();
 
+        // 시간관련 초기화.
         _timeText = Instantiate(Resources.Load("GUI/TimeText")) as GameObject;
         var timePosition = _uiSystem._uiCam.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height * 0.8f, 0));
         timePosition.z = 0;
@@ -35,7 +43,24 @@ public class TestManager : MonoBehaviour
         _gameTimer = Instantiate(Resources.Load("Prefabs/GameTimer") as GameObject).GetComponent<GameTimer>();
         _gameTimer.SetText(_timeText);
         _gameTimer.OnTurnAutoEnd += OnTurnAutoEnd;
-        _gameTimer.TurnStart();
+
+        // 플레이어 체력바 초기화.
+        _playerHealthBar = Instantiate(Resources.Load("GUI/HorizontalBoxWithShadow") as GameObject);
+        _playerHealthBar.transform.position = new Vector3(130, 357, 0);
+        _uiSystem.AttachUI(_playerHealthBar);
+
+        // 적군 체력바 초기화.
+        _enemyHealthBar = Instantiate(Resources.Load("GUI/HorizontalBoxWithShadow") as GameObject);
+        _enemyHealthBar.transform.position = new Vector3(657, 357, 0);
+        _uiSystem.AttachUI(_enemyHealthBar);
+
+        // 플레이어 정보 초기화.
+        _playerNameText = Instantiate(Resources.Load("GUI/NameText")) as GameObject;
+        _playerNameText.GetComponent<Text>().text = _dataContainer._playerId;
+
+        // 적군 정보 초기화.
+        _enemyNameText = Instantiate(Resources.Load("GUI/NameText")) as GameObject;
+        _enemyNameText.GetComponent<Text>().text = _dataContainer._enemyId;
     }
 
     private void OnTurnAutoEnd()

@@ -16,7 +16,7 @@ public class GameTimer : MonoBehaviour
 
     private GameObject _timeText;
 
-	void Awake ()
+	void Awake()
     {
         _turnTime = 15;
         _accTime = 0;

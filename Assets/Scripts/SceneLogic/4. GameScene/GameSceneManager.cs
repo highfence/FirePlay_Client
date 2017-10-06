@@ -177,7 +177,9 @@ public class GameSceneManager : MonoBehaviour
     #region UI
 
     private UISystem _uiSystem;
-    public GameObject _timeText; 
+    public GameObject _timeText;
+    public GameObject _playerHealthBar;
+    public GameObject _enemyHealthBar;
 
     private GameTimer _gameTimer;
 
@@ -195,6 +197,14 @@ public class GameSceneManager : MonoBehaviour
         _gameTimer.SetText(_timeText);
         _gameTimer.OnTurnAutoEnd += OnTurnAutoEnd;
         _gameTimer.TurnStart();
+
+        _playerHealthBar = Instantiate(Resources.Load("Prefabs/HorizontalBoxWithShadow") as GameObject);
+        var playerHealthBarPosition = _uiSystem._uiCam.ScreenToWorldPoint(new Vector3(Screen.width / 5, Screen.height * 0.8f, 0));
+        playerHealthBarPosition.z = 0;
+        _playerHealthBar.transform.position = playerHealthBarPosition;
+        _uiSystem.AttachUI(_playerHealthBar);
+
+        _enemyHealthBar = Instantiate(Resources.Load("Prefabs/HorizontalBoxWithShadow") as GameObject);
     }
 
     #endregion
