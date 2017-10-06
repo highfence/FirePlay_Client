@@ -36,7 +36,6 @@ public class GameSceneManager : MonoBehaviour
         _dataContainer = DataContainer.GetInstance();
         _networkManager = NetworkManager.GetInstance();
         _effectManager = EffectManager.GetInstance();
-        _effectManager.SetPlayers(_player.gameObject, _enemy.gameObject);
     }
 
     private void RegistPacketEvents()
@@ -162,6 +161,9 @@ public class GameSceneManager : MonoBehaviour
 
         _enemy = Player.Factory.Create(enemySpec);
         _enemy.SetEnemy();
+
+        // 이펙트 매니저에서 쓸 수 있도록 등록.
+        _effectManager.SetPlayers(_player.gameObject, _enemy.gameObject);
     }
 
     private void PlatformCreate()
@@ -182,6 +184,12 @@ public class GameSceneManager : MonoBehaviour
     public void UIInitialize()
     {
         _uiSystem = FindObjectOfType<UISystem>();
+
+        _timeText = Instantiate(Resources.Load("GUI/TimeText")) as GameObject;
+        var timePosition = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height * 0.8f, 0));
+        timePosition.z = 0;
+        _timeText.transform.position = timePosition;
+        _uiSystem.AttachUI(_timeText);
 
         _gameTimer = Instantiate(Resources.Load("Prefabs/GameTimer") as GameObject).GetComponent<GameTimer>();
         _gameTimer.SetText(_timeText);

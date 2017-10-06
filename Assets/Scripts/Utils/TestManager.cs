@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +14,33 @@ public class TestManager : MonoBehaviour
         PlayerCreate();
 
         EffectManager.GetInstance().SetPlayers(_player.gameObject, _enemy.gameObject);
+        UIInitialize();
+    }
+
+    private UISystem _uiSystem;
+    public GameObject _timeText;
+
+    private GameTimer _gameTimer;
+
+    private void UIInitialize()
+    {
+        _uiSystem = FindObjectOfType<UISystem>();
+
+        _timeText = Instantiate(Resources.Load("GUI/TimeText")) as GameObject;
+        var timePosition = _uiSystem._uiCam.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height * 0.8f, 0));
+        timePosition.z = 0;
+        _timeText.transform.position = timePosition;
+        _uiSystem.AttachUI(_timeText);
+
+        _gameTimer = Instantiate(Resources.Load("Prefabs/GameTimer") as GameObject).GetComponent<GameTimer>();
+        _gameTimer.SetText(_timeText);
+        _gameTimer.OnTurnAutoEnd += OnTurnAutoEnd;
+        _gameTimer.TurnStart();
+    }
+
+    private void OnTurnAutoEnd()
+    {
+
     }
 
     private void PlayerCreate()
