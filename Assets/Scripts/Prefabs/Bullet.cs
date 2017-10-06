@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum BulletType
+{
+    Type1 = 1,
+    Type2 = 2,
+    Type3 = 3
+}
+
 public class Bullet : MonoBehaviour
 {
     SpriteRenderer _renderer;

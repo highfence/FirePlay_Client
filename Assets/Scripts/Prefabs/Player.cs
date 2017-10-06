@@ -326,8 +326,6 @@ public struct PlayerSpec
     // Move Spec
     [SerializeField]
     public float _moveSpeed;
-    [SerializeField]
-    public int _moveGauge;
 
     // Angle Spec
     [SerializeField]
@@ -337,21 +335,12 @@ public struct PlayerSpec
 
     // Fire Spec
     [SerializeField]
-    public int _firstArmDamage;
+    public BulletType _bulletType;
     [SerializeField]
-    public int _secondArmDamage;
-
-    [SerializeField]
-    public float _firstArmRange;
-    [SerializeField]
-    public float _secondArmRange;
-
-    [SerializeField]
-    public float _firstArmWeight;
-    [SerializeField]
-    public float _secondArmWeight;
+    public float _armWeight;
 
     // Life Spec
+    [SerializeField]
     public int _maxHealth;
 
     public static PlayerSpec CreateFromText(string text)
