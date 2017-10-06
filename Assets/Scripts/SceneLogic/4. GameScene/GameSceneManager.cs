@@ -136,6 +136,11 @@ public class GameSceneManager : MonoBehaviour
 
     }
 
+    private void OnTurnAutoEnd()
+    {
+
+    }
+
     #endregion
 
     #region INGAME
@@ -170,12 +175,18 @@ public class GameSceneManager : MonoBehaviour
     #region UI
 
     private UISystem _uiSystem;
+    public GameObject _timeText; 
+
+    private GameTimer _gameTimer;
 
     public void UIInitialize()
     {
         _uiSystem = FindObjectOfType<UISystem>();
-        
 
+        _gameTimer = Instantiate(Resources.Load("Prefabs/GameTimer") as GameObject).GetComponent<GameTimer>();
+        _gameTimer.SetText(_timeText);
+        _gameTimer.OnTurnAutoEnd += OnTurnAutoEnd;
+        _gameTimer.TurnStart();
     }
 
     #endregion

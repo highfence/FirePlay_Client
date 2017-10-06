@@ -39,7 +39,7 @@ public class GameTimer : MonoBehaviour
 
     public void TurnStart()
     {
-
+        _isTurnStarted = true;
     }
 
     private void TimeProcess()
@@ -80,7 +80,16 @@ public class GameTimer : MonoBehaviour
         if (_turnTime <= -3)
         {
             // 턴 자동 종료 이벤트를 호출한다.
-            OnTurnAutoEnd.Invoke(); 
+            OnTurnAutoEnd.Invoke();
+            Clear();
         }
+    }
+
+    private void Clear()
+    {
+        _turnTime = 15;
+        _accTime = 0f;
+        ApplyTextTime();
+        _isTurnStarted = false;
     }
 }
