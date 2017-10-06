@@ -31,6 +31,7 @@ public class Player : MonoBehaviour
     private bool      _isEnemy     = false;
     public bool       _isMyTurn    = false;
     public bool       _isMouseDown = false;
+    public bool       _isMoving    = false;
     public PlayerSpec _spec { get; private set; }
 
     public void Init(PlayerSpec spec)
@@ -144,7 +145,7 @@ public class Player : MonoBehaviour
 
     private void MoveControll()
     {
-        if (_isEnemy || _isMyTurn == false)
+        if (_isEnemy == true || _isMyTurn == false || _isMouseDown == true)
         {
             return;
         }
@@ -160,12 +161,14 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             _isGoesRight = false;
+            _isMoving = true;
 
             transform.position += Vector3.left * _spec._moveSpeed * Time.deltaTime;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             _isGoesRight = true;
+            _isMoving = true;
 
             transform.position += Vector3.right * _spec._moveSpeed * Time.deltaTime;
         }
@@ -173,7 +176,7 @@ public class Player : MonoBehaviour
 
     private void KeyUpDetect()
     {
-        if (_isEnemy || _isMyTurn == false)
+        if (_isEnemy || _isMyTurn == false || _isMouseDown == true)
         {
             return;
         }
@@ -187,7 +190,6 @@ public class Player : MonoBehaviour
 
             _beforePosition = curPosition;
 
-            // TODO :: 서버에서 이해할 수 있는 좌표 값으로 바꿔서 보내주어야 함.
             var moveNotify = new PacketInfo.MoveNotify()
             {
                 _enemyPositionX = (int)transform.position.x * 100,
@@ -195,12 +197,12 @@ public class Player : MonoBehaviour
                 _moveRange = (int)((Camera.main.ViewportToWorldPoint(new Vector3(movedRange, 0.0f, 0.0f)).x))
             };
 
-            Debug.LogFormat("Moved! origin : {0},", this.transform.position);
             this.transform.position = new Vector3(moveNotify._enemyPositionX / 100, moveNotify._enemyPositionY / 100, 0);
-            Debug.LogFormat("Moved! transed : {0},", this.transform.position);
 
             NetworkManager.GetInstance().SendPacket<PacketInfo.MoveNotify>(moveNotify, PacketInfo.PacketId.ID_MoveNotify);
             DataContainer.GetInstance().SetPlayerPosition(this.transform.position);
+
+            _isMoving = false;
         }
     }
 
@@ -221,7 +223,7 @@ public class Player : MonoBehaviour
     {
         _fireLine.SetPosition(0, (transform.position));
 
-        if (_isEnemy || _isMyTurn == false)
+        if (_isEnemy || _isMyTurn == false || _isMoving)
             return;
         
         // 클릭 관련 검사.
