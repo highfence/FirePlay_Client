@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,6 +19,7 @@ public class GameSceneManager : MonoBehaviour
         UIInitialize();
     }
 
+
     private void Update()
     {
         
@@ -27,11 +29,14 @@ public class GameSceneManager : MonoBehaviour
 
     DataContainer _dataContainer = null;
     NetworkManager _networkManager = null;
+    EffectManager _effectManager = null;
 
     private void Initialize()
     {
         _dataContainer = DataContainer.GetInstance();
         _networkManager = NetworkManager.GetInstance();
+        _effectManager = EffectManager.GetInstance();
+        _effectManager.SetPlayers(_player.gameObject, _enemy.gameObject);
     }
 
     private void RegistPacketEvents()
@@ -50,14 +55,11 @@ public class GameSceneManager : MonoBehaviour
     private void OnGameStartNotify(PacketInfo.GameStartNotify receivedPacket)
     {
         // 받은 패킷에서 내 위치와 상대방 위치를 뽑아옴.
-        // TODO :: ScreenToWorldPoint로 바꿀듯.
-        _player.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(receivedPacket._positionX, 30));
+        _player.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(receivedPacket._positionX, 30, 10));
         _dataContainer.SetPlayerPosition(_player.transform.position);
 
-        _enemy.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(receivedPacket._enemyPositionX, 30));
+        _enemy.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(receivedPacket._enemyPositionX, 30, 10));
         _dataContainer.SetEnemyPosition(_enemy.transform.position);
-
-        Debug.LogFormat("received point : {0}, {1}", receivedPacket._positionX, receivedPacket._enemyPositionX);
 
         // 응답을 보내준다.
         var ackPacket = new PacketInfo.GameStartAck()
@@ -66,8 +68,6 @@ public class GameSceneManager : MonoBehaviour
         };
 
         _networkManager.SendPacket<PacketInfo.GameStartAck>(ackPacket, PacketInfo.PacketId.ID_GameStartAck);
-        Debug.Log("Send Game Start Ack");
-
         // TODO :: 컷씬이 추가된다면 컷씬 추가 
     }
 

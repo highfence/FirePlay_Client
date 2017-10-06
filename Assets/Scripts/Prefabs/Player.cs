@@ -261,18 +261,18 @@ public class Player : MonoBehaviour
 
     IEnumerator OnAttackStarted()
     {
+        var mousePosition = Input.mousePosition;
+        var crosshairPosition = _crosshair.transform.position;
+
         // 애니메이션 전환.
         _animator.SetTrigger("Attack");
 
         // 애니메이션이 끝날때까지 기다림.
         yield return new WaitForSeconds(1);
 
-        var mousePosition = Input.mousePosition;
-        var crosshairPosition = _crosshair.transform.position;
-
         var unitVec3 = Camera.main.WorldToScreenPoint(this.transform.position) - mousePosition;
         var unitVec2 = new Vector2((int)unitVec3.x, (int)unitVec3.y);
-        var magnitude = unitVec2.magnitude;
+        var magnitude = (int)unitVec2.magnitude;
 
         unitVec2.Normalize();
 
@@ -281,15 +281,14 @@ public class Player : MonoBehaviour
         // TODO :: 임시로 2배의 매그니튜드를 줌.
         bullet.GetComponent<Bullet>().Fire(crosshairPosition, unitVec2, magnitude * 2, ExplosionType.Type1);
 
-
         // 서버에 발사했다고 알림.
         var fireNotify = new PacketInfo.FireNotify()
         {
             _enemyPositionX = (int)this.transform.position.x,
             _enemyPositionY = (int)this.transform.position.y,
             _fireType = 0,
-            _forceX = (int)unitVec3.x,
-            _forceY = (int)unitVec3.y
+            _forceX = (int)(unitVec3.x * magnitude),
+            _forceY = (int)(unitVec3.y * magnitude)
         };
 
         NetworkManager.GetInstance().SendPacket<PacketInfo.FireNotify>(fireNotify, PacketInfo.PacketId.ID_FireNotify);
