@@ -216,6 +216,8 @@ public class Player : MonoBehaviour
 
             this.transform.position = new Vector3(moveNotify._enemyPositionX / 100, moveNotify._enemyPositionY / 100, 0);
 
+            Debug.LogFormat("Move Notify : {0}", moveNotify);
+
             NetworkManager.GetInstance().SendPacket<PacketInfo.MoveNotify>(moveNotify, PacketInfo.PacketId.ID_MoveNotify);
             DataContainer.GetInstance().SetPlayerPosition(this.transform.position);
 
@@ -281,7 +283,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    IEnumerator OnAttackStarted()
+    public IEnumerator OnAttackStarted()
     {
         var mousePosition = Input.mousePosition;
         var crosshairPosition = _crosshair.transform.position;
@@ -317,6 +319,71 @@ public class Player : MonoBehaviour
 
         // 내 턴을 끝낸다.
         _isMyTurn = false;
+    }
+
+    public IEnumerator OnMoveCommand(int destPositionX)
+    {
+        #region MOVE ANIM SETTING
+
+        _animator.SetBool("Move", true);
+
+        if (destPositionX > this.transform.position.x)
+        {
+            _isGoesRight = true;
+        }
+        else if (destPositionX < this.transform.position.x)
+        {
+            _isGoesRight = false;
+        }
+
+        #endregion
+
+        // 0.1초마다 움직일 거리 계산.
+        float unitMoveRange = _spec._moveSpeed / 10f;
+
+        while (true)
+        {
+            if (destPositionX == this.transform.position.x)
+            {
+                // 이동 애니메이션 해제.
+                _animator.SetBool("Move", false);
+                break;
+            }
+
+            // 목표 지점과 현재 지점의 거리 계산.
+            float remainDistance = 0f;
+            if (_isGoesRight == true)
+            {
+                remainDistance = destPositionX - this.transform.position.x;
+            }
+            else
+            {
+                remainDistance = this.transform.position.x - destPositionX;
+            }
+
+            // 단위 거리보다 거리가 가까워 졌다면 포지션을 대입.
+            if (unitMoveRange > remainDistance)
+            {
+                var goalPosition = this.transform.position;
+                goalPosition.x = destPositionX;
+                this.transform.position = goalPosition;
+            }
+            // 아니라면 단위 거리만큼 전진.
+            else
+            {
+                var movedPosition = this.transform.position;
+                if (_isGoesRight == true)
+                {
+                    movedPosition.x += unitMoveRange;
+                }
+                else
+                {
+                    movedPosition.x -= unitMoveRange;
+                }
+            }
+
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     public static class Factory

@@ -54,10 +54,10 @@ public class GameSceneManager : MonoBehaviour
     private void OnGameStartNotify(PacketInfo.GameStartNotify receivedPacket)
     {
         // 받은 패킷에서 내 위치와 상대방 위치를 뽑아옴.
-        _player.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(receivedPacket._positionX, 30, 10));
+        _player.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(receivedPacket._positionX, 300, 0));
         _dataContainer.SetPlayerPosition(_player.transform.position);
 
-        _enemy.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(receivedPacket._enemyPositionX, 30, 10));
+        _enemy.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(receivedPacket._enemyPositionX, 300, 0));
         _dataContainer.SetEnemyPosition(_enemy.transform.position);
 
         // 플레이어 넘버를 지정.
@@ -103,11 +103,12 @@ public class GameSceneManager : MonoBehaviour
 
     private void OnMoveAck(PacketInfo.MoveAck receivedPacket)
     {
+
     }
 
     private void OnEnemyMoveNotify(PacketInfo.EnemyMoveNotify receivedPacket)
     {
-        _enemy.transform.position = new Vector3(receivedPacket._enemyPositionX, receivedPacket._enemyPositionY);
+        _enemy.transform.position = new Vector3(receivedPacket._enemyPositionX / 100f, receivedPacket._enemyPositionY / 100f, 0f);
         _dataContainer.SetEnemyPosition(_enemy.transform.position);
 
         //var movedRange = Camera.main.WorldToViewportPoint(new Vector3(receivedPacket._moveRange, 0, 0)).x;
@@ -140,7 +141,7 @@ public class GameSceneManager : MonoBehaviour
 
     private void OnEnemyFireNotify(PacketInfo.EnemyFireNotify receivedPacket)
     {
-
+        // 현재 적군의 포지션과 
     }
 
     private void OnGameSetNotify(PacketInfo.GameSetNotify receivedPacket)
