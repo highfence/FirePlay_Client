@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -85,6 +86,7 @@ public class TestManager : MonoBehaviour
     public GameObject _playerScoreText;
     public GameObject _enemyText;
     public GameObject _enemyScoreText;
+    public GameObject _turnText;
 
     private GameTimer _gameTimer;
 
@@ -145,6 +147,19 @@ public class TestManager : MonoBehaviour
         _enemyScoreText.transform.position = new Vector3(Screen.width * 0.60f, Screen.height * 0.95f, 0);
         _uiSystem.AttachUI(_enemyScoreText);
 
+        // 턴 텍스트 초기화.
+        _turnText = Instantiate(Resources.Load("GUI/TurnText")) as GameObject;
+        _turnText.GetComponent<Text>().text = "PLAYER TURN";
+        _turnText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0f - 50f, 0);
+        _uiSystem.AttachUI(_turnText);
+
+        // 트윈 초기화.
+        DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
+
+        Sequence turnTextSequence = DOTween.Sequence();
+        turnTextSequence.Append(_turnText.transform.DOMoveY(Screen.width * 0.5f, 2f));
+        turnTextSequence.Append(_turnText.transform.DOMoveY(Screen.width * 0.4f, 2f));
+        turnTextSequence.Append(_turnText.transform.DOMoveY(Screen.width + 100f, 3f));
     }
 
     private void OnTurnAutoEnd()
