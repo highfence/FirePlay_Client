@@ -101,34 +101,36 @@ public class GameSceneManager : MonoBehaviour
         _player._isMyTurn = false;
     }
 
+    // 서버가 움직임을 확인했음을 알려주는 패킷 처리.
     private void OnMoveAck(PacketInfo.MoveAck receivedPacket)
     {
-
+        
     }
 
+    // 상대의 움직임을 알려주는 패킷 처리.
     private void OnEnemyMoveNotify(PacketInfo.EnemyMoveNotify receivedPacket)
     {
-        _enemy.StartCoroutine("OnMoveCommand", receivedPacket._enemyPositionX);
+        _enemy.StartCoroutine("OnMoveCommanded", receivedPacket._enemyPositionX);
         _dataContainer.SetEnemyPosition(_enemy.transform.position);
     }
 
+    // 서버가 발사를 확인했음을 알려주는 패킷 처리.
     private void OnFireAck(PacketInfo.FireAck receivedPacket)
     {
 
     }
 
+    // 상대의 발사를 알려주는 패킷 처리.
     private void OnEnemyFireNotify(PacketInfo.EnemyFireNotify receivedPacket)
     {
         // 현재 적군의 위치가 잘 동기화 되었는지 확인.
         if (receivedPacket._enemyPositionX != _enemy.transform.position.x)
         {
             // 동기화 되어있지 않다면 먼저 움직이는 모션을 넣어준다.
-            _enemy.StartCoroutine("OnMoveCommand", receivedPacket._enemyPositionX);
+            _enemy.StartCoroutine("OnMoveCommanded", receivedPacket._enemyPositionX);
         }
 
-
-
-
+        _enemy.StartCoroutine("OnEnemyAttackStarted", receivedPacket);
     }
 
     private void OnGameSetNotify(PacketInfo.GameSetNotify receivedPacket)

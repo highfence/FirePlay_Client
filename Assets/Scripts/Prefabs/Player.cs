@@ -279,7 +279,7 @@ public class Player : MonoBehaviour
 
     public IEnumerator OnAttackStarted()
     {
-        // 움직이는 중이라면 대기한다.
+        #region WAIT FOR MOVE END
         while (true)
         {
             if (_isMoving == true)
@@ -287,15 +287,19 @@ public class Player : MonoBehaviour
 
             break;
         }
+        #endregion
 
         var mousePosition = Input.mousePosition;
         var crosshairPosition = _crosshair.transform.position;
 
-        // 애니메이션 전환.
+        #region START ATTACK ANIMATION
+
         _animator.SetTrigger("Attack");
 
-        // 애니메이션이 끝날때까지 기다림.
+        // 애니메이션이 끝날 때까지 기다림.
         yield return new WaitForSeconds(1);
+
+        #endregion
 
         var unitVec3 = Camera.main.WorldToScreenPoint(this.transform.position) - mousePosition;
         var unitVec2 = new Vector2(unitVec3.x, unitVec3.y);
@@ -324,7 +328,7 @@ public class Player : MonoBehaviour
         _isMyTurn = false;
     }
 
-    public IEnumerator OnMoveCommand(float destPositionX)
+    public IEnumerator OnMoveCommanded(float destPositionX)
     {
         #region MOVE ANIM SETTING
 
@@ -395,6 +399,56 @@ public class Player : MonoBehaviour
 
             yield return new WaitForSeconds(0.05f);
         }
+    }
+
+    public IEnumerator OnEnemyAttackStarted(PacketInfo.EnemyFireNotify enemyFireInfo)
+    {
+        #region WAIT FOR MOVE END
+        while (true)
+        {
+            if (_isMoving == true)
+                continue;
+
+            break;
+        }
+        #endregion
+
+        var unitVec = new Vector2(enemyFireInfo._unitVecX, enemyFireInfo._unitVecY);
+        var magnitude = enemyFireInfo._magnitude;
+
+        #region MAKE ENEMY CROSSHAIR
+
+        _crosshair.GetComponent<SpriteRenderer>().enabled = true;
+        var enemyPos = new Vector2(this.transform.position.x, this.transform.position.y);
+        var crosshairVec = unitVec;
+        crosshairVec *= 2;
+
+        _crosshair.transform.position = (this.transform.position + new Vector3(crosshairVec.x, crosshairVec.y, 0));
+
+        #endregion
+
+        #region START ATTACK ANIMATION
+
+        _animator.SetTrigger("Attack");
+
+        // 애니메이션이 끝날 때까지 기다림.
+        yield return new WaitForSeconds(1);
+
+        #endregion
+
+        // 총알 발사.
+        var bullet = Instantiate(Resources.Load("Prefabs/Bullet")) as GameObject;
+        bullet.GetComponent<Bullet>().Fire(_crosshair.transform.position, unitVec, magnitude * 2, ExplosionType.Type1);
+
+        _crosshair.GetComponent<SpriteRenderer>().enabled = false;
+
+        // 잘 받았다고 서버에 알림.
+        var enemyFireAck = new PacketInfo.EnemyFireAck()
+        {
+            _result = (int)ErrorCode.None
+        };
+
+        NetworkManager.GetInstance().SendPacket(enemyFireAck, PacketInfo.PacketId.ID_EnemyFireAck);
     }
 
     public static class Factory
