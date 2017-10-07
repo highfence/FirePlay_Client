@@ -108,31 +108,13 @@ public class GameSceneManager : MonoBehaviour
 
     private void OnEnemyMoveNotify(PacketInfo.EnemyMoveNotify receivedPacket)
     {
-        _enemy.transform.position = new Vector3(receivedPacket._enemyPositionX / 100f, receivedPacket._enemyPositionY / 100f, 0f);
-        _dataContainer.SetEnemyPosition(_enemy.transform.position);
+        //_enemy.transform.position = new Vector3(receivedPacket._enemyPositionX / 100f, receivedPacket._enemyPositionY / 100f, 0f);
 
-        //var movedRange = Camera.main.WorldToViewportPoint(new Vector3(receivedPacket._moveRange, 0, 0)).x;
-        //MoveEnemy(receivedPacket._enemyPositionX, (int)movedRange);
+        _enemy.OnMoveCommand(receivedPacket._enemyPositionX / 100f);
+        _dataContainer.SetEnemyPosition(_enemy.transform.position);
     }
 
-    //IEnumerator MoveEnemy(int enemyPositionX, int movedRange)
-    //{
-    //    float remainRange = (float)movedRange;
-    //    if (remainRange < 0)
-    //    {
-    //        remainRange *= -1;
-    //    }
 
-    //    while (remainRange > 0.0f)
-    //    {
-    //        var enemyPos = _enemy.transform.position;
-    //        enemyPos.x += movedRange / 100;
-    //        _enemy.transform.position = enemyPos;
-    //        remainRange -= movedRange / 100;
-
-    //        yield return new WaitForSeconds(0.02f);
-    //    }
-    //}
 
     private void OnFireAck(PacketInfo.FireAck receivedPacket)
     {

@@ -39,6 +39,7 @@ public class TestManager : MonoBehaviour
 
         _playerText.GetComponent<Text>().text = "PLAYER 1";
         _enemyText.GetComponent<Text>().text = "PLAYER 2";
+
     }
 
     private void Update()
@@ -53,6 +54,14 @@ public class TestManager : MonoBehaviour
         enemyTextPos.z = 0;
         enemyTextPos.y += 20;
         _enemyText.transform.position = enemyTextPos;
+
+
+        #region FOR TEST
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            _enemy.StartCoroutine("OnMoveCommand", _player.transform.position.x);
+        }
+        #endregion
     }
 
     private UISystem _uiSystem;

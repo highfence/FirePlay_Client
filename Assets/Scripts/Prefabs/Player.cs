@@ -216,8 +216,6 @@ public class Player : MonoBehaviour
 
             this.transform.position = new Vector3(moveNotify._enemyPositionX / 100, moveNotify._enemyPositionY / 100, 0);
 
-            Debug.LogFormat("Move Notify : {0}", moveNotify);
-
             NetworkManager.GetInstance().SendPacket<PacketInfo.MoveNotify>(moveNotify, PacketInfo.PacketId.ID_MoveNotify);
             DataContainer.GetInstance().SetPlayerPosition(this.transform.position);
 
@@ -321,7 +319,7 @@ public class Player : MonoBehaviour
         _isMyTurn = false;
     }
 
-    public IEnumerator OnMoveCommand(int destPositionX)
+    public IEnumerator OnMoveCommand(float destPositionX)
     {
         #region MOVE ANIM SETTING
 
@@ -339,10 +337,12 @@ public class Player : MonoBehaviour
         #endregion
 
         // 0.1초마다 움직일 거리 계산.
-        float unitMoveRange = _spec._moveSpeed / 10f;
+        float unitMoveRange = _spec._moveSpeed / 20f;
 
         while (true)
         {
+            #region LET MOVE 
+
             if (destPositionX == this.transform.position.x)
             {
                 // 이동 애니메이션 해제.
@@ -352,6 +352,7 @@ public class Player : MonoBehaviour
 
             // 목표 지점과 현재 지점의 거리 계산.
             float remainDistance = 0f;
+
             if (_isGoesRight == true)
             {
                 remainDistance = destPositionX - this.transform.position.x;
@@ -380,9 +381,12 @@ public class Player : MonoBehaviour
                 {
                     movedPosition.x -= unitMoveRange;
                 }
+                this.transform.position = movedPosition;
             }
 
-            yield return new WaitForSeconds(0.1f);
+            #endregion
+
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
