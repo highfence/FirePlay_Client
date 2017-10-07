@@ -254,15 +254,13 @@ public class GameSceneManager : MonoBehaviour
     private void UIUpdate()
     {
         // 플레이어 정보가 따라다니도록.
-        var playerTextPos = _uiSystem._uiCam.WorldToViewportPoint(_player.transform.position);
-        playerTextPos.z = 0;
-        playerTextPos.y += 20;
-        _playerText.transform.position = playerTextPos;
+        var playerScreenPosition = Camera.main.WorldToScreenPoint(_player.transform.position);
+        playerScreenPosition.y += 80;
+        _playerText.transform.position = playerScreenPosition;
 
-        var enemyTextPos = _uiSystem._uiCam.WorldToViewportPoint(_enemy.transform.position);
-        enemyTextPos.z = 0;
-        enemyTextPos.y += 20;
-        _enemyText.transform.position = enemyTextPos;
+        var enemyScreenPosition = Camera.main.WorldToScreenPoint(_enemy.transform.position);
+        enemyScreenPosition.y += 80;
+        _enemyText.transform.position = enemyScreenPosition;
     }
 
     #endregion
