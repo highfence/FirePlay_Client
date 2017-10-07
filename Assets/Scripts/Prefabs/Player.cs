@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     private LineRenderer   _fireLine;
     private GameObject     _healthBar      = null;
     public  int            _hp             = 0;
+    public  GameObject     _hpParticle     = null;
 
     private Dictionary<CharacterType, string> _playerTypeToAnimPath = new Dictionary<CharacterType, string>()
     {
@@ -79,6 +80,12 @@ public class Player : MonoBehaviour
         var remainRatio = (float)_hp / (float)_spec._maxHealth;
 
         _healthBar.GetComponent<ProgressBarPro>().Value = remainRatio;
+
+        GameObject damageParticle = Instantiate(_hpParticle, this.transform.position, this.gameObject.transform.rotation) as GameObject;
+        damageParticle.GetComponent<AlwaysFace>().Target = GameObject.Find("Main Camera").gameObject;
+
+        TextMesh textMesh = damageParticle.transform.Find("HPLabel").GetComponent<TextMesh>();
+        textMesh.text = "-" + damage.ToString();
 
         _animator.SetTrigger("Damage");
     }
