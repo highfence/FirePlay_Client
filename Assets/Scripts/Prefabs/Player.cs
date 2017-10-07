@@ -209,14 +209,10 @@ public class Player : MonoBehaviour
 
             var moveNotify = new PacketInfo.MoveNotify()
             {
-                _enemyPositionX = (int)transform.position.x * 100,
-                _enemyPositionY = (int)transform.position.y * 100,
-                _moveRange = (int)((Camera.main.ViewportToWorldPoint(new Vector3(movedRange, 0.0f, 0.0f)).x))
+                _enemyPositionX = this.transform.position.x
             };
 
-            this.transform.position = new Vector3(moveNotify._enemyPositionX / 100, moveNotify._enemyPositionY / 100, 0);
-
-            NetworkManager.GetInstance().SendPacket<PacketInfo.MoveNotify>(moveNotify, PacketInfo.PacketId.ID_MoveNotify);
+            NetworkManager.GetInstance().SendPacket(moveNotify, PacketInfo.PacketId.ID_MoveNotify);
             DataContainer.GetInstance().SetPlayerPosition(this.transform.position);
 
             _isMoving = false;
@@ -302,8 +298,8 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         var unitVec3 = Camera.main.WorldToScreenPoint(this.transform.position) - mousePosition;
-        var unitVec2 = new Vector2((int)unitVec3.x, (int)unitVec3.y);
-        var magnitude = (int)unitVec2.magnitude;
+        var unitVec2 = new Vector2(unitVec3.x, unitVec3.y);
+        var magnitude = unitVec2.magnitude;
 
         unitVec2.Normalize();
 
@@ -315,14 +311,14 @@ public class Player : MonoBehaviour
         // 서버에 발사했다고 알림.
         var fireNotify = new PacketInfo.FireNotify()
         {
-            _enemyPositionX = (int)this.transform.position.x,
-            _enemyPositionY = (int)this.transform.position.y,
             _fireType = 0,
-            _forceX = (int)(unitVec3.x * magnitude),
-            _forceY = (int)(unitVec3.y * magnitude)
+            _enemyPositionX = (int)this.transform.position.x,
+            _magnitude = magnitude,
+            _unitVecX = unitVec2.x,
+            _unitVecY = unitVec2.y
         };
 
-        NetworkManager.GetInstance().SendPacket<PacketInfo.FireNotify>(fireNotify, PacketInfo.PacketId.ID_FireNotify);
+        NetworkManager.GetInstance().SendPacket(fireNotify, PacketInfo.PacketId.ID_FireNotify);
 
         // 내 턴을 끝낸다.
         _isMyTurn = false;

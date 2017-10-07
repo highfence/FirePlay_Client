@@ -108,9 +108,7 @@ public class GameSceneManager : MonoBehaviour
 
     private void OnEnemyMoveNotify(PacketInfo.EnemyMoveNotify receivedPacket)
     {
-        //_enemy.transform.position = new Vector3(receivedPacket._enemyPositionX / 100f, receivedPacket._enemyPositionY / 100f, 0f);
-
-        _enemy.StartCoroutine("OnMoveCommand", receivedPacket._enemyPositionX / 100f);
+        _enemy.StartCoroutine("OnMoveCommand", receivedPacket._enemyPositionX);
         _dataContainer.SetEnemyPosition(_enemy.transform.position);
     }
 
@@ -122,10 +120,10 @@ public class GameSceneManager : MonoBehaviour
     private void OnEnemyFireNotify(PacketInfo.EnemyFireNotify receivedPacket)
     {
         // 현재 적군의 위치가 잘 동기화 되었는지 확인.
-        if (receivedPacket._enemyPositionX / 100f != _enemy.transform.position.x)
+        if (receivedPacket._enemyPositionX != _enemy.transform.position.x)
         {
             // 동기화 되어있지 않다면 먼저 움직이는 모션을 넣어준다.
-            _enemy.StartCoroutine("OnMoveCommand", receivedPacket._enemyPositionX / 100f);
+            _enemy.StartCoroutine("OnMoveCommand", receivedPacket._enemyPositionX);
         }
 
 
