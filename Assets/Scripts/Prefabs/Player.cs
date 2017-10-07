@@ -283,6 +283,15 @@ public class Player : MonoBehaviour
 
     public IEnumerator OnAttackStarted()
     {
+        // 움직이는 중이라면 대기한다.
+        while (true)
+        {
+            if (_isMoving == true)
+                continue;
+
+            break;
+        }
+
         var mousePosition = Input.mousePosition;
         var crosshairPosition = _crosshair.transform.position;
 
@@ -323,6 +332,7 @@ public class Player : MonoBehaviour
     {
         #region MOVE ANIM SETTING
 
+        _isMoving = true;
         _animator.SetBool("Move", true);
 
         if (destPositionX > this.transform.position.x)
@@ -347,6 +357,7 @@ public class Player : MonoBehaviour
             {
                 // 이동 애니메이션 해제.
                 _animator.SetBool("Move", false);
+                _isMoving = false;
                 break;
             }
 

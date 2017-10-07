@@ -61,10 +61,8 @@ namespace PacketInfo
 	public class GameStartNotify
 {
 	public int					_playerNumber;
-	public int					_positionX;
-	public int					_positionY;
-	public int					_enemyPositionX;
-	public int					_enemyPositionY;
+	public float				_positionX;
+	public float				_enemyPositionX;
 	}
 
 	// 게임 시작 응답 패킷
@@ -76,8 +74,8 @@ namespace PacketInfo
 	// 내 턴 시작 패킷
 	public class TurnStartNotify
 {
-	public int					_windX;
-	public int					_windY;
+	public float				_windX;
+	public float				_windY;
 	}
 
 	// 내 턴 시작 응답 패킷
@@ -89,8 +87,8 @@ namespace PacketInfo
 	// 상대 턴 시작 패킷
 	public class EnemyTurnStartNotify
 {
-	public int					_windX;
-	public int					_windY;
+	public float				_windX;
+	public float				_windY;
 	}
 
 	// 상대 턴 시작 응답 패킷
@@ -102,9 +100,7 @@ namespace PacketInfo
 	// 움직임 전달 패킷
 	public class MoveNotify
 {
-	public int					_moveRange;
-	public int					_enemyPositionX;
-	public int					_enemyPositionY;
+	public float				_enemyPositionX;
 	}
 
 	// 움직임 응답 패킷
@@ -116,9 +112,7 @@ namespace PacketInfo
 	// 상대 움직임 알림 패킷
 	public class EnemyMoveNotify
 {
-	public int					_moveRange;
-	public int					_enemyPositionX;
-	public int					_enemyPositionY;
+	public float				_enemyPositionX;
 	}
 
 	// 상대 움직임 응답 패킷
@@ -131,10 +125,10 @@ namespace PacketInfo
 	public class FireNotify
 {
 	public int					_fireType;
-	public int					_enemyPositionX;
-	public int					_enemyPositionY;
-	public int					_forceX;
-	public int					_forceY;
+	public float				_enemyPositionX;
+	public float				_unitVecX;
+	public float				_unitVecY;
+	public float				_magnitude;
 	}
 
 	// 발사 응답 패킷
@@ -147,10 +141,10 @@ namespace PacketInfo
 	public class EnemyFireNotify
 {
 	public int					_fireType;
-	public int					_enemyPositionX;
-	public int					_enemyPositionY;
-	public int					_forceX;
-	public int					_forceY;
+	public float				_enemyPositionX;
+	public float				_unitVecX;
+	public float				_unitVecY;
+	public float				_magnitude;
 	}
 
 	// 상대 발사 응답 패킷
