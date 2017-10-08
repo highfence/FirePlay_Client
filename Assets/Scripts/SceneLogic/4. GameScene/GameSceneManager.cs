@@ -234,25 +234,25 @@ public class GameSceneManager : MonoBehaviour
 
     private UISystem _uiSystem;
     [SerializeField]
-    GameObject _timeText;
+    Text _timeText;
     [SerializeField]
     GameObject _playerHealthBar;
     [SerializeField]
     GameObject _enemyHealthBar;
     [SerializeField]
-    GameObject _playerNameText;
+    Text _playerNameText;
     [SerializeField]
-    GameObject _enemyNameText;
+    Text _enemyNameText;
     [SerializeField]
-    GameObject _playerText;
+    Text _playerText;
     [SerializeField]
-    GameObject _playerScoreText;
+    Text _playerScoreText;
     [SerializeField]
-    GameObject _enemyText;
+    Text _enemyText;
     [SerializeField]
-    GameObject _enemyScoreText;
+    Text _enemyScoreText;
     [SerializeField]
-    GameObject _turnText;
+    Text _turnText;
 
     private GameTimer _gameTimer;
 
@@ -261,14 +261,14 @@ public class GameSceneManager : MonoBehaviour
         _uiSystem = FindObjectOfType<UISystem>();
 
         // 시간관련 초기화.
-        _timeText = Instantiate(Resources.Load("GUI/TimeText")) as GameObject;
+        _timeText = Instantiate(Resources.Load("GUI/TimeText") as GameObject).GetComponent<Text>();
         var timePosition = (new Vector3(Screen.width / 2, Screen.height * 0.95f, 0));
         timePosition.z = 0;
         _timeText.transform.position = timePosition;
-        _uiSystem.AttachUI(_timeText);
+        _uiSystem.AttachUI(_timeText.gameObject);
 
         _gameTimer = Instantiate(Resources.Load("Prefabs/GameTimer") as GameObject).GetComponent<GameTimer>();
-        _gameTimer.SetText(_timeText);
+        _gameTimer.SetText(_timeText.gameObject);
         _gameTimer.OnTurnAutoEnd += OnTurnAutoEnd;
 
         // 플레이어 체력바 초기화.
@@ -286,38 +286,38 @@ public class GameSceneManager : MonoBehaviour
         _enemy.SetHealthBar(_enemyHealthBar);
 
         // 플레이어 정보 초기화.
-        _playerNameText = Instantiate(Resources.Load("GUI/PlayerNameText")) as GameObject;
+        _playerNameText = Instantiate(Resources.Load("GUI/PlayerNameText") as GameObject).GetComponent<Text>();
         _playerNameText.GetComponent<Text>().text = _dataContainer._playerId;
         _playerNameText.transform.position = new Vector3(Screen.width * 0.128f, Screen.height * 0.95f, 0);
-        _uiSystem.AttachUI(_playerNameText);
+        _uiSystem.AttachUI(_playerNameText.gameObject);
 
-        _playerText = Instantiate(Resources.Load("GUI/PlayerText")) as GameObject;
-        _uiSystem.AttachUI(_playerText);
+        _playerText = Instantiate(Resources.Load("GUI/PlayerText") as GameObject).GetComponent<Text>();
+        _uiSystem.AttachUI(_playerText.gameObject);
 
-        _playerScoreText = Instantiate(Resources.Load("GUI/PlayerScoreText")) as GameObject;
+        _playerScoreText = Instantiate(Resources.Load("GUI/PlayerScoreText") as GameObject).GetComponent<Text>();
         _playerScoreText.GetComponent<Text>().text = "Wins : " + _dataContainer._playerWins.ToString() + "\n Loses : " + _dataContainer._playerLoses.ToString();
         _playerScoreText.transform.position = new Vector3(Screen.width * 0.40f, Screen.height * 0.95f, 0);
-        _uiSystem.AttachUI(_playerScoreText);
+        _uiSystem.AttachUI(_playerScoreText.gameObject);
 
         // 적군 정보 초기화.
-        _enemyNameText = Instantiate(Resources.Load("GUI/EnemyNameText")) as GameObject;
+        _enemyNameText = Instantiate(Resources.Load("GUI/EnemyNameText") as GameObject).GetComponent<Text>();
         _enemyNameText.GetComponent<Text>().text = _dataContainer._enemyId;
         _enemyNameText.transform.position = new Vector3(Screen.width * 0.872f, Screen.height * 0.95f, 0);
-        _uiSystem.AttachUI(_enemyNameText);
+        _uiSystem.AttachUI(_enemyNameText.gameObject);
 
-        _enemyText = Instantiate(Resources.Load("GUI/PlayerText")) as GameObject;
-        _uiSystem.AttachUI(_enemyText);
+        _enemyText = Instantiate(Resources.Load("GUI/PlayerText") as GameObject).GetComponent<Text>();
+        _uiSystem.AttachUI(_enemyText.gameObject);
 
-        _enemyScoreText = Instantiate(Resources.Load("GUI/EnemyScoreText")) as GameObject;
+        _enemyScoreText = Instantiate(Resources.Load("GUI/EnemyScoreText") as GameObject).GetComponent<Text>();
         _enemyScoreText.GetComponent<Text>().text = _dataContainer._enemyWins.ToString() + " : Wins \n" + _dataContainer._enemyLoses.ToString() + " : Loses";
         _enemyScoreText.transform.position = new Vector3(Screen.width * 0.60f, Screen.height * 0.95f, 0);
-        _uiSystem.AttachUI(_enemyScoreText);
+        _uiSystem.AttachUI(_enemyScoreText.gameObject);
 
         // 턴 텍스트 초기화.
-        _turnText = Instantiate(Resources.Load("GUI/TurnText")) as GameObject;
+        _turnText = Instantiate(Resources.Load("GUI/TurnText") as GameObject).GetComponent<Text>();
         _turnText.GetComponent<Text>().text = "PLAYER TURN";
         _turnText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0f - 50f, 0);
-        _uiSystem.AttachUI(_turnText);
+        _uiSystem.AttachUI(_turnText.gameObject);
 
         // 트윈 초기화.
         DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
