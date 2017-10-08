@@ -14,7 +14,7 @@ public class GameTimer : MonoBehaviour
     // 턴이 자동으로 끝났을 때 호출될 이벤트.
     public event Action OnTurnAutoEnd = delegate { };
 
-    private GameObject _timeText;
+    private Text _timeText;
 
 	void Awake()
     {
@@ -23,9 +23,9 @@ public class GameTimer : MonoBehaviour
         _isTimeSeted = false;
 	}
 
-    public void SetText(GameObject textUI)
+    public void SetText(Text textObject)
     {
-        _timeText = textUI;
+        _timeText = textObject;
         _isTimeSeted = true;
     }
 	
@@ -66,11 +66,11 @@ public class GameTimer : MonoBehaviour
     {
         if (_turnTime >= 10)
         {
-            _timeText.GetComponent<Text>().text = _turnTime.ToString();
+            _timeText.text = _turnTime.ToString();
         }
         else
         {
-            _timeText.GetComponent<Text>().text = "0" + _turnTime.ToString();
+            _timeText.text = "0" + _turnTime.ToString();
         }
     }
 
