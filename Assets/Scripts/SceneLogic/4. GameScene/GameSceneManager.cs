@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -133,11 +134,13 @@ public class GameSceneManager : MonoBehaviour
         _enemy.StartCoroutine("OnEnemyAttackStarted", receivedPacket);
     }
 
+    // 게임이 끝났음을 알려주는 패킷 처리.
     private void OnGameSetNotify(PacketInfo.GameSetNotify receivedPacket)
     {
 
     }
 
+    // 턴이 자동 종료됨을 알려주는 패킷 처리.
     private void OnTurnAutoEnd()
     {
 
@@ -175,20 +178,62 @@ public class GameSceneManager : MonoBehaviour
         Instantiate(platform);
     }
 
+    private IEnumerator OnTurnChanged(bool isEnemyTurnNow = false)
+    {
+        string turnText;
+        if (isEnemyTurnNow == true)
+        {
+            turnText = "ENEMY TURN";
+        }
+        else
+        {
+            turnText = "PLAYER TURN";
+        }
+        _turnText.GetComponent<Text>().text = turnText;
+
+        _turnText.transform.DOMoveY(Screen.height * 0.6f, 2f);
+        yield return new WaitForSeconds(2f);
+
+        for (var i = 0; i < 2; ++i)
+        {
+            _turnText.GetComponent<Text>().text = "";
+            yield return new WaitForSeconds(0.25f);
+            _turnText.GetComponent<Text>().text = turnText;
+        }
+
+        _turnText.transform.DOMoveY(Screen.height + 100f, 2f);
+
+        if (isEnemyTurnNow == false)
+        {
+            _player._isMyTurn = true;
+        }
+    }
+
     #endregion
 
     #region UI
 
     private UISystem _uiSystem;
-    public GameObject _timeText;
-    public GameObject _playerHealthBar;
-    public GameObject _enemyHealthBar;
-    public GameObject _playerNameText;
-    public GameObject _enemyNameText;
-    public GameObject _playerText;
-    public GameObject _playerScoreText;
-    public GameObject _enemyText;
-    public GameObject _enemyScoreText;
+    [SerializeField]
+    GameObject _timeText;
+    [SerializeField]
+    GameObject _playerHealthBar;
+    [SerializeField]
+    GameObject _enemyHealthBar;
+    [SerializeField]
+    GameObject _playerNameText;
+    [SerializeField]
+    GameObject _enemyNameText;
+    [SerializeField]
+    GameObject _playerText;
+    [SerializeField]
+    GameObject _playerScoreText;
+    [SerializeField]
+    GameObject _enemyText;
+    [SerializeField]
+    GameObject _enemyScoreText;
+    [SerializeField]
+    GameObject _turnText;
 
     private GameTimer _gameTimer;
 
@@ -249,6 +294,28 @@ public class GameSceneManager : MonoBehaviour
         _enemyScoreText.transform.position = new Vector3(Screen.width * 0.60f, Screen.height * 0.95f, 0);
         _uiSystem.AttachUI(_enemyScoreText);
 
+        // 적군 정보 초기화.
+        _enemyNameText = Instantiate(Resources.Load("GUI/EnemyNameText")) as GameObject;
+        _enemyNameText.GetComponent<Text>().text = _dataContainer._enemyId;
+        _enemyNameText.transform.position = new Vector3(Screen.width * 0.872f, Screen.height * 0.95f, 0);
+        _uiSystem.AttachUI(_enemyNameText);
+
+        _enemyText = Instantiate(Resources.Load("GUI/PlayerText")) as GameObject;
+        _uiSystem.AttachUI(_enemyText);
+
+        _enemyScoreText = Instantiate(Resources.Load("GUI/EnemyScoreText")) as GameObject;
+        _enemyScoreText.GetComponent<Text>().text = _dataContainer._enemyWins.ToString() + " : Wins \n" + _dataContainer._enemyLoses.ToString() + " : Loses";
+        _enemyScoreText.transform.position = new Vector3(Screen.width * 0.60f, Screen.height * 0.95f, 0);
+        _uiSystem.AttachUI(_enemyScoreText);
+
+        // 턴 텍스트 초기화.
+        _turnText = Instantiate(Resources.Load("GUI/TurnText")) as GameObject;
+        _turnText.GetComponent<Text>().text = "PLAYER TURN";
+        _turnText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0f - 50f, 0);
+        _uiSystem.AttachUI(_turnText);
+
+        // 트윈 초기화.
+        DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
     }
 
     private void UIUpdate()

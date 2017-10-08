@@ -157,8 +157,8 @@ public class TestManager : MonoBehaviour
         DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
 
         Sequence turnTextSequence = DOTween.Sequence();
-        turnTextSequence.Append(_turnText.transform.DOMoveY(Screen.width * 0.5f, 2f));
         turnTextSequence.Append(_turnText.transform.DOMoveY(Screen.width * 0.4f, 2f));
+        turnTextSequence.Append(_turnText.transform.DOMoveY(Screen.width * 0.4f, 0.5f));
         turnTextSequence.Append(_turnText.transform.DOMoveY(Screen.width + 100f, 3f));
     }
 
