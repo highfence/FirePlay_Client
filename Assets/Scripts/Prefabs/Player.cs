@@ -424,6 +424,18 @@ public class Player : MonoBehaviour
         NetworkManager.GetInstance().SendPacket(enemyFireAck, PacketInfo.PacketId.ID_EnemyFireAck);
     }
 
+    public void TurnEndSetting()
+    {
+        if (_isMyTurn == false)
+            return;
+
+        _isMyTurn = false;
+        _isMoving = false;
+        _isMouseDown = false;
+        _fireLine.enabled = false;
+        _crosshair.GetComponent<SpriteRenderer>().enabled = false;
+    }
+
     public static class Factory
     {
         public static Player Create(PlayerSpec spec)

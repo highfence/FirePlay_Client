@@ -29,7 +29,7 @@ public class GameTimer : MonoBehaviour
         _isTimeSeted = true;
     }
 	
-	void Update ()
+	void Update()
     {
         if (_isTimeSeted == true && _isTurnStarted == true)
         {
@@ -39,6 +39,7 @@ public class GameTimer : MonoBehaviour
 
     public void TurnStart()
     {
+        Clear();
         _isTurnStarted = true;
     }
 

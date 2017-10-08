@@ -95,6 +95,7 @@ public class GameSceneManager : MonoBehaviour
     private void OnTurnStartNotify(TurnStartNotify receivedPacket)
     {
         // TODO :: 턴 시작시 바람 얻어와서 적용.
+        _gameTimer.TurnStart();
         StartCoroutine("OnTurnChanged", false);
     }
 
@@ -102,6 +103,7 @@ public class GameSceneManager : MonoBehaviour
     private void OnEnemyTurnStartNotify(EnemyTurnStartNotify receivedPacket)
     {
         // TODO :: 턴 시작시 바람 얻어와서 적용.
+        _gameTimer.TurnStart();
         _player._isMyTurn = false;
         StartCoroutine("OnTurnChanged", true);
     }
@@ -147,7 +149,16 @@ public class GameSceneManager : MonoBehaviour
     // 턴이 자동 종료됨을 알려주는 패킷 처리.
     private void OnTurnAutoEnd()
     {
+        // 내 턴일 때만 작동.
+        if (_player._isMyTurn == false)
+            return;
 
+        // 우선 내 턴을 끝낸다.
+        _player.TurnEndSetting();
+
+        // 서버에게 내가 턴이 끝났다는 것을 알려준다.
+        var turnEndNotify = new TurnEndNotify();
+        _networkManager.SendPacket(turnEndNotify, PacketId.ID_TurnEndNotify);
     }
 
     // 매치 성사 응답을 보낸다.

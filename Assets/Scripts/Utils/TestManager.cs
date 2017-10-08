@@ -139,7 +139,7 @@ public class TestManager : MonoBehaviour
         _uiSystem.AttachUI(_timeText.gameObject);
 
         _gameTimer = Instantiate(Resources.Load("Prefabs/GameTimer") as GameObject).GetComponent<GameTimer>();
-        _gameTimer.SetText(_timeText.gameObject);
+        _gameTimer.SetText(_timeText);
         _gameTimer.OnTurnAutoEnd += OnTurnAutoEnd;
 
         // 플레이어 체력바 초기화.
