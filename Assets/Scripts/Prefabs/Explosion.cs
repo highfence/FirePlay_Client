@@ -22,7 +22,7 @@ public class Explosion : MonoBehaviour
     private ExplosionSpec _spec;
     private GameObject _explosion;
 
-    public void Init(ExplosionType explosionType, GameObject player, GameObject enemy)
+    public void Init(ExplosionType explosionType, GameObject player, GameObject enemy, int damageRatio)
     {
         #region SPEC LOAD
 
@@ -48,7 +48,7 @@ public class Explosion : MonoBehaviour
 
         #region COLLISION DETECT 
 
-        int damage = UnityEngine.Random.Range(_spec._minDamage, _spec._maxDamage);
+        var damage = (int)(_spec._minDamage + (_spec._maxDamage - _spec._minDamage) * damageRatio / 100);
 
         if (GetExplosionCollision(_spec, player, this.transform.position))
         {
@@ -74,8 +74,6 @@ public class Explosion : MonoBehaviour
         var playerPosition = new Vector2(player.transform.position.x, player.transform.position.y);
         var explosionPosition = new Vector2(position.x, position.y);
         var distance = Vector2.Distance(playerPosition, explosionPosition);
-
-        Debug.LogFormat("Distance to explosion : {0}, Explosion Range : {1}", distance, spec._range);
 
         if (distance <= spec._range)
         {

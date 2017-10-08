@@ -70,18 +70,12 @@ public class MatchSceneManager : MonoBehaviour
     // 매치 성공 알림 답변 패킷 처리.
     private void OnMatchSuccessNotify(PacketInfo.MatchSuccessNotify receivedPacket)
     {
-        // 응답을 보내준다.
-        SendMatchSuccessAck();
-
         // 받은 정보를 저장한다.
         _dataContainer.SetGameMatchData(receivedPacket);
 
         // 게임 씬으로 상태를 바꾼다.
-        // TODO :: 게임 확인 패킷이 날라올때 까지의 컷씬이 필요하지 않을까 싶기도.
         SceneManager.LoadScene("4. Game");
     }
-
-
 
     // 매치 요청 패킷을 보낸다.
     void SendMatchReqPacket()
@@ -94,7 +88,6 @@ public class MatchSceneManager : MonoBehaviour
         };
 
         _networkManager.SendPacket<PacketInfo.FastMatchReq>(matchReq, PacketInfo.PacketId.ID_FastMatchReq);
-
     }
 
     // 매치 취소 요청 패킷을 보낸다.
@@ -109,16 +102,7 @@ public class MatchSceneManager : MonoBehaviour
         _networkManager.SendPacket<PacketInfo.MatchCancelReq>(cancelReq, PacketInfo.PacketId.ID_MatchCancelReq);
     }
 
-    // 매치 성사 응답을 보낸다.
-    void SendMatchSuccessAck()
-    {
-        var successAck = new PacketInfo.MatchSuccessAck()
-        {
-            _result = (int)ErrorCode.None
-        };
 
-        _networkManager.SendPacket<PacketInfo.MatchSuccessAck>(successAck, PacketInfo.PacketId.ID_MatchSuccessAck);
-    }
 
     #endregion
 

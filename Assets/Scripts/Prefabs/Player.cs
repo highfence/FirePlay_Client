@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -209,7 +210,8 @@ public class Player : MonoBehaviour
 
             var moveNotify = new PacketInfo.MoveNotify()
             {
-                _enemyPositionX = this.transform.position.x
+                _enemyPositionX = this.transform.position.x,
+                _enemyPositionY = this.transform.position.y
             };
 
             NetworkManager.GetInstance().SendPacket(moveNotify, PacketInfo.PacketId.ID_MoveNotify);
@@ -254,31 +256,36 @@ public class Player : MonoBehaviour
                 #endregion
 
                 #region CROSSHAIR CONTROLL
+
                 _crosshair.GetComponent<SpriteRenderer>().enabled = true;
                 var playerPos = new Vector2(this.transform.position.x, this.transform.position.y);
                 var mouseWorldPos = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
                 var oppositeUnitVec = playerPos - mouseWorldPos;
                 oppositeUnitVec.Normalize();
-                oppositeUnitVec *= 2;
+                oppositeUnitVec *= 3f;
 
                 _crosshair.transform.position = (this.transform.position + new Vector3(oppositeUnitVec.x, oppositeUnitVec.y, 0));
+
                 #endregion
             }
         }
 
         if (Input.GetMouseButtonUp(0))
         {
+            // 발사.
+            StartCoroutine("OnAttackStarted");
+
             _isMouseDown = false;
             _fireLine.enabled = false;
             _crosshair.GetComponent<SpriteRenderer>().enabled = false;
-
-            // 발사.
-            StartCoroutine("OnAttackStarted");
         }
     }
 
     public IEnumerator OnAttackStarted()
     {
+        var mousePosition = Input.mousePosition;
+        var crosshairPosition = _crosshair.transform.position;
+
         #region WAIT FOR MOVE END
         while (true)
         {
@@ -289,10 +296,18 @@ public class Player : MonoBehaviour
         }
         #endregion
 
-        var mousePosition = Input.mousePosition;
-        var crosshairPosition = _crosshair.transform.position;
-
         #region START ATTACK ANIMATION
+
+        if (mousePosition.x > this.transform.position.x)
+        {
+            _isGoesRight = false;
+            _spriteRenderer.flipX = true;
+        }
+        else if (mousePosition.x < this.transform.position.x)
+        {
+            _isGoesRight = true;
+            _spriteRenderer.flipX = false;
+        }
 
         _animator.SetTrigger("Attack");
 
@@ -307,16 +322,19 @@ public class Player : MonoBehaviour
 
         unitVec2.Normalize();
 
+        // 데미지 결정.
+        var damageRatio = (int)UnityEngine.Random.Range(0, 100);
+
         // 총알 발사.
         var bullet = Instantiate(Resources.Load("Prefabs/Bullet")) as GameObject;
-        // TODO :: 임시로 2배의 매그니튜드를 줌.
-        bullet.GetComponent<Bullet>().Fire(crosshairPosition, unitVec2, magnitude * 2, ExplosionType.Type1);
+        bullet.GetComponent<Bullet>().Fire(crosshairPosition, unitVec2, magnitude * 2, ExplosionType.Type1, damageRatio);
 
         // 서버에 발사했다고 알림.
         var fireNotify = new PacketInfo.FireNotify()
         {
             _fireType = 0,
-            _enemyPositionX = (int)this.transform.position.x,
+            _enemyPositionX = this.transform.position.x,
+            _damage = damageRatio,
             _magnitude = magnitude,
             _unitVecX = unitVec2.x,
             _unitVecY = unitVec2.y
@@ -346,73 +364,28 @@ public class Player : MonoBehaviour
 
         #endregion
 
-        // 0.1초마다 움직일 거리 계산.
-        float unitMoveRange = _spec._moveSpeed / 20f;
+        // 1초마다 움직일 거리 계산.
+        float unitMoveRange = _spec._moveSpeed / 2f;
+        float remainDistance = 0f;
 
-        while (true)
+        if (_isGoesRight == true)
         {
-            #region LET MOVE 
-
-            if (destPositionX == this.transform.position.x)
-            {
-                // 이동 애니메이션 해제.
-                _animator.SetBool("Move", false);
-                _isMoving = false;
-                break;
-            }
-
-            // 목표 지점과 현재 지점의 거리 계산.
-            float remainDistance = 0f;
-
-            if (_isGoesRight == true)
-            {
-                remainDistance = destPositionX - this.transform.position.x;
-            }
-            else
-            {
-                remainDistance = this.transform.position.x - destPositionX;
-            }
-
-            // 단위 거리보다 거리가 가까워 졌다면 포지션을 대입.
-            if (unitMoveRange > remainDistance)
-            {
-                var goalPosition = this.transform.position;
-                goalPosition.x = destPositionX;
-                this.transform.position = goalPosition;
-            }
-            // 아니라면 단위 거리만큼 전진.
-            else
-            {
-                var movedPosition = this.transform.position;
-                if (_isGoesRight == true)
-                {
-                    movedPosition.x += unitMoveRange;
-                }
-                else
-                {
-                    movedPosition.x -= unitMoveRange;
-                }
-                this.transform.position = movedPosition;
-            }
-
-            #endregion
-
-            yield return new WaitForSeconds(0.05f);
+            remainDistance = destPositionX - this.transform.position.x;
         }
+        else
+        {
+            remainDistance = this.transform.position.x - destPositionX;
+        }
+
+        var neededTimeToMove = remainDistance / unitMoveRange;
+        transform.DOMoveX(destPositionX, neededTimeToMove);
+
+        yield return new WaitForSeconds(neededTimeToMove);
+        _animator.SetBool("Move", false);
     }
 
     public IEnumerator OnEnemyAttackStarted(PacketInfo.EnemyFireNotify enemyFireInfo)
     {
-        #region WAIT FOR MOVE END
-        while (true)
-        {
-            if (_isMoving == true)
-                continue;
-
-            break;
-        }
-        #endregion
-
         var unitVec = new Vector2(enemyFireInfo._unitVecX, enemyFireInfo._unitVecY);
         var magnitude = enemyFireInfo._magnitude;
 
@@ -421,7 +394,7 @@ public class Player : MonoBehaviour
         _crosshair.GetComponent<SpriteRenderer>().enabled = true;
         var enemyPos = new Vector2(this.transform.position.x, this.transform.position.y);
         var crosshairVec = unitVec;
-        crosshairVec *= 2;
+        crosshairVec *= 3;
 
         _crosshair.transform.position = (this.transform.position + new Vector3(crosshairVec.x, crosshairVec.y, 0));
 
@@ -438,7 +411,7 @@ public class Player : MonoBehaviour
 
         // 총알 발사.
         var bullet = Instantiate(Resources.Load("Prefabs/Bullet")) as GameObject;
-        bullet.GetComponent<Bullet>().Fire(_crosshair.transform.position, unitVec, magnitude * 2, ExplosionType.Type1);
+        bullet.GetComponent<Bullet>().Fire(_crosshair.transform.position, unitVec, magnitude * 2, ExplosionType.Type1, enemyFireInfo._damage);
 
         _crosshair.GetComponent<SpriteRenderer>().enabled = false;
 

@@ -13,15 +13,17 @@ public class Bullet : MonoBehaviour
 {
     SpriteRenderer _renderer;
     ExplosionType _type;
+    int _damageRatio;
 
     private void Awake()
     {
         _renderer = this.GetComponent<SpriteRenderer>();
     }
 
-    public void Fire(Vector2 firePosition, Vector2 fireUnitVec, float magnitude, ExplosionType type)
+    public void Fire(Vector2 firePosition, Vector2 fireUnitVec, float magnitude, ExplosionType type, int damageRatio)
     {
         _type = type;
+        _damageRatio = damageRatio;
         this.transform.position = firePosition;
 
         var body = this.GetComponent<Rigidbody2D>();
@@ -30,7 +32,7 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        EffectManager.GetInstance().MakeExplosion(_type, this.transform.position);
+        EffectManager.GetInstance().MakeExplosion(_type, this.transform.position, _damageRatio);
 
         Destroy(this.gameObject);
     }

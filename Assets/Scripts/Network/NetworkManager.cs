@@ -44,6 +44,14 @@ public partial class NetworkManager : MonoBehaviour
     void OnApplicationQuit()
     {
         // TODO :: Close Session Packet을 보내준다.
+        var closePacket = new PacketInfo.CloseReq
+        {
+            _id = DataContainer.GetInstance()._playerId,
+            _token = DataContainer.GetInstance()._playerToken
+        };
+
+        SendPacket(closePacket, PacketId.ID_CloseReq);
+
         _tcpNetwork.CloseNetwork();
     }
 

@@ -1,23 +1,29 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using PacketInfo;
 
 public class GameSceneManager : MonoBehaviour
 {
-    private void Start()
+    private IEnumerator Start()
     {
         // Logic Initialize
         Initialize();
-        RegistPacketEvents();
 
         // Ingame Graphic Initialize
-        PlatformCreate();
-        PlayerCreate();
+        yield return PlatformCreate();
+        yield return PlayerCreate();
+
+        RegistPacketEvents();
 
         // UI Initialize
         UIInitialize();
+
+        // 게임을 시작할 준비가 되었음을 서버에 알린다.
+        SendMatchSuccessAck();
     }
 
     private void Update()
@@ -51,13 +57,15 @@ public class GameSceneManager : MonoBehaviour
     }
 
     // 게임 시작 알림 답변 패킷 처리.
-    private void OnGameStartNotify(PacketInfo.GameStartNotify receivedPacket)
+    private void OnGameStartNotify(GameStartNotify receivedPacket)
     {
         // 받은 패킷에서 내 위치와 상대방 위치를 뽑아옴.
-        _player.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(receivedPacket._positionX, 300, 0));
+        var initPlayerPosition =  new Vector3(receivedPacket._positionX, 30, 0);
+        _player.transform.position = initPlayerPosition;
         _dataContainer.SetPlayerPosition(_player.transform.position);
 
-        _enemy.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(receivedPacket._enemyPositionX, 300, 0));
+        var initEnemyPosition =  new Vector3(receivedPacket._enemyPositionX, 30, 0);
+        _enemy.transform.position = initEnemyPosition;
         _dataContainer.SetEnemyPosition(_enemy.transform.position);
 
         // 플레이어 넘버를 지정.
@@ -84,63 +92,73 @@ public class GameSceneManager : MonoBehaviour
     }
 
     // 턴이 시작되었음을 알려주는 패킷 처리.
-    private void OnTurnStartNotify(PacketInfo.TurnStartNotify receivedPacket)
+    private void OnTurnStartNotify(TurnStartNotify receivedPacket)
     {
         // TODO :: 턴 시작시 바람 얻어와서 적용.
-
-        // TODO :: 내 턴이라는 걸 알려주고 시간 차를 둔 뒤 턴 활성화.
-        _player._isMyTurn = true;
+        StartCoroutine("OnTurnChanged", false);
     }
 
     // 상대 턴이 시작되었음을 알려주는 패킷 처리.
-    private void OnEnemyTurnStartNotify(PacketInfo.EnemyTurnStartNotify receivedPacket)
+    private void OnEnemyTurnStartNotify(EnemyTurnStartNotify receivedPacket)
     {
         // TODO :: 턴 시작시 바람 얻어와서 적용.
-
-        // TODO :: 상대 턴이라는 걸 알려주고 시간 차를 둔 뒤 턴 활성화.
         _player._isMyTurn = false;
+        StartCoroutine("OnTurnChanged", true);
     }
 
     // 서버가 움직임을 확인했음을 알려주는 패킷 처리.
-    private void OnMoveAck(PacketInfo.MoveAck receivedPacket)
+    private void OnMoveAck(MoveAck receivedPacket)
     {
         
     }
 
     // 상대의 움직임을 알려주는 패킷 처리.
-    private void OnEnemyMoveNotify(PacketInfo.EnemyMoveNotify receivedPacket)
+    private void OnEnemyMoveNotify(EnemyMoveNotify receivedPacket)
     {
         _enemy.StartCoroutine("OnMoveCommanded", receivedPacket._enemyPositionX);
         _dataContainer.SetEnemyPosition(_enemy.transform.position);
     }
 
     // 서버가 발사를 확인했음을 알려주는 패킷 처리.
-    private void OnFireAck(PacketInfo.FireAck receivedPacket)
+    private void OnFireAck(FireAck receivedPacket)
     {
 
     }
 
     // 상대의 발사를 알려주는 패킷 처리.
-    private void OnEnemyFireNotify(PacketInfo.EnemyFireNotify receivedPacket)
+    private void OnEnemyFireNotify(EnemyFireNotify receivedPacket)
     {
         // 현재 적군의 위치가 잘 동기화 되었는지 확인.
         if (receivedPacket._enemyPositionX != _enemy.transform.position.x)
         {
             // 동기화 되어있지 않다면 먼저 움직이는 모션을 넣어준다.
-            _enemy.StartCoroutine("OnMoveCommanded", receivedPacket._enemyPositionX);
+            //_enemy.StartCoroutine("OnMoveCommanded", receivedPacket._enemyPositionX); 
         }
 
         _enemy.StartCoroutine("OnEnemyAttackStarted", receivedPacket);
     }
 
-    private void OnGameSetNotify(PacketInfo.GameSetNotify receivedPacket)
+    // 게임이 끝났음을 알려주는 패킷 처리.
+    private void OnGameSetNotify(GameSetNotify receivedPacket)
     {
 
     }
 
+    // 턴이 자동 종료됨을 알려주는 패킷 처리.
     private void OnTurnAutoEnd()
     {
 
+    }
+
+    // 매치 성사 응답을 보낸다.
+    void SendMatchSuccessAck()
+    {
+        var successAck = new PacketInfo.MatchSuccessAck()
+        {
+            _result = (int)ErrorCode.None
+        };
+
+        _networkManager.SendPacket<PacketInfo.MatchSuccessAck>(successAck, PacketInfo.PacketId.ID_MatchSuccessAck);
     }
 
     #endregion
@@ -150,7 +168,7 @@ public class GameSceneManager : MonoBehaviour
     private Player _player;
     private Player _enemy;
 
-    private void PlayerCreate()
+    private IEnumerator PlayerCreate()
     {
         // 내 캐릭터 생성.
         var playerSpecText = Resources.Load<TextAsset>("Data/Archer" + (int)_dataContainer._playerType).text;
@@ -167,12 +185,47 @@ public class GameSceneManager : MonoBehaviour
 
         // 이펙트 매니저에서 쓸 수 있도록 등록.
         _effectManager.SetPlayers(_player.gameObject, _enemy.gameObject);
+        yield break;
     }
 
-    private void PlatformCreate()
+    private IEnumerator PlatformCreate()
     {
         var platform = Resources.Load<GameObject>("Prefabs/Platform");
         Instantiate(platform);
+        yield break;
+    }
+
+    private IEnumerator OnTurnChanged(bool isEnemyTurnNow)
+    {
+        string turnText;
+        if (isEnemyTurnNow == true)
+        {
+            turnText = "ENEMY TURN";
+        }
+        else
+        {
+            turnText = "PLAYER TURN";
+        }
+        _turnText.GetComponent<Text>().text = turnText;
+
+        _turnText.transform.DOMoveY(Screen.height * 0.6f, 2f);
+        yield return new WaitForSeconds(2f);
+
+        for (var i = 0; i < 2; ++i)
+        {
+            _turnText.GetComponent<Text>().text = "";
+            yield return new WaitForSeconds(0.2f);
+            _turnText.GetComponent<Text>().text = turnText;
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        _turnText.GetComponent<Text>().text = "";
+        _turnText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0f - 50f, 0);
+
+        if (isEnemyTurnNow == false)
+        {
+            _player._isMyTurn = true;
+        }
     }
 
     #endregion
@@ -180,15 +233,26 @@ public class GameSceneManager : MonoBehaviour
     #region UI
 
     private UISystem _uiSystem;
-    public GameObject _timeText;
-    public GameObject _playerHealthBar;
-    public GameObject _enemyHealthBar;
-    public GameObject _playerNameText;
-    public GameObject _enemyNameText;
-    public GameObject _playerText;
-    public GameObject _playerScoreText;
-    public GameObject _enemyText;
-    public GameObject _enemyScoreText;
+    [SerializeField]
+    GameObject _timeText;
+    [SerializeField]
+    GameObject _playerHealthBar;
+    [SerializeField]
+    GameObject _enemyHealthBar;
+    [SerializeField]
+    GameObject _playerNameText;
+    [SerializeField]
+    GameObject _enemyNameText;
+    [SerializeField]
+    GameObject _playerText;
+    [SerializeField]
+    GameObject _playerScoreText;
+    [SerializeField]
+    GameObject _enemyText;
+    [SerializeField]
+    GameObject _enemyScoreText;
+    [SerializeField]
+    GameObject _turnText;
 
     private GameTimer _gameTimer;
 
@@ -249,20 +313,26 @@ public class GameSceneManager : MonoBehaviour
         _enemyScoreText.transform.position = new Vector3(Screen.width * 0.60f, Screen.height * 0.95f, 0);
         _uiSystem.AttachUI(_enemyScoreText);
 
+        // 턴 텍스트 초기화.
+        _turnText = Instantiate(Resources.Load("GUI/TurnText")) as GameObject;
+        _turnText.GetComponent<Text>().text = "PLAYER TURN";
+        _turnText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0f - 50f, 0);
+        _uiSystem.AttachUI(_turnText);
+
+        // 트윈 초기화.
+        DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
     }
 
     private void UIUpdate()
     {
         // 플레이어 정보가 따라다니도록.
-        var playerTextPos = _uiSystem._uiCam.WorldToViewportPoint(_player.transform.position);
-        playerTextPos.z = 0;
-        playerTextPos.y += 20;
-        _playerText.transform.position = playerTextPos;
+        var playerScreenPosition = Camera.main.WorldToScreenPoint(_player.transform.position);
+        playerScreenPosition.y += 80;
+        _playerText.transform.position = playerScreenPosition;
 
-        var enemyTextPos = _uiSystem._uiCam.WorldToViewportPoint(_enemy.transform.position);
-        enemyTextPos.z = 0;
-        enemyTextPos.y += 20;
-        _enemyText.transform.position = enemyTextPos;
+        var enemyScreenPosition = Camera.main.WorldToScreenPoint(_enemy.transform.position);
+        enemyScreenPosition.y += 80;
+        _enemyText.transform.position = enemyScreenPosition;
     }
 
     #endregion

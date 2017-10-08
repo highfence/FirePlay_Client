@@ -101,6 +101,7 @@ namespace PacketInfo
 	public class MoveNotify
 {
 	public float				_enemyPositionX;
+	public float				_enemyPositionY;
 	}
 
 	// 움직임 응답 패킷
@@ -113,6 +114,7 @@ namespace PacketInfo
 	public class EnemyMoveNotify
 {
 	public float				_enemyPositionX;
+	public float				_enemyPositionY;
 	}
 
 	// 상대 움직임 응답 패킷
@@ -125,7 +127,9 @@ namespace PacketInfo
 	public class FireNotify
 {
 	public int					_fireType;
+	public int					_damage;
 	public float				_enemyPositionX;
+	public float				_enemyPositionY;
 	public float				_unitVecX;
 	public float				_unitVecY;
 	public float				_magnitude;
@@ -141,7 +145,9 @@ namespace PacketInfo
 	public class EnemyFireNotify
 {
 	public int					_fireType;
+	public int					_damage;
 	public float				_enemyPositionX;
+	public float				_enemyPositionY;
 	public float				_unitVecX;
 	public float				_unitVecY;
 	public float				_magnitude;

@@ -36,7 +36,7 @@ public class EffectManager : MonoBehaviour
         _enemy = enemy;
     }
 
-    public void MakeExplosion(ExplosionType type, Vector2 position)
+    public void MakeExplosion(ExplosionType type, Vector2 position, int damageRatio)
     {
         if (_player == null || _enemy == null)
             return;
@@ -47,7 +47,7 @@ public class EffectManager : MonoBehaviour
         var explosionPosition = new Vector3(position.x, position.y, 0);
         instance.transform.position = explosionPosition;
 
-        instance.GetComponent<Explosion>().Init(type, _player, _enemy);
+        instance.GetComponent<Explosion>().Init(type, _player, _enemy, damageRatio);
     }
 
     public void FreePlayers()
