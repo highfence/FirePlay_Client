@@ -90,6 +90,7 @@ public class TestManager : MonoBehaviour
     public Text _enemyScoreText;
     public Text _turnText;
 
+
     private GameTimer _gameTimer;
 
     private IEnumerator OnTurnChanged(bool isEnemyTurnNow = false)
@@ -191,6 +192,7 @@ public class TestManager : MonoBehaviour
 
         // 트윈 초기화.
         DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
+ 
     }
 
     private void OnTurnAutoEnd()
