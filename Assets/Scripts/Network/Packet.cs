@@ -169,9 +169,34 @@ namespace PacketInfo
 {
 	}
 
+	// 게임 종료 신청 패킷
+	public class GameSetRequest
+{
+	public int					_winPlayerNum;
+	public int					_player1Hp;
+	public int					_player2Hp;
+	}
+
+	// 게임 종료 확인 패킷
+	public class GameSetAsk
+{
+	public int					_winPlayerNum;
+	}
+
+	// 게임 종료 확인 응답 패킷
+	public class GameSetAnswer
+{
+	public int					_answer;
+	public int					_player1Hp;
+	public int					_player2Hp;
+	}
+
 	// 게임 종료 알림 패킷
 	public class GameSetNotify
 {
+	public int					_isGameSet;
+	public int					_player1Hp;
+	public int					_player2Hp;
 	public int					_winPlayerNum;
 	}
 
@@ -214,8 +239,11 @@ namespace PacketInfo
 		ID_EnemyFireAck			= 122,
 		ID_TurnEndNotify			= 123,
 		ID_TurnEndAck			= 124,
-		ID_GameSetNotify			= 125,
-		ID_GameSetAck			= 126,
-		ID_CloseReq			= 127,
+		ID_GameSetRequest			= 125,
+		ID_GameSetAsk			= 126,
+		ID_GameSetAnswer			= 127,
+		ID_GameSetNotify			= 128,
+		ID_GameSetAck			= 129,
+		ID_CloseReq			= 130,
 	};
 }

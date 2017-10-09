@@ -29,6 +29,7 @@ public class GameSceneManager : MonoBehaviour
     private void Update()
     {
         UIUpdate();
+        CheckGameSet();
     }
 
     #region PACKET LOGIC
@@ -79,6 +80,8 @@ public class GameSceneManager : MonoBehaviour
             _playerText.GetComponent<Text>().text = "PLAYER 2";
             _enemyText.GetComponent<Text>().text = "PLAYER 1";
         }
+
+        _dataContainer.SetPlayerNumber(receivedPacket._playerNumber);
 
         // 응답을 보내준다.
         var ackPacket = new PacketInfo.GameStartAck()
@@ -143,6 +146,11 @@ public class GameSceneManager : MonoBehaviour
     // 게임이 끝났음을 알려주는 패킷 처리.
     private void OnGameSetNotify(GameSetNotify receivedPacket)
     {
+        // 화면을 어둡게 한다.
+
+        // 내가 이겼다면 승리 텍스트를, 아니라면 패배 텍스트를 내보낸다.
+        
+        // TODO :: 전적을 추가해준다.
 
     }
 
@@ -236,6 +244,41 @@ public class GameSceneManager : MonoBehaviour
         if (isEnemyTurnNow == false)
         {
             _player._isMyTurn = true;
+        }
+    }
+
+    private void CheckGameSet()
+    {
+        if (_player._hp <= 0)
+        {
+            _player._isMyTurn = false;
+            _gameTimer.Stop();
+
+            int player1Hp;
+            int player2Hp;
+            int winPlayerNum;
+
+            if (_dataContainer._playerNumber == 1)
+            {
+                player1Hp = _player._hp;
+                player2Hp = _enemy._hp;
+                winPlayerNum = 2;
+            }
+            else
+            {
+                player1Hp = _enemy._hp;
+                player2Hp = _player._hp;
+                winPlayerNum = 1;
+            }
+
+            var gameSetReq = new GameSetRequest()
+            {
+                _player1Hp = player1Hp,
+                _player2Hp = player2Hp,
+                _winPlayerNum = winPlayerNum
+            };
+
+            _networkManager.SendPacket(gameSetReq, PacketId.ID_GameSetRequest);
         }
     }
 

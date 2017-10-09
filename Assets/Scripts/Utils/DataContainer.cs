@@ -43,14 +43,15 @@ public class DataContainer : MonoBehaviour
     #region DATAS
 
     // 플레이어 관련 데이터.
-    public string        _playerId    { get; private set; }
-    public string        _playerToken { get; private set; }
-    public CharacterType _playerType  { get; private set; } 
-    public int           _playerWins  { get; private set; }
-    public int           _playerLoses { get; private set; }
+    public string        _playerId     { get; private set; }
+    public string        _playerToken  { get; private set; }
+    public CharacterType _playerType   { get; private set; } 
+    public int           _playerWins   { get; private set; }
+    public int           _playerLoses  { get; private set; }
+    public int           _playerNumber { get; private set; }
 
-    public Vector2       _playerPos   { get; private set; }
-    public Vector2       _enemyPos    { get; private set; }
+    public Vector2       _playerPos    { get; private set; }
+    public Vector2       _enemyPos     { get; private set; }
 
     // 로그인 서버 관련 데이터.
     public LoginServerConfig               _loginServerConfig { get; private set; }
@@ -81,6 +82,8 @@ public class DataContainer : MonoBehaviour
     }
     public void SetPlayerPosition(Vector2 position) { _playerPos = position; }
     public void SetEnemyPosition(Vector2 position) { _enemyPos = position; }
+    public void SetPlayerNumber(int playerNumber) { _playerNumber = playerNumber; }
+
 
     #endregion
 

@@ -43,6 +43,11 @@ public class GameTimer : MonoBehaviour
         _isTurnStarted = true;
     }
 
+    public void Stop()
+    {
+        _isTurnStarted = false;
+    }
+
     private void TimeProcess()
     {
         _accTime += Time.deltaTime;
