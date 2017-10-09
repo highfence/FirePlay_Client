@@ -138,6 +138,8 @@ public class LoginSceneManager : MonoBehaviour
 
     #region GUI
 
+    public Button _loginButton;
+    public Button _exitButton;
     public InputField _idField;
     public InputField _pwField;
     public string _id;
@@ -177,13 +179,23 @@ public class LoginSceneManager : MonoBehaviour
     // 버튼이 눌렸는지 체크해주는 메소드.
     private void ButtonCheck()
     {
-        if (GUI.Button(new Rect((Screen.width / 2) - 155, Screen.height * 2 / 3, 150, 50), "Login"))
+        //if (GUI.Button(new Rect((Screen.width / 2) - 155, Screen.height * 2 / 3, 150, 50), "Login"))
+        //{
+        //    TryLogin(_id, _pw);
+        //}
+
+        //// TODO :: 이걸 회원가입 버튼으로 바꿔야 될 것 같은데?
+        //if (GUI.Button(new Rect((Screen.width / 2) + 5, Screen.height * 2 / 3, 150, 50), "Exit"))
+        //{
+        //    Application.Quit();
+        //}
+
+        if (_loginButton)
         {
             TryLogin(_id, _pw);
         }
 
-        // TODO :: 이걸 회원가입 버튼으로 바꿔야 될 것 같은데?
-        if (GUI.Button(new Rect((Screen.width / 2) + 5, Screen.height * 2 / 3, 150, 50), "Exit"))
+        if (_exitButton)
         {
             Application.Quit();
         }
