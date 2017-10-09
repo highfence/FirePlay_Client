@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using PacketInfo;
+using UnityEngine.SceneManagement;
 
 public class GameSceneManager : MonoBehaviour
 {
@@ -133,11 +134,14 @@ public class GameSceneManager : MonoBehaviour
     private void OnEnemyFireNotify(EnemyFireNotify receivedPacket)
     {
         // 현재 적군의 위치가 잘 동기화 되었는지 확인.
-        if (receivedPacket._enemyPositionX != _enemy.transform.position.x)
-        {
-            // 동기화 되어있지 않다면 먼저 움직이는 모션을 넣어준다.
-            //_enemy.StartCoroutine("OnMoveCommanded", receivedPacket._enemyPositionX); 
-        }
+        //if (receivedPacket._enemyPositionX != _enemy.transform.position.x)
+        //{
+        //    // 동기화 되어있지 않다면 먼저 움직이는 모션을 넣어준다.
+        //    var fixedPosition = _enemy.transform.position;
+        //    fixedPosition.x = receivedPacket._enemyPositionX;
+        //    fixedPosition.y = receivedPacket._enemyPositionY;
+        //    _enemy.transform.position = fixedPosition;
+        //}
 
         _enemy.StartCoroutine("OnEnemyAttackStarted", receivedPacket);
     }
@@ -251,6 +255,8 @@ public class GameSceneManager : MonoBehaviour
 
     private IEnumerator OnTurnChanged(bool isEnemyTurnNow)
     {
+        yield return new WaitForSeconds(2f);
+
         string turnText;
         if (isEnemyTurnNow == true)
         {
@@ -260,20 +266,20 @@ public class GameSceneManager : MonoBehaviour
         {
             turnText = "PLAYER TURN";
         }
-        _turnText.GetComponent<Text>().text = turnText;
+        _turnText.text = turnText;
 
         _turnText.transform.DOMoveY(Screen.height * 0.6f, 2f);
         yield return new WaitForSeconds(2f);
 
         for (var i = 0; i < 2; ++i)
         {
-            _turnText.GetComponent<Text>().text = "";
+            _turnText.text = "";
             yield return new WaitForSeconds(0.2f);
-            _turnText.GetComponent<Text>().text = turnText;
+            _turnText.text = turnText;
             yield return new WaitForSeconds(0.2f);
         }
 
-        _turnText.GetComponent<Text>().text = "";
+        _turnText.text = "";
         _turnText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0f - 50f, 0);
 
         if (isEnemyTurnNow == false)
@@ -303,6 +309,8 @@ public class GameSceneManager : MonoBehaviour
 
         #endregion
 
+        _blackCurtain = Instantiate(Resources.Load("Prefabs/BlackCurtain") as GameObject).GetComponent<BlackCurtain>();
+        _blackCurtain.Init();
         for (var i = 0f; i <= 0.5f; i += 0.01f)
         {
             Color color = new Color(1, 1, 1, i);
@@ -312,6 +320,10 @@ public class GameSceneManager : MonoBehaviour
 
         _endText.enabled = true;
         _endText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+
+        yield return new WaitForSeconds(5f);
+
+        SceneManager.LoadScene("3. Matching");
     }
 
 
@@ -413,6 +425,7 @@ public class GameSceneManager : MonoBehaviour
         // 게임 결과 텍스트 초기화.
         _endText = Instantiate(Resources.Load("GUI/EndText") as GameObject).GetComponent<Text>();
         _endText.enabled = false;
+        _uiSystem.AttachUI(_endText.gameObject);
 
         // 트윈 초기화.
         DOTween.Init(false, true, LogBehaviour.ErrorsOnly);

@@ -89,6 +89,8 @@ public class TestManager : MonoBehaviour
 
         _endText.enabled = true;
         _endText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+
+
     }
 
 
@@ -239,7 +241,6 @@ public class TestManager : MonoBehaviour
 
         // 트윈 초기화.
         DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
- 
     }
 
     private void OnTurnAutoEnd()
