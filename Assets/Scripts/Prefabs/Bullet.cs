@@ -70,7 +70,6 @@ public class Bullet : MonoBehaviour
                 Camera.main.transform.position = afterPos;
             });
         });
-
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
