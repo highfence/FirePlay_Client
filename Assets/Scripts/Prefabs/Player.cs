@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // 데미지를 받았을 때 호출할 이벤트.
+    public event Action OnDamageOccured = delegate { };
+
     [SerializeField]
     private SpriteRenderer _spriteRenderer = null;
     private GameObject     _crosshair      = null;

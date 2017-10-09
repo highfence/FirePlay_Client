@@ -29,7 +29,6 @@ public class GameSceneManager : MonoBehaviour
     private void Update()
     {
         UIUpdate();
-        CheckGameSet();
     }
 
     #region PACKET LOGIC
@@ -143,31 +142,6 @@ public class GameSceneManager : MonoBehaviour
         _enemy.StartCoroutine("OnEnemyAttackStarted", receivedPacket);
     }
 
-    // 게임이 끝났는지 묻는 패킷에 대한 응답 처리.
-    private void OnGameSetAsk(GameSetAsk receivedPacket)
-    {
-        var answerPacket = new GameSetAnswer();
-
-        int player1Hp;
-        int player2Hp;
-
-        if (_dataContainer._playerNumber == 1)
-        {
-            player1Hp = _player._hp;
-            player2Hp = _enemy._hp;
-        }
-        else
-        {
-            player1Hp = _enemy._hp;
-            player2Hp = _player._hp;
-        }
-
-        answerPacket._player1Hp = player1Hp;
-        answerPacket._player2Hp = player2Hp;
-
-        _networkManager.SendPacket(answerPacket, PacketId.ID_GameSetAnswer);
-    }
-
     // 게임이 끝났음을 알려주는 패킷 처리.
     private void OnGameSetNotify(GameSetNotify receivedPacket)
     {
@@ -205,6 +179,31 @@ public class GameSceneManager : MonoBehaviour
         _networkManager.SendPacket<PacketInfo.MatchSuccessAck>(successAck, PacketInfo.PacketId.ID_MatchSuccessAck);
     }
 
+    // 캐릭터가 데미지를 입었을 경우 발생할 이벤트.
+    void OnCharacterDamaged()
+    {
+        int player1Hp;
+        int player2Hp;
+
+        if (_dataContainer._playerNumber == 1)
+        {
+            player1Hp = _player._hp;
+            player2Hp = _enemy._hp;
+        }
+        else
+        {
+            player1Hp = _enemy._hp;
+            player2Hp = _player._hp;
+        }
+
+        var damageInfoPacket = new DamageOccur
+        {
+            _player1Hp = player1Hp,
+            _player2Hp = player2Hp
+        };
+
+        _networkManager.SendPacket(damageInfoPacket, PacketId.ID_DamageOccur);
+    }
 
     #endregion
 
@@ -220,12 +219,14 @@ public class GameSceneManager : MonoBehaviour
         var playerSpec = PlayerSpec.CreateFromText(playerSpecText);
 
         _player = Player.Factory.Create(playerSpec);
+        _player.OnDamageOccured += OnCharacterDamaged;
 
         // 적 캐릭터 생성.
         var enemySpecText = Resources.Load<TextAsset>("Data/Archer" + (int)_dataContainer._enemyType).text;
         var enemySpec = PlayerSpec.CreateFromText(enemySpecText);
 
         _enemy = Player.Factory.Create(enemySpec);
+        _enemy.OnDamageOccured += OnCharacterDamaged;
         _enemy.SetEnemy();
 
         // 이펙트 매니저에서 쓸 수 있도록 등록.
@@ -270,41 +271,6 @@ public class GameSceneManager : MonoBehaviour
         if (isEnemyTurnNow == false)
         {
             _player._isMyTurn = true;
-        }
-    }
-
-    private void CheckGameSet()
-    {
-        if (_player._hp <= 0)
-        {
-            _player._isMyTurn = false;
-            _gameTimer.Stop();
-
-            int player1Hp;
-            int player2Hp;
-            int winPlayerNum;
-
-            if (_dataContainer._playerNumber == 1)
-            {
-                player1Hp = _player._hp;
-                player2Hp = _enemy._hp;
-                winPlayerNum = 2;
-            }
-            else
-            {
-                player1Hp = _enemy._hp;
-                player2Hp = _player._hp;
-                winPlayerNum = 1;
-            }
-
-            var gameSetReq = new GameSetRequest()
-            {
-                _player1Hp = player1Hp,
-                _player2Hp = player2Hp,
-                _winPlayerNum = winPlayerNum
-            };
-
-            _networkManager.SendPacket(gameSetReq, PacketId.ID_GameSetRequest);
         }
     }
 
