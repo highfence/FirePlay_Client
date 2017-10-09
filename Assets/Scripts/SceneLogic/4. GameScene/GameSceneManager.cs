@@ -143,6 +143,31 @@ public class GameSceneManager : MonoBehaviour
         _enemy.StartCoroutine("OnEnemyAttackStarted", receivedPacket);
     }
 
+    // 게임이 끝났는지 묻는 패킷에 대한 응답 처리.
+    private void OnGameSetAsk(GameSetAsk receivedPacket)
+    {
+        var answerPacket = new GameSetAnswer();
+
+        int player1Hp;
+        int player2Hp;
+
+        if (_dataContainer._playerNumber == 1)
+        {
+            player1Hp = _player._hp;
+            player2Hp = _enemy._hp;
+        }
+        else
+        {
+            player1Hp = _enemy._hp;
+            player2Hp = _player._hp;
+        }
+
+        answerPacket._player1Hp = player1Hp;
+        answerPacket._player2Hp = player2Hp;
+
+        _networkManager.SendPacket(answerPacket, PacketId.ID_GameSetAnswer);
+    }
+
     // 게임이 끝났음을 알려주는 패킷 처리.
     private void OnGameSetNotify(GameSetNotify receivedPacket)
     {
@@ -179,6 +204,7 @@ public class GameSceneManager : MonoBehaviour
 
         _networkManager.SendPacket<PacketInfo.MatchSuccessAck>(successAck, PacketInfo.PacketId.ID_MatchSuccessAck);
     }
+
 
     #endregion
 
