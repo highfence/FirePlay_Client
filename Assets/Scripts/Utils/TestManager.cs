@@ -43,7 +43,54 @@ public class TestManager : MonoBehaviour
         _enemyText.GetComponent<Text>().text = "PLAYER 2";
 
         StartCoroutine("OnTurnChanged", false);
+
+        _endText = Instantiate(Resources.Load("GUI/EndText") as GameObject).GetComponent<Text>();
+        _endText.enabled = false;
+        _endText.text = "PLAYER WIN!";
+        _uiSystem.AttachUI(_endText.gameObject);
+
+        // 화면을 어둡게 한다.
+        _blackCurtain = Instantiate(Resources.Load("Prefabs/BlackCurtain") as GameObject).GetComponent<BlackCurtain>();
+        _blackCurtain.Init();
+
+        StartCoroutine("OnGameSeted");        
     }
+
+    BlackCurtain _blackCurtain;
+    Text _endText;
+
+    private IEnumerator OnGameSeted()
+    {
+        #region UI TURN OFF
+
+        _timeText.enabled = false;
+
+        _playerHealthBar.GetComponentInChildren<Image>().enabled = false;
+        _playerHealthBar.GetComponentInChildren<Canvas>().enabled = false;
+        _enemyHealthBar.GetComponentInChildren<Image>().enabled = false;
+        _enemyHealthBar.GetComponentInChildren<Canvas>().enabled = false;
+
+        _playerNameText.enabled = false;
+        _enemyNameText.enabled = false;
+        _playerText.enabled = false;
+        _playerScoreText.enabled = false;
+        _enemyText.enabled = false;
+        _enemyScoreText.enabled = false;
+        _turnText.enabled = false;
+
+        #endregion
+
+        for (var i = 0f; i <= 0.5f; i += 0.01f)
+        {
+            Color color = new Color(1, 1, 1, i);
+            _blackCurtain._spriteRenderer.color = color;
+            yield return new WaitForSeconds(0.02f);
+        }
+
+        _endText.enabled = true;
+        _endText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+    }
+
 
     private void Update()
     {

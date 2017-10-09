@@ -7,13 +7,13 @@ public class BlackCurtain : MonoBehaviour
 {
     public SpriteRenderer _spriteRenderer;
 
-    private void Start()
+    public void Init()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _spriteRenderer.color = new Color(0, 0, 0, 0);
 
         Vector2 spriteSize = _spriteRenderer.sprite.rect.size;
-        Vector3 scale = new Vector3(Screen.width * 2.5f / spriteSize.x, Screen.height * 2.5f / spriteSize.y, 1f);
+        Vector3 scale = new Vector3(Screen.width * 5f / spriteSize.x, Screen.height * 5f / spriteSize.y, 1f);
 
         transform.localScale = scale;
     }

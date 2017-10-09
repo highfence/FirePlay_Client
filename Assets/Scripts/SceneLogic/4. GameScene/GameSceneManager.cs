@@ -145,10 +145,18 @@ public class GameSceneManager : MonoBehaviour
     // 게임이 끝났음을 알려주는 패킷 처리.
     private void OnGameSetNotify(GameSetNotify receivedPacket)
     {
-        // 화면을 어둡게 한다.
-
         // 내가 이겼다면 승리 텍스트를, 아니라면 패배 텍스트를 내보낸다.
-        
+        if (receivedPacket._winPlayerNum == _dataContainer._playerNumber)
+        {
+            _endText.text = "PLAYER WIN!";
+        }
+        else
+        {
+            _endText.text = "PLAYER DEFEAT...";
+        }
+
+        StartCoroutine("OnGameSeted");
+
         // TODO :: 전적을 추가해준다.
 
     }
@@ -274,6 +282,39 @@ public class GameSceneManager : MonoBehaviour
         }
     }
 
+    private IEnumerator OnGameSeted()
+    {
+        #region UI TURN OFF
+
+        _timeText.enabled = false;
+
+        _playerHealthBar.GetComponentInChildren<Image>().enabled = false;
+        _playerHealthBar.GetComponentInChildren<Canvas>().enabled = false;
+        _enemyHealthBar.GetComponentInChildren<Image>().enabled = false;
+        _enemyHealthBar.GetComponentInChildren<Canvas>().enabled = false;
+
+        _playerNameText.enabled = false;
+        _enemyNameText.enabled = false;
+        _playerText.enabled = false;
+        _playerScoreText.enabled = false;
+        _enemyText.enabled = false;
+        _enemyScoreText.enabled = false;
+        _turnText.enabled = false;
+
+        #endregion
+
+        for (var i = 0f; i <= 0.5f; i += 0.01f)
+        {
+            Color color = new Color(1, 1, 1, i);
+            _blackCurtain._spriteRenderer.color = color;
+            yield return new WaitForSeconds(0.02f);
+        }
+
+        _endText.enabled = true;
+        _endText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+    }
+
+
     #endregion
 
     #region UI
@@ -299,6 +340,10 @@ public class GameSceneManager : MonoBehaviour
     Text _enemyScoreText;
     [SerializeField]
     Text _turnText;
+    [SerializeField]
+    Text _endText;
+    [SerializeField]
+    BlackCurtain _blackCurtain;
 
     private GameTimer _gameTimer;
 
@@ -364,6 +409,10 @@ public class GameSceneManager : MonoBehaviour
         _turnText.GetComponent<Text>().text = "PLAYER TURN";
         _turnText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0f - 50f, 0);
         _uiSystem.AttachUI(_turnText.gameObject);
+
+        // 게임 결과 텍스트 초기화.
+        _endText = Instantiate(Resources.Load("GUI/EndText") as GameObject).GetComponent<Text>();
+        _endText.enabled = false;
 
         // 트윈 초기화.
         DOTween.Init(false, true, LogBehaviour.ErrorsOnly);

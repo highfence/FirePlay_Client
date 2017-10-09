@@ -28,6 +28,7 @@ public class MatchSceneManager : MonoBehaviour
         _networkManager = NetworkManager.GetInstance();
 
         _curtain = Instantiate(Resources.Load("Prefabs/BlackCurtain") as GameObject);
+        _curtain.GetComponent<BlackCurtain>().Init();
     }
 
     // 패킷 처리 함수를 이벤트에 등록해주는 메소드.

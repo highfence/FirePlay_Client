@@ -92,6 +92,8 @@ public class Player : MonoBehaviour
         textMesh.text = "-" + damage.ToString();
 
         _animator.SetTrigger("Damage");
+
+        OnDamageOccured.Invoke();
     }
 
     public void SetHealthBar(GameObject healthBar)
