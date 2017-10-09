@@ -344,7 +344,7 @@ public class GameSceneManager : MonoBehaviour
 
         var currentCameraPos = Camera.main.transform.position;
         var playerPos = focusPlayer.transform.position;
-        playerPos.z = Camera.main.transform.position.z;
+        playerPos.z = currentCameraPos.z;
 
         Camera.main.gameObject.Tween("CameraMove", currentCameraPos, playerPos, 1f, TweenScaleFunctions.CubicEaseIn, (t) =>
         {

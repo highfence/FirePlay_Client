@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using DigitalRuby.Tween;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -311,6 +312,7 @@ public class Player : MonoBehaviour
         var crosshairPosition = _crosshair.transform.position;
 
         #region WAIT FOR MOVE END
+
         while (true)
         {
             if (_isMoving == true)
@@ -318,6 +320,7 @@ public class Player : MonoBehaviour
 
             break;
         }
+
         #endregion
 
         #region START ATTACK ANIMATION
@@ -352,6 +355,11 @@ public class Player : MonoBehaviour
         // 총알 발사.
         var bullet = Instantiate(Resources.Load("Prefabs/Bullet")) as GameObject;
         bullet.GetComponent<Bullet>().Fire(crosshairPosition, unitVec2, magnitude * 2, ExplosionType.Type1, damageRatio);
+
+        var currentCameraPos = Camera.main.transform.position;
+        var bulletPos = bullet.transform.position;
+        bulletPos.z = currentCameraPos.z;
+
 
         // 서버에 발사했다고 알림.
         var fireNotify = new PacketInfo.FireNotify()
