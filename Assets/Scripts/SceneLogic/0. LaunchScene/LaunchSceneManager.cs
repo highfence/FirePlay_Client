@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /*
@@ -12,6 +13,8 @@ public class LaunchSceneManager : MonoBehaviour
         // 스크린 설정 초기화.
         Screen.SetResolution(1280, 800, false);
 
+        StartCoroutine("OnClassLoad");
+
         // 데이터 컨테이너 클래스 초기화.
         DataContainer.GetInstance();
 
@@ -20,7 +23,26 @@ public class LaunchSceneManager : MonoBehaviour
 
         // 이펙트 클래스 초기화.
         EffectManager.GetInstance();
+	}
+
+    IEnumerator OnClassLoad()
+    {
+        var loadingRenderer = GetComponent<SpriteRenderer>();
+
+        var curColor = loadingRenderer.color;
+        curColor.a = 0.0f;
+        loadingRenderer.color = curColor;
+
+        while (curColor.a < 1.0f)
+        {
+            curColor.a += 0.025f;
+            loadingRenderer.color = curColor;
+
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        yield return new WaitForSeconds(0.5f);
 
         SceneManager.LoadScene("1. Login");
-	}
+    }
 }

@@ -16,6 +16,9 @@ public class Bullet : MonoBehaviour
     SpriteRenderer _renderer;
     ExplosionType _type;
     int _damageRatio;
+    FloatTween _moveTween;
+    bool _isBulletValid = false;
+    bool _isBulletTweenEnd = false;
 
     private void Awake()
     {
@@ -30,6 +33,9 @@ public class Bullet : MonoBehaviour
 
     private void CameraWalk()
     {
+        if (_isBulletValid == false)
+            return;
+
         float bulletHeight = this.transform.position.y - _firePosition.y;
 
         if (bulletHeight < 5)
@@ -39,6 +45,13 @@ public class Bullet : MonoBehaviour
 
         Camera.main.orthographicSize = bulletHeight;
 
+        if (_isBulletTweenEnd == false)
+            return;
+
+        var cameraPos = this.transform.position;
+        cameraPos.z = Camera.main.transform.position.z;
+
+        Camera.main.transform.position = cameraPos;
     }
 
     public void Fire(Vector2 firePosition, Vector2 fireUnitVec, float magnitude, ExplosionType type, int damageRatio)
@@ -47,6 +60,7 @@ public class Bullet : MonoBehaviour
         _type = type;
         _damageRatio = damageRatio;
         this.transform.position = firePosition;
+        _isBulletValid = true;
 
         var body = this.GetComponent<Rigidbody2D>();
         body.AddForce(fireUnitVec * magnitude);
@@ -54,28 +68,24 @@ public class Bullet : MonoBehaviour
         // Tween 적용.
         Vector3 initPos = new Vector3(_firePosition.x, _firePosition.y, Camera.main.transform.position.z);
         Debug.LogFormat("Fire Magnitude : {0}", magnitude);
-        this.gameObject.Tween("BulletFire", 0f, 1f, 1f, TweenScaleFunctions.QuadraticEaseIn, (t) =>
+        Camera.main.gameObject.Tween("BulletFire", 0f, 1f, 1f, TweenScaleFunctions.QuadraticEaseIn, (t) =>
         {
-            // Progress
             var cameraPos = initPos;
             cameraPos += new Vector3(this.transform.position.x - initPos.x, this.transform.position.y - initPos.y, 0f) * t.CurrentValue;
             Camera.main.transform.position = cameraPos;
-        }, (t) => 
-        {
-            // Completion
-            this.gameObject.Tween("", 0f, 1f, 5f, TweenScaleFunctions.Linear, (t2) =>
-            {
-                var afterPos = this.transform.position;
-                afterPos.z = Camera.main.transform.position.z;
-                Camera.main.transform.position = afterPos;
-            });
-        });
+        }, (t) => { _isBulletTweenEnd = true; }); 
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        EffectManager.GetInstance().MakeExplosion(_type, this.transform.position, _damageRatio);
+        if (_isBulletValid == true)
+        {
+            EffectManager.GetInstance().MakeExplosion(_type, this.transform.position, _damageRatio);
 
-        Destroy(this.gameObject);
+            _renderer.enabled = false;
+            _isBulletValid = false;
+            _isBulletTweenEnd = false;
+            Destroy(this.gameObject, 1f);
+        }
     }
 }

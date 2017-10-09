@@ -352,11 +352,18 @@ public class GameSceneManager : MonoBehaviour
         });
 
         var currentCameraSize = Camera.main.orthographicSize;
+        float maxSize = 20;
         float afterSize = 10;
 
-        Camera.main.gameObject.Tween("CameraZoomIn", currentCameraSize, afterSize, 1f, TweenScaleFunctions.CubicEaseIn, (t) =>
+        Camera.main.gameObject.Tween("CameraZoomIn", currentCameraSize, maxSize, 0.5f, TweenScaleFunctions.CubicEaseIn, (t) =>
         {
             Camera.main.orthographicSize = t.CurrentValue;
+        }, (t) =>
+        {
+            Camera.main.gameObject.Tween("CameraZoomIn", maxSize, afterSize, 0.5f, TweenScaleFunctions.CubicEaseIn, (t2) => 
+            {
+                Camera.main.orthographicSize = t2.CurrentValue;
+            });
         });
     }
 
