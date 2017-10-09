@@ -102,8 +102,6 @@ public class TestManager : MonoBehaviour
         });
     }
 
-
-
     private void Update()
     {
         // 플레이어 정보가 따라다니도록.
@@ -147,7 +145,6 @@ public class TestManager : MonoBehaviour
     public Text _enemyText;
     public Text _enemyScoreText;
     public Text _turnText;
-
 
     private GameTimer _gameTimer;
 

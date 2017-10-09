@@ -150,6 +150,20 @@ public class Player : MonoBehaviour
         MoveControll();
         KeyUpDetect();
         TurnControll();
+
+        // 카메라 움직임.
+        CameraMove();
+    }
+
+    private void CameraMove()
+    {
+        if (_isEnemy || _isMyTurn == false || _isMoving == false)
+            return;
+
+        var playerCurrentPos = Camera.main.transform.position;
+        playerCurrentPos.x = this.transform.position.x;
+        playerCurrentPos.y = this.transform.position.y;
+        Camera.main.transform.position = playerCurrentPos;
     }
 
     private void TurnControll()
@@ -256,8 +270,10 @@ public class Player : MonoBehaviour
             if (_isMouseDown == true)
             {
                 #region FIRELINE CONTROLL
+
                 _fireLine.enabled = true;
                 _fireLine.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+
                 #endregion
 
                 #region CROSSHAIR CONTROLL
@@ -288,6 +304,9 @@ public class Player : MonoBehaviour
 
     public IEnumerator OnAttackStarted()
     {
+        // 내 턴을 끝낸다.
+        _isMyTurn = false;
+
         var mousePosition = Input.mousePosition;
         var crosshairPosition = _crosshair.transform.position;
 
@@ -346,9 +365,6 @@ public class Player : MonoBehaviour
         };
 
         NetworkManager.GetInstance().SendPacket(fireNotify, PacketInfo.PacketId.ID_FireNotify);
-
-        // 내 턴을 끝낸다.
-        _isMyTurn = false;
     }
 
     public IEnumerator OnMoveCommanded(float destPositionX)
@@ -385,7 +401,13 @@ public class Player : MonoBehaviour
         var neededTimeToMove = remainDistance / unitMoveRange;
         transform.DOMoveX(destPositionX, neededTimeToMove);
 
+        var playerCurrentPos = Camera.main.transform.position;
+        playerCurrentPos.x = this.transform.position.x;
+        playerCurrentPos.y = this.transform.position.y;
+        Camera.main.transform.position = playerCurrentPos;
+
         yield return new WaitForSeconds(neededTimeToMove);
+
         _animator.SetBool("Move", false);
     }
 
