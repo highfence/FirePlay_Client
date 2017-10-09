@@ -38,7 +38,7 @@ public class LaunchSceneManager : MonoBehaviour
             curColor.a += 0.025f;
             loadingRenderer.color = curColor;
 
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.03f);
         }
 
         yield return new WaitForSeconds(0.5f);
@@ -48,7 +48,7 @@ public class LaunchSceneManager : MonoBehaviour
             curColor.a -= 0.025f;
             loadingRenderer.color = curColor;
 
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.03f);
         }
 
         SceneManager.LoadScene("1. Login");

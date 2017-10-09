@@ -150,8 +150,8 @@ public class LoginSceneManager : MonoBehaviour
     {
         #region MAKE BACKGROUND
 
-        var bgPrefab = Resources.Load("Prefabs/Background") as GameObject;
-        var bgInstance = Instantiate(bgPrefab).GetComponent<Background>();
+        //var bgPrefab = Resources.Load("Prefabs/Background") as GameObject;
+        //var bgInstance = Instantiate(bgPrefab).GetComponent<Background>();
 
         #endregion
 
@@ -173,7 +173,7 @@ public class LoginSceneManager : MonoBehaviour
 
     private void OnGUI()
     {
-        ButtonCheck();
+        //ButtonCheck();
     }
 
     // 버튼이 눌렸는지 체크해주는 메소드.
@@ -190,15 +190,25 @@ public class LoginSceneManager : MonoBehaviour
         //    Application.Quit();
         //}
 
-        if (_loginButton)
-        {
-            TryLogin(_id, _pw);
-        }
+        //if (_loginButton)
+        //{
+        //    TryLogin(_id, _pw);
+        //}
 
-        if (_exitButton)
-        {
-            Application.Quit();
-        }
+        //if (_exitButton)
+        //{
+        //    Application.Quit();
+        //}
+    }
+
+    public void QuitProcess()
+    {
+        Application.Quit();
+    }
+
+    public void LoginProcess()
+    {
+        TryLogin(_id, _pw);
     }
 
     // Input Field에 적힌 string을 가져오는 콜백 메소드.
