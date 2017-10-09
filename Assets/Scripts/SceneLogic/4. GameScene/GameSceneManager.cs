@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using PacketInfo;
 using UnityEngine.SceneManagement;
+using DigitalRuby.Tween;
 
 public class GameSceneManager : MonoBehaviour
 {
@@ -255,7 +256,9 @@ public class GameSceneManager : MonoBehaviour
 
     private IEnumerator OnTurnChanged(bool isEnemyTurnNow)
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
+
+        CameraFocusToPlayer(isEnemyTurnNow);
 
         string turnText;
         if (isEnemyTurnNow == true)
@@ -326,6 +329,36 @@ public class GameSceneManager : MonoBehaviour
         SceneManager.LoadScene("3. Matching");
     }
 
+    private void CameraFocusToPlayer(bool isEnemyTurnNow)
+    {
+        Player focusPlayer;
+
+        if (isEnemyTurnNow == true)
+        {
+            focusPlayer = _enemy;
+        }
+        else
+        {
+            focusPlayer = _player;
+        }
+
+        var currentCameraPos = Camera.main.transform.position;
+        var playerPos = focusPlayer.transform.position;
+        playerPos.z = Camera.main.transform.position.z;
+
+        Camera.main.gameObject.Tween("CameraMove", currentCameraPos, playerPos, 1f, TweenScaleFunctions.CubicEaseIn, (t) =>
+        {
+            Camera.main.gameObject.transform.position = t.CurrentValue;
+        });
+
+        var currentCameraSize = Camera.main.orthographicSize;
+        float afterSize = 10;
+
+        Camera.main.gameObject.Tween("CameraZoomIn", currentCameraSize, afterSize, 1f, TweenScaleFunctions.CubicEaseIn, (t) =>
+        {
+            Camera.main.orthographicSize = t.CurrentValue;
+        });
+    }
 
     #endregion
 

@@ -103,6 +103,7 @@ public class TestManager : MonoBehaviour
     }
 
 
+
     private void Update()
     {
         // 플레이어 정보가 따라다니도록.
