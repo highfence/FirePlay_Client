@@ -134,14 +134,14 @@ public class GameSceneManager : MonoBehaviour
     private void OnEnemyFireNotify(EnemyFireNotify receivedPacket)
     {
         // 현재 적군의 위치가 잘 동기화 되었는지 확인.
-        //if (receivedPacket._enemyPositionX != _enemy.transform.position.x)
-        //{
-        //    // 동기화 되어있지 않다면 먼저 움직이는 모션을 넣어준다.
-        //    var fixedPosition = _enemy.transform.position;
-        //    fixedPosition.x = receivedPacket._enemyPositionX;
-        //    fixedPosition.y = receivedPacket._enemyPositionY;
-        //    _enemy.transform.position = fixedPosition;
-        //}
+        if (receivedPacket._enemyPositionX != _enemy.transform.position.x)
+        {
+            // 동기화 되어있지 않다면 먼저 움직이는 모션을 넣어준다.
+            var fixedPosition = _enemy.transform.position;
+            fixedPosition.x = receivedPacket._enemyPositionX;
+            fixedPosition.y = receivedPacket._enemyPositionY;
+            _enemy.transform.position = fixedPosition;
+        }
 
         _enemy.StartCoroutine("OnEnemyAttackStarted", receivedPacket);
     }

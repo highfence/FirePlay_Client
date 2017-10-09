@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DigitalRuby.Tween;
 using UnityEngine.UI;
 
 public class TestManager : MonoBehaviour
@@ -43,17 +44,6 @@ public class TestManager : MonoBehaviour
         _enemyText.GetComponent<Text>().text = "PLAYER 2";
 
         StartCoroutine("OnTurnChanged", false);
-
-        _endText = Instantiate(Resources.Load("GUI/EndText") as GameObject).GetComponent<Text>();
-        _endText.enabled = false;
-        _endText.text = "PLAYER WIN!";
-        _uiSystem.AttachUI(_endText.gameObject);
-
-        // 화면을 어둡게 한다.
-        _blackCurtain = Instantiate(Resources.Load("Prefabs/BlackCurtain") as GameObject).GetComponent<BlackCurtain>();
-        _blackCurtain.Init();
-
-        StartCoroutine("OnGameSeted");        
     }
 
     BlackCurtain _blackCurtain;
@@ -90,7 +80,26 @@ public class TestManager : MonoBehaviour
         _endText.enabled = true;
         _endText.transform.position = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
 
+    }
 
+    private void FocusToPlayer(int focusPlayerNumber)
+    {
+        Vector3 currentCameraPos = Camera.main.transform.position;
+        Vector3 playerPos = _player.transform.position;
+        playerPos.z = Camera.main.transform.position.z;
+
+        Camera.main.gameObject.Tween("CameraMove", currentCameraPos, playerPos, 1f, TweenScaleFunctions.CubicEaseIn, (t) =>
+        {
+            Camera.main.gameObject.transform.position = t.CurrentValue;
+        });
+
+        var currentCameraSize = Camera.main.orthographicSize;
+        float afterSize = 10;
+
+        Camera.main.gameObject.Tween("CameraZoomIn", currentCameraSize, afterSize, 1f, TweenScaleFunctions.CubicEaseIn, (t) =>
+        {
+            Camera.main.orthographicSize = t.CurrentValue;
+        });
     }
 
 
@@ -104,7 +113,6 @@ public class TestManager : MonoBehaviour
         var enemyScreenPosition = Camera.main.WorldToScreenPoint(_enemy.transform.position);
         enemyScreenPosition.y += 80;
         _enemyText.transform.position = enemyScreenPosition;
-
 
         #region FOR TEST
         if (Input.GetKeyDown(KeyCode.S))
@@ -174,6 +182,7 @@ public class TestManager : MonoBehaviour
             _player._isMyTurn = true;
         }
 
+        FocusToPlayer(1);
     }
 
     private void UIInitialize()
