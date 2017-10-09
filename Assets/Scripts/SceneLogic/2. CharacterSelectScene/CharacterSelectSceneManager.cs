@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /*
@@ -7,6 +8,10 @@ using UnityEngine.SceneManagement;
  */
 public partial class CharacterSelectSceneManager : MonoBehaviour
 {
+    public GameObject _atkBar;
+    public GameObject _defBar;
+    public GameObject _spdBar;
+
     DataContainer _dataContainer;
     NetworkManager _networkManager;
 
@@ -21,7 +26,7 @@ public partial class CharacterSelectSceneManager : MonoBehaviour
     private GameObject _pointer = null;
     private GameObject[] _archers = new GameObject[(int)CharacterType.Archer3 + 1];
     private Vector3[] _archerPosition = new Vector3[(int)CharacterType.Archer3 + 1];
-    private Vector3 _pointerVector = new Vector3(0f, -3f, 0f);
+    private Vector3 _pointerVector = new Vector3(0f, -2.2f, 0f);
 
     private void Start()
     {
@@ -37,18 +42,21 @@ public partial class CharacterSelectSceneManager : MonoBehaviour
     private void SetInitialArchers()
     {
         _archers[(int)CharacterType.Archer1] = Instantiate(Resources.Load("PrivateData/SpritesArchers/FantasyArcher_01") as GameObject);
-        _archerPosition[(int)CharacterType.Archer1] = new Vector3(-4f, 0f, 0f);
+        _archerPosition[(int)CharacterType.Archer1] = new Vector3(-4f, 1.5f, 0f);
         _archers[(int)CharacterType.Archer1].GetComponent<Transform>().position = _archerPosition[(int)CharacterType.Archer1];
+        _archers[(int)CharacterType.Archer1].GetComponent<Transform>().localScale = new Vector3(0.7f, 0.7f);
         _archers[(int)CharacterType.Archer1].GetComponent<Animator>().enabled = false;
 
         _archers[(int)CharacterType.Archer2] = Instantiate(Resources.Load("PrivateData/SpritesArchers/FantasyArcher_02") as GameObject);
-        _archerPosition[(int)CharacterType.Archer2] = new Vector3(0f, 0f, 0f);
+        _archerPosition[(int)CharacterType.Archer2] = new Vector3(0f, 1.5f, 0f);
         _archers[(int)CharacterType.Archer2].GetComponent<Transform>().position = _archerPosition[(int)CharacterType.Archer2];
+        _archers[(int)CharacterType.Archer2].GetComponent<Transform>().localScale = new Vector3(0.7f, 0.7f);
         _archers[(int)CharacterType.Archer2].GetComponent<Animator>().enabled = false;
 
         _archers[(int)CharacterType.Archer3] = Instantiate(Resources.Load("PrivateData/SpritesArchers/FantasyArcher_03") as GameObject);
-        _archerPosition[(int)CharacterType.Archer3] = new Vector3(4f, 0f, 0f);
+        _archerPosition[(int)CharacterType.Archer3] = new Vector3(4f, 1.5f, 0f);
         _archers[(int)CharacterType.Archer3].GetComponent<Transform>().position = _archerPosition[(int)CharacterType.Archer3];
+        _archers[(int)CharacterType.Archer3].GetComponent<Transform>().localScale = new Vector3(0.7f, 0.7f);
         _archers[(int)CharacterType.Archer3].GetComponent<Animator>().enabled = false;
     }
 
@@ -99,6 +107,31 @@ public partial class CharacterSelectSceneManager : MonoBehaviour
             _pointer.GetComponent<Transform>().position = _archerPosition[(int)_selectedCharacter] + _pointerVector;
 
             _archers[(int)_selectedCharacter].GetComponent<Animator>().enabled = true;
+        }
+
+        SetProgressBar();
+    }
+
+    private void SetProgressBar()
+    {
+        if (_selectedCharacter == CharacterType.Archer1)
+        {
+            _atkBar.GetComponent<ProgressBarPro>().Value = 0.66f;
+            _defBar.GetComponent<ProgressBarPro>().Value = 0.35f;
+            _spdBar.GetComponent<ProgressBarPro>().Value = 1;
+        }
+        else if (_selectedCharacter == CharacterType.Archer2)
+        {
+            _atkBar.GetComponent<ProgressBarPro>().Value = 0.75f;
+            _defBar.GetComponent<ProgressBarPro>().Value = 0.75f;
+            _spdBar.GetComponent<ProgressBarPro>().Value = 0.5f;
+        }
+        else
+        {
+            _atkBar.GetComponent<ProgressBarPro>().Value = 0.8f;
+            _defBar.GetComponent<ProgressBarPro>().Value = 1;
+            _spdBar.GetComponent<ProgressBarPro>().Value = 0.2f;
+
         }
     }
 
