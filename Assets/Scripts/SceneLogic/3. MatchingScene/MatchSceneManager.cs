@@ -103,8 +103,6 @@ public class MatchSceneManager : MonoBehaviour
         _networkManager.SendPacket<PacketInfo.MatchCancelReq>(cancelReq, PacketInfo.PacketId.ID_MatchCancelReq);
     }
 
-
-
     #endregion
 
     #region GUI
@@ -138,14 +136,14 @@ public class MatchSceneManager : MonoBehaviour
     {
         if (_isTryingFastMatch == false && _isTryingNumberMatch == false)
         {
-            if (GUI.Button(new Rect((Screen.width / 2) - 155, (Screen.height * 2 / 3), 150, 150), "Fast Match"))
+            if (GUI.Button(new Rect((Screen.width / 2) - 305, (Screen.height * 2 / 3), 300, 150), "Fast Match"))
             {
                 _isTryingFastMatch = true;
 
                 SendMatchReqPacket();
                 _curtain.GetComponent<BlackCurtain>().StartFadeIn();
             }
-            if (GUI.Button(new Rect((Screen.width / 2) + 5, (Screen.height * 2 / 3), 150, 150), "Number Match"))
+            if (GUI.Button(new Rect((Screen.width / 2) + 5, (Screen.height * 2 / 3), 300, 150), "Number Match"))
             {
                 // TODO :: Number Match는 추후에 구현.
                 _curtain.GetComponent<BlackCurtain>().StartFadeIn();
@@ -210,4 +208,9 @@ public class MatchSceneManager : MonoBehaviour
     }
 
     #endregion
+
+    public void GoBackToCharacterSelect()
+    {
+        SceneManager.LoadScene("2. CharacterSelect");
+    }
 }

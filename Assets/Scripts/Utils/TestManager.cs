@@ -90,6 +90,7 @@ public class TestManager : MonoBehaviour
 
         Camera.main.gameObject.Tween("CameraMove", currentCameraPos, playerPos, 1f, TweenScaleFunctions.CubicEaseIn, (t) =>
         {
+            Debug.LogFormat("Test 93 : {0}", t.CurrentValue);
             Camera.main.gameObject.transform.position = t.CurrentValue;
         });
 
@@ -105,11 +106,11 @@ public class TestManager : MonoBehaviour
     private void Update()
     {
         // 플레이어 정보가 따라다니도록.
-        var playerScreenPosition = Camera.main.WorldToScreenPoint(_player.transform.position);
+        var playerScreenPosition = _uiSystem._uiCam.WorldToScreenPoint(_player.transform.position);
         playerScreenPosition.y += 80;
         _playerText.transform.position = playerScreenPosition;
 
-        var enemyScreenPosition = Camera.main.WorldToScreenPoint(_enemy.transform.position);
+        var enemyScreenPosition = _uiSystem._uiCam.WorldToScreenPoint(_enemy.transform.position);
         enemyScreenPosition.y += 80;
         _enemyText.transform.position = enemyScreenPosition;
 

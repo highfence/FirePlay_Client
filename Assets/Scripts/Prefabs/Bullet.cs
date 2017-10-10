@@ -45,13 +45,11 @@ public class Bullet : MonoBehaviour
 
         Camera.main.orthographicSize = bulletHeight;
 
-        if (_isBulletTweenEnd == false)
-            return;
-
         var cameraPos = this.transform.position;
         cameraPos.z = Camera.main.transform.position.z;
 
         Camera.main.transform.position = cameraPos;
+        Debug.LogFormat("Bullet Y : {0}", cameraPos.y);
     }
 
     public void Fire(Vector2 firePosition, Vector2 fireUnitVec, float magnitude, ExplosionType type, int damageRatio)
@@ -73,7 +71,7 @@ public class Bullet : MonoBehaviour
             var cameraPos = initPos;
             cameraPos += new Vector3(this.transform.position.x - initPos.x, this.transform.position.y - initPos.y, 0f) * t.CurrentValue;
             Camera.main.transform.position = cameraPos;
-        }, (t) => { _isBulletTweenEnd = true; }); 
+        }, (t) => { _isBulletTweenEnd = true; });
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

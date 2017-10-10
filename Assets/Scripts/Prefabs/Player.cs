@@ -347,6 +347,12 @@ public class Player : MonoBehaviour
         var unitVec2 = new Vector2(unitVec3.x, unitVec3.y);
         var magnitude = unitVec2.magnitude;
 
+        if (magnitude > 1000)
+        {
+            Debug.LogWarningFormat("Much Magnitude! : {0}", magnitude);
+            magnitude = 1000;
+        }
+
         unitVec2.Normalize();
 
         // 데미지 결정.
@@ -355,11 +361,6 @@ public class Player : MonoBehaviour
         // 총알 발사.
         var bullet = Instantiate(Resources.Load("Prefabs/Bullet")) as GameObject;
         bullet.GetComponent<Bullet>().Fire(crosshairPosition, unitVec2, magnitude * 2, ExplosionType.Type1, damageRatio);
-
-        var currentCameraPos = Camera.main.transform.position;
-        var bulletPos = bullet.transform.position;
-        bulletPos.z = currentCameraPos.z;
-
 
         // 서버에 발사했다고 알림.
         var fireNotify = new PacketInfo.FireNotify()
@@ -412,7 +413,7 @@ public class Player : MonoBehaviour
         var playerCurrentPos = Camera.main.transform.position;
         playerCurrentPos.x = this.transform.position.x;
         playerCurrentPos.y = this.transform.position.y;
-        Camera.main.transform.position = playerCurrentPos;
+        Camera.main.transform.DOMove(playerCurrentPos, 0.25f);
 
         yield return new WaitForSeconds(neededTimeToMove);
 

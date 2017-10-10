@@ -135,14 +135,14 @@ public class GameSceneManager : MonoBehaviour
     private void OnEnemyFireNotify(EnemyFireNotify receivedPacket)
     {
         // 현재 적군의 위치가 잘 동기화 되었는지 확인.
-        if (receivedPacket._enemyPositionX != _enemy.transform.position.x)
-        {
-            // 동기화 되어있지 않다면 먼저 움직이는 모션을 넣어준다.
-            var fixedPosition = _enemy.transform.position;
-            fixedPosition.x = receivedPacket._enemyPositionX;
-            fixedPosition.y = receivedPacket._enemyPositionY;
-            _enemy.transform.position = fixedPosition;
-        }
+        //if (receivedPacket._enemyPositionX != _enemy.transform.position.x)
+        //{
+        //    // 동기화 되어있지 않다면 먼저 움직이는 모션을 넣어준다.
+        //    var fixedPosition = _enemy.transform.position;
+        //    fixedPosition.x = receivedPacket._enemyPositionX;
+        //    fixedPosition.y = receivedPacket._enemyPositionY;
+        //    _enemy.transform.position = fixedPosition;
+        //}
 
         _enemy.StartCoroutine("OnEnemyAttackStarted", receivedPacket);
     }
@@ -331,24 +331,24 @@ public class GameSceneManager : MonoBehaviour
 
     private void CameraFocusToPlayer(bool isEnemyTurnNow)
     {
-        Player focusPlayer;
-
-        if (isEnemyTurnNow == true)
+        var currentCameraPos = Camera.main.transform.position;
+        Vector3 playerPos;
+        
+        if (isEnemyTurnNow)
         {
-            focusPlayer = _enemy;
+            playerPos = _enemy.transform.position;
         }
         else
         {
-            focusPlayer = _player;
+            playerPos = _player.transform.position;
         }
 
-        var currentCameraPos = Camera.main.transform.position;
-        var playerPos = focusPlayer.transform.position;
         playerPos.z = currentCameraPos.z;
 
         Camera.main.gameObject.Tween("CameraMove", currentCameraPos, playerPos, 1f, TweenScaleFunctions.CubicEaseIn, (t) =>
         {
             Camera.main.gameObject.transform.position = t.CurrentValue;
+            Debug.LogFormat("Game 350 : {0}", Camera.main.gameObject.transform.position.y);
         });
 
         var currentCameraSize = Camera.main.orthographicSize;
